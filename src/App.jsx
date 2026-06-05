@@ -16,25 +16,20 @@ function App() {
       <header style={{ 
         backgroundColor: 'var(--bg-secondary)', 
         borderBottom: '1px solid var(--border-color)',
-        padding: '1rem 1.5rem',
+        padding: '1rem 0',
         position: 'sticky',
         top: 0,
         zIndex: 100
       }}>
-        <div className="container" style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          padding: 0
-        }}>
+        <div className="container header-content">
           {/* Logo/Brand */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 'bold', fontSize: '1.25rem' }}>
             <Wallet className="text-accent-primary" />
-            <span>FinTools</span>
+            <span>Valia</span>
           </div>
 
           {/* Navigation Tabs */}
-          <nav style={{ display: 'flex', gap: '0.5rem' }}>
+          <nav className="nav-tabs">
             <button
               onClick={() => setActiveTab('inicio')}
               style={{
@@ -81,7 +76,7 @@ function App() {
       <main style={{ flex: 1, padding: '2rem 0' }}>
         {activeTab === 'inicio' && (
           <div className="container animate-fade-in" style={{ textAlign: 'center', marginTop: '4rem' }}>
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Bienvenido a FinTools</h1>
+            <h1 style={{ marginBottom: '1rem' }}>Bienvenido a Valia</h1>
             <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto' }}>
               Tu plataforma integral para tomar decisiones financieras inteligentes. 
               Navega a la pestaña de <strong>Herramientas</strong> para empezar.
@@ -99,22 +94,15 @@ function App() {
         {activeTab === 'herramientas' && (
           <div className="animate-fade-in">
             {/* Tool Selector */}
-            <div className="container" style={{ marginBottom: '2rem' }}>
-              <div style={{ 
-                display: 'inline-flex', 
-                background: 'var(--bg-secondary)', 
-                padding: '0.5rem', 
-                borderRadius: 'var(--border-radius-lg)',
-                border: '1px solid var(--border-color)',
-                gap: '0.5rem',
-                flexWrap: 'wrap'
-              }}>
+            <div className="tool-selector-container container">
+              <div className="tool-selector-scroll">
                 <button
                   className="btn"
                   onClick={() => setActiveTool('buy-vs-rent')}
                   style={{
                     backgroundColor: activeTool === 'buy-vs-rent' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'buy-vs-rent' ? 'white' : 'var(--text-secondary)',
+                    color: activeTool === 'buy-vs-rent' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'buy-vs-rent' ? '600' : '500',
                     boxShadow: activeTool === 'buy-vs-rent' ? 'var(--shadow-sm)' : 'none',
                   }}
                 >
@@ -125,7 +113,8 @@ function App() {
                   onClick={() => setActiveTool('compound-interest')}
                   style={{
                     backgroundColor: activeTool === 'compound-interest' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'compound-interest' ? 'white' : 'var(--text-secondary)',
+                    color: activeTool === 'compound-interest' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'compound-interest' ? '600' : '500',
                     boxShadow: activeTool === 'compound-interest' ? 'var(--shadow-sm)' : 'none',
                   }}
                 >
@@ -136,7 +125,8 @@ function App() {
                   onClick={() => setActiveTool('savings-goal')}
                   style={{
                     backgroundColor: activeTool === 'savings-goal' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'savings-goal' ? 'white' : 'var(--text-secondary)',
+                    color: activeTool === 'savings-goal' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'savings-goal' ? '600' : '500',
                     boxShadow: activeTool === 'savings-goal' ? 'var(--shadow-sm)' : 'none',
                   }}
                 >
@@ -147,7 +137,8 @@ function App() {
                   onClick={() => setActiveTool('fire')}
                   style={{
                     backgroundColor: activeTool === 'fire' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'fire' ? 'white' : 'var(--text-secondary)',
+                    color: activeTool === 'fire' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'fire' ? '600' : '500',
                     boxShadow: activeTool === 'fire' ? 'var(--shadow-sm)' : 'none',
                   }}
                 >
@@ -158,7 +149,8 @@ function App() {
                   onClick={() => setActiveTool('inflation')}
                   style={{
                     backgroundColor: activeTool === 'inflation' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'inflation' ? 'white' : 'var(--text-secondary)',
+                    color: activeTool === 'inflation' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'inflation' ? '600' : '500',
                     boxShadow: activeTool === 'inflation' ? 'var(--shadow-sm)' : 'none',
                   }}
                 >
@@ -178,8 +170,24 @@ function App() {
 
       {/* Advertisement Banner Placeholder */}
       <div style={{ padding: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
-        <div style={{ width: '100%', maxWidth: '728px', height: '90px', backgroundColor: 'var(--bg-tertiary)', border: '1px dashed var(--text-tertiary)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--text-tertiary)', fontSize: '0.875rem', borderRadius: '4px' }}>
-          Espacio Publicitario (728x90)
+        <div 
+          className="ad-banner"
+          style={{ 
+            width: '100%', 
+            maxWidth: '728px', 
+            height: '90px', 
+            backgroundColor: 'var(--bg-tertiary)', 
+            border: '1px dashed var(--text-tertiary)', 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            color: 'var(--text-tertiary)', 
+            fontSize: '0.875rem', 
+            borderRadius: '4px' 
+          }}
+        >
+          <span className="ad-text-desktop">Espacio Publicitario (728x90)</span>
+          <span className="ad-text-mobile" style={{ display: 'none' }}>Espacio Publicitario (320x50)</span>
         </div>
       </div>
     </div>
@@ -187,3 +195,4 @@ function App() {
 }
 
 export default App;
+

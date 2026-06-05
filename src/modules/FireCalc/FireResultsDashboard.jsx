@@ -62,7 +62,7 @@ const FireResultsDashboard = ({ results }) => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+      <div className="stats-grid">
         <div className="card" style={{ textAlign: 'center' }}>
           <TrendingDown size={20} style={{ color: 'var(--accent-danger)', marginBottom: '0.5rem' }} />
           <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Peor Caso</p>
@@ -81,7 +81,7 @@ const FireResultsDashboard = ({ results }) => {
       </div>
 
       {/* Chart */}
-      <div className="card" style={{ height: '420px' }}>
+      <div className="card chart-container">
         <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Rango de Resultados del Portafolio</h3>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 25 }}>

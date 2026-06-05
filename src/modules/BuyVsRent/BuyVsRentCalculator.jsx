@@ -52,9 +52,9 @@ const BuyVsRentCalculator = () => {
   ]);
 
   return (
-    <div className="container" style={{ padding: '2rem 1.5rem' }}>
+    <div className="container" style={{ padding: '2rem 0' }}>
       
-      <header style={{ marginBottom: '2rem', textAlign: 'center', position: 'relative' }}>
+      <header className="calculator-header">
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Calculator className="text-accent-primary" size={32} />
           ¿Comprar o Alquilar?
@@ -63,29 +63,13 @@ const BuyVsRentCalculator = () => {
         
         <button 
           onClick={() => setIsHelpOpen(true)}
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            background: 'var(--bg-tertiary)',
-            border: '1px solid var(--border-color)',
-            color: 'var(--text-primary)',
-            padding: '0.5rem 1rem',
-            borderRadius: 'var(--border-radius-lg)',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            transition: 'all 0.2s'
-          }}
-          onMouseOver={e => e.currentTarget.style.background = 'var(--border-color)'}
-          onMouseOut={e => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+          className="help-btn"
         >
           <HelpCircle size={18} className="text-accent-primary" />
           ¿Cómo funciona?
         </button>
       </header>
+
 
       <div className="grid" style={{ 
         gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 

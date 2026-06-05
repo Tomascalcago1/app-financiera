@@ -103,7 +103,7 @@ const ResultsDashboard = ({ data }) => {
       </div>
 
       {/* Chart */}
-      <div className="card" style={{ height: '400px' }}>
+      <div className="card chart-container">
         <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Evolución del Patrimonio</h3>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart

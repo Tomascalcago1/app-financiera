@@ -77,7 +77,7 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount }) => {
       </div>
 
       {/* Chart */}
-      <div className="card" style={{ height: '400px' }}>
+      <div className="card chart-container">
         <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>El camino hacia tu objetivo</h3>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart

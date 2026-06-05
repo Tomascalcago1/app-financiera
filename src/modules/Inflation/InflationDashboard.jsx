@@ -82,7 +82,7 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
           <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginBottom: '1rem' }}>
             Muestra cómo $100 de 1635 habrían crecido en términos nominales hasta hoy.
           </p>
-          <div style={{ height: '500px' }}>
+          <div className="chart-container-large">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />

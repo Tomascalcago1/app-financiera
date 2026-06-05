@@ -41,7 +41,7 @@ const CompoundInterestCalculator = () => {
   ]);
 
   return (
-    <div className="container" style={{ padding: '2rem 1.5rem' }}>
+    <div className="container" style={{ padding: '2rem 0' }}>
       
       <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
