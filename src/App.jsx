@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import BuyVsRentCalculator from './modules/BuyVsRent/BuyVsRentCalculator';
 import CompoundInterestCalculator from './modules/CompoundInterest/CompoundInterestCalculator';
 import SavingsGoalCalculator from './modules/SavingsGoal/SavingsGoalCalculator';
@@ -12,11 +12,22 @@ import AcercaDe from './pages/AcercaDe';
 import Privacidad from './pages/Privacidad';
 import Terminos from './pages/Terminos';
 import Inicio from './pages/Inicio';
-import { Home, Wrench, Wallet, Info } from 'lucide-react';
+import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('herramientas');
   const [activeTool, setActiveTool] = useState('buy-vs-rent');
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = 250;
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -123,9 +134,42 @@ function App() {
 
         {activeTab === 'herramientas' && (
           <div className="animate-fade-in">
-            {/* Tool Selector */}
-            <div className="tool-selector-container container">
-              <div className="tool-selector-scroll">
+            {/* Tool Selector Carousel Wrapper */}
+            <div className="tool-selector-container container" style={{ position: 'relative', paddingLeft: '2.5rem', paddingRight: '2.5rem', display: 'flex', alignItems: 'center' }}>
+              
+              {/* Left Slide Button */}
+              <button 
+                onClick={() => scroll('left')}
+                className="scroll-btn scroll-btn-left"
+                style={{
+                  position: 'absolute',
+                  left: '0.5rem',
+                  zIndex: 10,
+                  backgroundColor: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'var(--text-primary)',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              <div 
+                ref={scrollRef}
+                className="tool-selector-scroll"
+                style={{
+                  scrollBehavior: 'smooth',
+                  width: '100%'
+                }}
+              >
                 <button
                   className="btn"
                   onClick={() => setActiveTool('buy-vs-rent')}
@@ -223,6 +267,31 @@ function App() {
                   Sueldo Neto Freelancer
                 </button>
               </div>
+
+              {/* Right Slide Button */}
+              <button 
+                onClick={() => scroll('right')}
+                className="scroll-btn scroll-btn-right"
+                style={{
+                  position: 'absolute',
+                  right: '0.5rem',
+                  zIndex: 10,
+                  backgroundColor: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'var(--text-primary)',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <ChevronRight size={20} />
+              </button>
             </div>
 
             {activeTool === 'buy-vs-rent' && <BuyVsRentCalculator />}
