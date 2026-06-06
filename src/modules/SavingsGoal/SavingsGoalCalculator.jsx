@@ -127,6 +127,12 @@ const SavingsGoalCalculator = () => {
             data={simulationResult?.progressionData} 
             requiredContribution={simulationResult?.requiredMonthlyContribution}
             goalAmount={Number(goalAmount) || 0}
+            inputs={{
+              goalAmount,
+              initialInvestment,
+              years,
+              interestRate
+            }}
           />
         </div>
 

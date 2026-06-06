@@ -64,9 +64,9 @@ const FireCalculator = () => {
   const allocSum = Number(stockAlloc || 0) + Number(bondAlloc || 0) + Number(cashAlloc || 0);
 
   const results = useMemo(() => {
-    if (!portfolioValue || !retirementLength) return null;
-    if (withdrawalStrategy === 'constant-dollar' && !withdrawalAmount) return null;
-    if (withdrawalStrategy === 'percent-of-portfolio' && !withdrawalPercent) return null;
+    if (portfolioValue === '' || retirementLength === '') return null;
+    if (withdrawalStrategy === 'constant-dollar' && withdrawalAmount === '') return null;
+    if (withdrawalStrategy === 'percent-of-portfolio' && withdrawalPercent === '') return null;
     if (allocSum !== 100) return null;
 
     return runFireSimulation({
@@ -138,7 +138,19 @@ const FireCalculator = () => {
 
         {/* Results Panel */}
         <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-          <FireResultsDashboard results={results} />
+          <FireResultsDashboard 
+            results={results} 
+            inputs={{
+              portfolioValue,
+              retirementLength,
+              withdrawalStrategy,
+              withdrawalAmount,
+              withdrawalPercent,
+              stockAlloc,
+              bondAlloc,
+              cashAlloc
+            }}
+          />
         </div>
       </div>
 

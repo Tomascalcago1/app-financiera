@@ -208,7 +208,18 @@ const CompoundInterestCalculator = () => {
 
         {/* Results Panel */}
         <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-          <CompoundResultsDashboard data={simulationData} varianceEnabled={enableVariance} />
+          <CompoundResultsDashboard 
+            data={simulationData} 
+            varianceEnabled={enableVariance} 
+            inputs={{
+              initialInvestment,
+              monthlyContribution,
+              years,
+              interestRate,
+              varianceRange: enableVariance ? varianceRange : 0,
+              compoundFrequency
+            }}
+          />
         </div>
 
       </div>

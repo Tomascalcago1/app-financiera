@@ -40,7 +40,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const CompoundResultsDashboard = ({ data, varianceEnabled }) => {
+const CompoundResultsDashboard = ({ data, varianceEnabled, inputs = {} }) => {
   const [showTable, setShowTable] = useState(false);
 
   const profitCrossoverYear = useMemo(() => {
@@ -54,25 +54,23 @@ const CompoundResultsDashboard = ({ data, varianceEnabled }) => {
     return null;
   }, [data]);
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-secondary)' }}>
-        Ingresa los datos para ver la proyección.
-      </div>
-    );
-  }
+  if (!data || data.length === 0) return null;
 
   const finalYear = data[data.length - 1];
 
   const exportToCSV = () => {
-    const headers = ['Año', 'Total Aportado', 'Balance Esperado', 'Escenario Optimista', 'Escenario Conservador'];
-    const rows = data.map(row => [
-      row.year,
-      row.totalContributions,
-      row.expected,
-      row.optimistic || '',
-      row.pessimistic || ''
-    ]);
+    const headers = ['Año', 'Aportes Acumulados', 'Saldo Estimado (Medio)'];
+    if (varianceEnabled) {
+      headers.push('Saldo Pesimista', 'Saldo Optimista');
+    }
+    
+    const rows = data.map(row => {
+      const baseRow = [row.year, row.totalContributions, row.expected];
+      if (varianceEnabled) {
+        baseRow.push(row.pessimistic, row.optimistic);
+      }
+      return baseRow;
+    });
     
     const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -90,8 +88,33 @@ const CompoundResultsDashboard = ({ data, varianceEnabled }) => {
     window.print();
   };
 
+  const compoundFrequencyLabel = inputs.compoundFrequency === 1 
+    ? 'Anual' 
+    : inputs.compoundFrequency === 12 
+      ? 'Mensual' 
+      : inputs.compoundFrequency === 365 
+        ? 'Diaria' 
+        : 'Mensual';
+
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
+      
+      {/* Print-only Report Header & Parameters */}
+      <div className="print-only-section">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Interés Compuesto</h2>
+        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
+        
+        <div className="print-params-grid">
+          <div><strong>Inversión Inicial:</strong> {formatCurrency(inputs.initialInvestment)}</div>
+          <div><strong>Aporte Mensual:</strong> {formatCurrency(inputs.monthlyContribution)}</div>
+          <div><strong>Horizonte Temporal:</strong> {inputs.years} años</div>
+          <div><strong>Tasa de Interés (TNA):</strong> {inputs.interestRate}%</div>
+          <div><strong>Capitalización:</strong> {compoundFrequencyLabel}</div>
+          {varianceEnabled && (
+            <div><strong>Rango de Variación:</strong> ±{inputs.varianceRange}%</div>
+          )}
+        </div>
+      </div>
       
       {/* Summary Banner */}
       <div className="card" style={{

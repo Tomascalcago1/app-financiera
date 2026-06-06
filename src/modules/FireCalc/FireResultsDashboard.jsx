@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const FireResultsDashboard = ({ results }) => {
+const FireResultsDashboard = ({ results, inputs = {} }) => {
   const [showTable, setShowTable] = useState(false);
 
   if (!results) {
@@ -79,8 +79,30 @@ const FireResultsDashboard = ({ results }) => {
     window.print();
   };
 
+  const strategyLabel = inputs.withdrawalStrategy === 'constant-dollar' 
+    ? 'Dólar Constante (Ajustado por Inflación)' 
+    : 'Porcentaje Variable del Portafolio';
+
+  const withdrawalVal = inputs.withdrawalStrategy === 'constant-dollar'
+    ? `${formatCurrencyFull(inputs.withdrawalAmount)} anual`
+    : `${inputs.withdrawalPercent}% anual`;
+
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
+      
+      {/* Print-only Report Header & Parameters */}
+      <div className="print-only-section">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Simulador FIRE</h2>
+        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
+        
+        <div className="print-params-grid">
+          <div><strong>Valor de Portafolio:</strong> {formatCurrencyFull(inputs.portfolioValue)}</div>
+          <div><strong>Duración del Retiro:</strong> {inputs.retirementLength} años</div>
+          <div><strong>Estrategia de Retiro:</strong> {strategyLabel}</div>
+          <div><strong>Retiro Inicial:</strong> {withdrawalVal}</div>
+          <div><strong>Distribución Portafolio:</strong> Acciones {inputs.stockAlloc}% / Bonos {inputs.bondAlloc}% / Efectivo {inputs.cashAlloc}%</div>
+        </div>
+      </div>
 
       {/* Success Rate */}
       <div className="card" style={{
@@ -208,7 +230,7 @@ const FireResultsDashboard = ({ results }) => {
       )}
 
       {/* Affiliate CTA */}
-      <div className="card" style={{ marginTop: '1rem', background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05))', border: '1px solid var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="card no-print" style={{ marginTop: '1rem', background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05))', border: '1px solid var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h4 style={{ fontSize: '1rem', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>¿Listo para empezar a invertir?</h4>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Contactá a nuestro asesor asociado en <strong>Balanz</strong> para armar tu portafolio ideal y alcanzar tus metas financieras.</p>

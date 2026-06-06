@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount }) => {
+const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs = {} }) => {
   const [showTable, setShowTable] = useState(false);
 
   if (!data || data.length === 0) {
@@ -76,6 +76,19 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount }) => {
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
+      
+      {/* Print-only Report Header & Parameters */}
+      <div className="print-only-section">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Objetivo de Ahorro</h2>
+        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
+        
+        <div className="print-params-grid">
+          <div><strong>Monto de la Meta:</strong> {formatCurrency(inputs.goalAmount)}</div>
+          <div><strong>Ahorros Iniciales:</strong> {formatCurrency(inputs.initialInvestment)}</div>
+          <div><strong>Plazo Deseado:</strong> {inputs.years} años</div>
+          <div><strong>Tasa de Interés Estimada (TNA):</strong> {inputs.interestRate}%</div>
+        </div>
+      </div>
       
       {/* Summary Banner */}
       <div className="card" style={{

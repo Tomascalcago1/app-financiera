@@ -238,7 +238,21 @@ const BuyVsRentCalculator = () => {
 
         {/* Results Panel */}
         <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-          <ResultsDashboard data={simulationData} />
+          <ResultsDashboard 
+            data={simulationData} 
+            inputs={{
+              propertyPrice,
+              initialCapital,
+              monthlyRent,
+              years,
+              inflationRate,
+              investmentReturn,
+              propertyAppreciation,
+              maintenanceRate,
+              mortgageRate,
+              mortgageYears
+            }}
+          />
         </div>
 
       </div>

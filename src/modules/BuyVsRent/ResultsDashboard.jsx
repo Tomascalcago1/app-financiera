@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const ResultsDashboard = ({ data }) => {
+const ResultsDashboard = ({ data, inputs = {} }) => {
   if (!data || data.length === 0) return null;
 
   const finalYear = data[data.length - 1];
@@ -85,6 +85,29 @@ const ResultsDashboard = ({ data }) => {
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
+      
+      {/* Print-only Report Header & Parameters */}
+      <div className="print-only-section">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: ¿Comprar o Alquilar?</h2>
+        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
+        
+        <div className="print-params-grid">
+          <div><strong>Precio de la Propiedad:</strong> {formatCurrency(inputs.propertyPrice)}</div>
+          <div><strong>Capital Inicial (Ahorros):</strong> {formatCurrency(inputs.initialCapital)}</div>
+          <div><strong>Alquiler Mensual:</strong> {formatCurrency(inputs.monthlyRent)}</div>
+          <div><strong>Horizonte Temporal:</strong> {inputs.years} años</div>
+          <div><strong>Inflación Anual Estimada:</strong> {inputs.inflationRate}%</div>
+          <div><strong>Rendimiento Inversión (TNA):</strong> {inputs.investmentReturn}%</div>
+          <div><strong>Apreciación de Propiedad (Anual):</strong> {inputs.propertyAppreciation}%</div>
+          <div><strong>Mantenimiento Anual Propiedad:</strong> {inputs.maintenanceRate}%</div>
+          {inputs.propertyPrice > inputs.initialCapital && (
+            <>
+              <div><strong>Tasa de Hipoteca (Anual):</strong> {inputs.mortgageRate}%</div>
+              <div><strong>Plazo de Hipoteca:</strong> {inputs.mortgageYears} años</div>
+            </>
+          )}
+        </div>
+      </div>
       
       {/* Summary Banner */}
       <div className="card" style={{

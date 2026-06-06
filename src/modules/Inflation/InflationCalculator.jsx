@@ -108,7 +108,7 @@ const InflationCalculator = () => {
       </header>
 
       {/* Inputs - Horizontal Layout */}
-      <div className="card animate-fade-in" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div className="card animate-fade-in no-print" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
           <h2 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Tus Parámetros</h2>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Moneda: USD (Dólares)</span>

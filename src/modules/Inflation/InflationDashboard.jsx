@@ -57,6 +57,19 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
 
+      {/* Print-only Report Header & Parameters */}
+      <div className="print-only-section">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Inflación Histórica</h2>
+        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
+        
+        <div className="print-params-grid">
+          <div><strong>Monto Inicial:</strong> {formatCurrency(amount)}</div>
+          <div><strong>Desde el Año:</strong> {fromYear}</div>
+          <div><strong>Hasta el Año:</strong> {toYear}</div>
+          <div><strong>Tasa de Inflación Utilizada:</strong> {annualRate.toFixed(2)}%</div>
+        </div>
+      </div>
+
       {/* Main Result */}
       <div className="card" style={{
         background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05))',
