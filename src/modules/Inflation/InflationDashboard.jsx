@@ -1,8 +1,9 @@
 import React from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer, ReferenceLine
 } from 'recharts';
+import { Download, Printer } from 'lucide-react';
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(value);
@@ -32,6 +33,26 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
 
   const futureYears = 10;
   const purchasingPowerIn10 = amount * Math.pow(1 / (1 + (annualRate / 100)), futureYears);
+
+  const exportToCSV = () => {
+    const headers = ['Año', 'Valor Ajustado de $100 de 1635'];
+    const rows = chartData.map(row => [row.year, row.value]);
+    
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `valia_inflacion_historica_1635_2025.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportToPDF = () => {
+    window.print();
+  };
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
@@ -73,6 +94,26 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
         </p>
       </div>
 
+      {/* Export Actions */}
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
+        <button 
+          onClick={exportToCSV}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Download size={16} />
+          Exportar CSV (Excel)
+        </button>
+        <button 
+          onClick={exportToPDF}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Printer size={16} />
+          Imprimir / Guardar PDF
+        </button>
+      </div>
+
       {/* Large Historical Chart */}
       {chartData && chartData.length > 0 && (
         <div className="card" style={{ padding: '1.5rem' }}>
@@ -84,7 +125,7 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
           </p>
           <div className="chart-container-large">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
+              <AreaChart data={chartData} margin={{ top: 15, right: 20, left: 20, bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                 <XAxis
                   dataKey="year"
@@ -98,6 +139,37 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
                   tickFormatter={v => `$${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v.toFixed(0)}`}
                 />
                 <Tooltip content={<ChartTooltip />} />
+                
+                {fromYear && (
+                  <ReferenceLine 
+                    x={Number(fromYear)} 
+                    stroke="var(--accent-warning)" 
+                    strokeDasharray="3 3" 
+                    label={{ 
+                      value: `Desde: ${fromYear}`, 
+                      fill: 'var(--accent-warning)', 
+                      fontSize: 10, 
+                      position: 'top',
+                      fontWeight: 500
+                    }} 
+                  />
+                )}
+
+                {toYear && (
+                  <ReferenceLine 
+                    x={Number(toYear)} 
+                    stroke="var(--accent-primary)" 
+                    strokeDasharray="3 3" 
+                    label={{ 
+                      value: `Hasta: ${toYear}`, 
+                      fill: 'var(--accent-primary)', 
+                      fontSize: 10, 
+                      position: 'top',
+                      fontWeight: 500
+                    }} 
+                  />
+                )}
+
                 <Area
                   type="monotone"
                   dataKey="value"

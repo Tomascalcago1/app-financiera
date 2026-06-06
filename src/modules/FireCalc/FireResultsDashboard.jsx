@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend
+  ResponsiveContainer, Legend, ReferenceLine
 } from 'recharts';
-import { TableProperties, TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import { TableProperties, TrendingUp, TrendingDown, BarChart3, Download, Printer } from 'lucide-react';
 
 const formatCurrency = (value) => {
   if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
@@ -21,8 +21,8 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Año {label} de retiro</p>
         {payload.map((entry, i) => (
           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.15rem' }}>
-            <span style={{ color: entry.color, fontSize: '0.8rem' }}>{entry.name}:</span>
-            <strong style={{ fontSize: '0.8rem' }}>{formatCurrencyFull(entry.value)}</strong>
+            <span style={{ color: entry.color, fontSize: '0.8.5rem' }}>{entry.name}:</span>
+            <strong style={{ fontSize: '0.8.5rem' }}>{formatCurrencyFull(entry.value)}</strong>
           </div>
         ))}
       </div>
@@ -44,6 +44,40 @@ const FireResultsDashboard = ({ results }) => {
 
   const { successRate, totalSimulations, survivedCount, statistics, chartData, simulations } = results;
   const rateColor = successRate >= 90 ? 'var(--accent-success)' : successRate >= 75 ? 'var(--accent-warning)' : 'var(--accent-danger)';
+
+  // Extraer el capital inicial del portafolio desde el primer punto de la mediana
+  const initialPortfolio = useMemo(() => {
+    return chartData && chartData.length > 0 ? chartData[0].median : null;
+  }, [chartData]);
+
+  const retirementLength = chartData ? chartData.length - 1 : 30;
+
+  const exportToCSV = () => {
+    const headers = ['Año de Retiro', 'Mínimo', 'Percentil 10', 'Mediana', 'Percentil 90', 'Máximo'];
+    const rows = chartData.map(row => [
+      row.yearIndex,
+      row.min,
+      row.p10,
+      row.median,
+      row.p90,
+      row.max
+    ]);
+    
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `valia_fire_progression_${retirementLength}_anos.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportToPDF = () => {
+    window.print();
+  };
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
@@ -80,16 +114,51 @@ const FireResultsDashboard = ({ results }) => {
         </div>
       </div>
 
+      {/* Export Actions */}
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
+        <button 
+          onClick={exportToCSV}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Download size={16} />
+          Exportar CSV (Excel)
+        </button>
+        <button 
+          onClick={exportToPDF}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Printer size={16} />
+          Imprimir / Guardar PDF
+        </button>
+      </div>
+
       {/* Chart */}
       <div className="card chart-container">
         <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Rango de Resultados del Portafolio</h3>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 25 }}>
+          <AreaChart data={chartData} margin={{ top: 15, right: 20, left: 20, bottom: 25 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="yearIndex" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
             <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={formatCurrency} />
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+            
+            {initialPortfolio && (
+              <ReferenceLine 
+                y={initialPortfolio} 
+                stroke="var(--text-secondary)" 
+                strokeDasharray="3 3" 
+                label={{ 
+                  value: `Inicial: ${formatCurrency(initialPortfolio)}`, 
+                  fill: 'var(--text-secondary)', 
+                  position: 'right',
+                  fontSize: 10
+                }} 
+              />
+            )}
+
             <Area type="monotone" dataKey="max" name="Máximo (P90)" stroke="none" fill="var(--accent-success)" fillOpacity={0.08} />
             <Area type="monotone" dataKey="p90" name="Percentil 90" stroke="var(--accent-success)" fill="var(--accent-success)" fillOpacity={0.12} strokeWidth={1} strokeDasharray="4 4" />
             <Area type="monotone" dataKey="median" name="Mediana" stroke="var(--accent-primary)" fill="url(#fireGrad)" strokeWidth={3} />

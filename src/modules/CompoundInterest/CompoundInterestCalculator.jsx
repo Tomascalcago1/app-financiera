@@ -1,21 +1,63 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import FinancialInput from '../../components/FinancialInput';
 import CompoundResultsDashboard from './CompoundResultsDashboard';
 import { simulateCompoundInterest } from './CompoundSimulationEngine';
-import { TrendingUp, Settings2 } from 'lucide-react';
+import HelpModal from '../../components/HelpModal';
+import { TrendingUp, Settings2, HelpCircle } from 'lucide-react';
 
 const CompoundInterestCalculator = () => {
   // Main Variables
-  const [initialInvestment, setInitialInvestment] = useState('');
-  const [monthlyContribution, setMonthlyContribution] = useState('');
-  const [years, setYears] = useState('');
-  const [interestRate, setInterestRate] = useState('');
+  const [initialInvestment, setInitialInvestment] = useState(() => {
+    const saved = localStorage.getItem('valia_compound_initialInvestment');
+    return saved !== null ? saved : '';
+  });
+  const [monthlyContribution, setMonthlyContribution] = useState(() => {
+    const saved = localStorage.getItem('valia_compound_monthlyContribution');
+    return saved !== null ? saved : '';
+  });
+  const [years, setYears] = useState(() => {
+    const saved = localStorage.getItem('valia_compound_years');
+    return saved !== null ? saved : '';
+  });
+  const [interestRate, setInterestRate] = useState(() => {
+    const saved = localStorage.getItem('valia_compound_interestRate');
+    return saved !== null ? saved : '';
+  });
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   
   // Advanced Variables
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [varianceRange, setVarianceRange] = useState(2);
-  const [compoundFrequency, setCompoundFrequency] = useState(1); // 1 = Annually, 12 = Monthly
-  const [enableVariance, setEnableVariance] = useState(false);
+  const [varianceRange, setVarianceRange] = useState(() => {
+    const saved = localStorage.getItem('valia_compound_varianceRange');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 2;
+  });
+  const [compoundFrequency, setCompoundFrequency] = useState(() => {
+    const saved = localStorage.getItem('valia_compound_compoundFrequency');
+    return saved !== null ? Number(saved) : 1;
+  });
+  const [enableVariance, setEnableVariance] = useState(() => {
+    const saved = localStorage.getItem('valia_compound_enableVariance');
+    return saved !== null ? saved === 'true' : false;
+  });
+
+  // Save states to localStorage
+  useEffect(() => {
+    localStorage.setItem('valia_compound_initialInvestment', initialInvestment);
+    localStorage.setItem('valia_compound_monthlyContribution', monthlyContribution);
+    localStorage.setItem('valia_compound_years', years);
+    localStorage.setItem('valia_compound_interestRate', interestRate);
+    localStorage.setItem('valia_compound_varianceRange', varianceRange);
+    localStorage.setItem('valia_compound_compoundFrequency', compoundFrequency);
+    localStorage.setItem('valia_compound_enableVariance', enableVariance);
+  }, [
+    initialInvestment,
+    monthlyContribution,
+    years,
+    interestRate,
+    varianceRange,
+    compoundFrequency,
+    enableVariance
+  ]);
 
   // Generate simulation data when inputs change
   const simulationData = useMemo(() => {
@@ -43,12 +85,20 @@ const CompoundInterestCalculator = () => {
   return (
     <div className="container" style={{ padding: '2rem 0' }}>
       
-      <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
+      <header className="calculator-header">
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <TrendingUp className="text-accent-primary" size={32} />
           Calculadora de Interés Compuesto
         </h1>
         <p>Descubre cuánto puede crecer tu dinero a lo largo del tiempo.</p>
+        
+        <button 
+          onClick={() => setIsHelpOpen(true)}
+          className="help-btn"
+        >
+          <HelpCircle size={18} className="text-accent-primary" />
+          ¿Cómo funciona?
+        </button>
       </header>
 
       <div className="grid" style={{ 
@@ -162,6 +212,36 @@ const CompoundInterestCalculator = () => {
         </div>
 
       </div>
+
+      <HelpModal 
+        isOpen={isHelpOpen} 
+        onClose={() => setIsHelpOpen(false)}
+        title="¿Cómo funciona el Interés Compuesto?"
+      >
+        <p>
+          El interés compuesto es la fuerza más poderosa de las finanzas personales. A diferencia del interés simple, 
+          aquí los intereses que ganás se suman a tu capital y **generan nuevos intereses el mes siguiente**.
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>1. El Efecto Bola de Nieve</h3>
+        <p>
+          Si invertís $100 y ganás 10% el primer año, al final tenés $110. El segundo año, tu 10% se calcula sobre 
+          $110 (no sobre los $100 iniciales), obteniendo $121. Con el tiempo, este crecimiento se acelera de forma exponencial.
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>2. Aportes Mensuales</h3>
+        <p>
+          Al sumar una contribución fija cada mes, no solo crece tu capital principal, sino que cada aporte empieza a generar 
+          su propia "bola de nieve" de intereses inmediatamente, multiplicando la velocidad de crecimiento.
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>3. Frecuencia de Capitalización</h3>
+        <p>
+          Es la frecuencia con la que los intereses ganados se suman al capital (ej: mensual o anualmente). Cuanto más 
+          frecuente sea (por ejemplo, mensual en vez de anual), más rápido crece tu dinero porque los intereses generan 
+          ganancias más seguido.
+        </p>
+      </HelpModal>
     </div>
   );
 };

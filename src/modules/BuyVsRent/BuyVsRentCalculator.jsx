@@ -7,36 +7,91 @@ import { Calculator, Settings2, HelpCircle } from 'lucide-react';
 
 const BuyVsRentCalculator = () => {
   // State for mandatory variables
-  const [propertyPrice, setPropertyPrice] = useState(100000);
-  const [monthlyRent, setMonthlyRent] = useState(500);
-  const [initialCapital, setInitialCapital] = useState(20000);
-  const [years, setYears] = useState(20);
+  const [propertyPrice, setPropertyPrice] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_propertyPrice');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 100000;
+  });
+  const [monthlyRent, setMonthlyRent] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_monthlyRent');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 500;
+  });
+  const [initialCapital, setInitialCapital] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_initialCapital');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 20000;
+  });
+  const [years, setYears] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_years');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 20;
+  });
 
   // State for advanced variables (hidden by default)
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [inflationRate, setInflationRate] = useState(3);
-  const [investmentReturn, setInvestmentReturn] = useState(8);
-  const [propertyAppreciation, setPropertyAppreciation] = useState(4);
-  const [maintenanceRate, setMaintenanceRate] = useState(1);
-  const [mortgageRate, setMortgageRate] = useState(5);
-  const [mortgageYears, setMortgageYears] = useState(20);
+  const [inflationRate, setInflationRate] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_inflationRate');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 3;
+  });
+  const [investmentReturn, setInvestmentReturn] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_investmentReturn');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 8;
+  });
+  const [propertyAppreciation, setPropertyAppreciation] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_propertyAppreciation');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 4;
+  });
+  const [maintenanceRate, setMaintenanceRate] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_maintenanceRate');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 1;
+  });
+  const [mortgageRate, setMortgageRate] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_mortgageRate');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 5;
+  });
+  const [mortgageYears, setMortgageYears] = useState(() => {
+    const saved = localStorage.getItem('valia_buyvsrent_mortgageYears');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 20;
+  });
 
   // Modal state
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
+  // Save states to localStorage
+  useEffect(() => {
+    localStorage.setItem('valia_buyvsrent_propertyPrice', propertyPrice);
+    localStorage.setItem('valia_buyvsrent_monthlyRent', monthlyRent);
+    localStorage.setItem('valia_buyvsrent_initialCapital', initialCapital);
+    localStorage.setItem('valia_buyvsrent_years', years);
+    localStorage.setItem('valia_buyvsrent_inflationRate', inflationRate);
+    localStorage.setItem('valia_buyvsrent_investmentReturn', investmentReturn);
+    localStorage.setItem('valia_buyvsrent_propertyAppreciation', propertyAppreciation);
+    localStorage.setItem('valia_buyvsrent_maintenanceRate', maintenanceRate);
+    localStorage.setItem('valia_buyvsrent_mortgageRate', mortgageRate);
+    localStorage.setItem('valia_buyvsrent_mortgageYears', mortgageYears);
+  }, [
+    propertyPrice,
+    monthlyRent,
+    initialCapital,
+    years,
+    inflationRate,
+    investmentReturn,
+    propertyAppreciation,
+    maintenanceRate,
+    mortgageRate,
+    mortgageYears
+  ]);
+
   // Generate simulation data when inputs change
   const simulationData = useMemo(() => {
     return simulateBuyVsRent({
-      propertyPrice,
-      monthlyRent,
-      initialCapital,
-      years,
-      inflationRate: inflationRate / 100,
-      investmentReturn: investmentReturn / 100,
-      propertyAppreciation: propertyAppreciation / 100,
-      maintenanceRate: maintenanceRate / 100,
-      mortgageRate: mortgageRate / 100,
-      mortgageYears: mortgageYears
+      propertyPrice: propertyPrice === '' ? 0 : Number(propertyPrice),
+      monthlyRent: monthlyRent === '' ? 0 : Number(monthlyRent),
+      initialCapital: initialCapital === '' ? 0 : Number(initialCapital),
+      years: years === '' ? 0 : Number(years),
+      inflationRate: (inflationRate === '' ? 0 : Number(inflationRate)) / 100,
+      investmentReturn: (investmentReturn === '' ? 0 : Number(investmentReturn)) / 100,
+      propertyAppreciation: (propertyAppreciation === '' ? 0 : Number(propertyAppreciation)) / 100,
+      maintenanceRate: (maintenanceRate === '' ? 0 : Number(maintenanceRate)) / 100,
+      mortgageRate: (mortgageRate === '' ? 0 : Number(mortgageRate)) / 100,
+      mortgageYears: mortgageYears === '' ? 0 : Number(mortgageYears)
     });
   }, [
     propertyPrice,
@@ -188,7 +243,40 @@ const BuyVsRentCalculator = () => {
 
       </div>
       
-      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+      <HelpModal 
+        isOpen={isHelpOpen} 
+        onClose={() => setIsHelpOpen(false)}
+        title="¿Cómo funciona la comparación?"
+      >
+        <p>
+          Esta calculadora compara de manera justa los escenarios de comprar y alquilar, asumiendo que en ambos casos 
+          <strong> gastas exactamente la misma cantidad de dinero de tu bolsillo cada mes</strong>.
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>1. Escenario: Alquilar e Invertir</h3>
+        <p>
+          Tu <strong>Capital Inicial</strong> se invierte inmediatamente al rendimiento estimado. 
+          Además, cada mes la calculadora revisa si pagar tu alquiler te sale más barato que 
+          pagar la hipoteca y el mantenimiento de una casa. <strong>Ese ahorro mensual también se invierte mes a mes</strong>.
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>2. Escenario: Comprar Inmueble</h3>
+        <p>
+          Tu Capital Inicial se usa como adelanto de la propiedad. El resto se financia con una hipoteca.
+          El inmueble se revaloriza (sube de precio) con los años, pero tienes gastos de hipoteca, mantenimiento e impuestos.
+          Si en algún mes pagar esto es más barato que alquilar, la diferencia se ahorra y se invierte.
+        </p>
+        <p>
+          Al final del plazo, tu patrimonio si compraste es igual a: 
+          <strong> (Valor de la Propiedad) - (Deuda restante) + (Tus ahorros invertidos)</strong>.
+        </p>
+
+        <div style={{ background: 'var(--bg-tertiary)', padding: '1rem', borderRadius: 'var(--border-radius-sm)', marginTop: '0.5rem' }}>
+          <p style={{ margin: 0, fontSize: '0.85rem' }}>
+            <strong>Conclusión:</strong> El gráfico te muestra qué decisión te deja con más riqueza neta en el bolsillo al final del plazo, considerando el costo del dinero y el crecimiento de las inversiones.
+          </p>
+        </div>
+      </HelpModal>
     </div>
   );
 };

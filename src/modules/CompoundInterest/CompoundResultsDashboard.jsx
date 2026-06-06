@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   AreaChart,
   Area,
@@ -7,9 +7,10 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend
+  Legend,
+  ReferenceLine
 } from 'recharts';
-import { TableProperties } from 'lucide-react';
+import { TableProperties, Download, Printer } from 'lucide-react';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -21,7 +22,7 @@ const formatCurrency = (value) => {
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
-    // Sort payload by value descending to show Optimistic first, then Expected, then Pessimistic
+    // Ordenar de mayor a menor para mejor legibilidad en tooltip
     const sortedPayload = [...payload].sort((a, b) => b.value - a.value);
 
     return (
@@ -42,6 +43,17 @@ const CustomTooltip = ({ active, payload, label }) => {
 const CompoundResultsDashboard = ({ data, varianceEnabled }) => {
   const [showTable, setShowTable] = useState(false);
 
+  const profitCrossoverYear = useMemo(() => {
+    if (!data) return null;
+    for (let i = 0; i < data.length; i++) {
+      const profit = data[i].expected - data[i].totalContributions;
+      if (profit > data[i].totalContributions) {
+        return data[i].year;
+      }
+    }
+    return null;
+  }, [data]);
+
   if (!data || data.length === 0) {
     return (
       <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-secondary)' }}>
@@ -52,19 +64,45 @@ const CompoundResultsDashboard = ({ data, varianceEnabled }) => {
 
   const finalYear = data[data.length - 1];
 
+  const exportToCSV = () => {
+    const headers = ['Año', 'Total Aportado', 'Balance Esperado', 'Escenario Optimista', 'Escenario Conservador'];
+    const rows = data.map(row => [
+      row.year,
+      row.totalContributions,
+      row.expected,
+      row.optimistic || '',
+      row.pessimistic || ''
+    ]);
+    
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `valia_interes_compuesto_${finalYear.year}_anos.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportToPDF = () => {
+    window.print();
+  };
+
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       
       {/* Summary Banner */}
       <div className="card" style={{
-        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05))',
+        background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.05))',
         borderLeft: '4px solid var(--accent-primary)'
       }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-          Resultado en {finalYear.year} años
+          Proyección final en {finalYear.year} años
         </h2>
         <p style={{ fontSize: '1.125rem' }}>
-          Tu inversión podría crecer hasta{' '}
+          Tendrás un balance estimado de{' '}
           <strong style={{ color: 'var(--accent-primary)' }}>
             {formatCurrency(finalYear.expected)}
           </strong>.
@@ -93,13 +131,33 @@ const CompoundResultsDashboard = ({ data, varianceEnabled }) => {
         </div>
       </div>
 
+      {/* Export Actions */}
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
+        <button 
+          onClick={exportToCSV}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Download size={16} />
+          Exportar CSV (Excel)
+        </button>
+        <button 
+          onClick={exportToPDF}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Printer size={16} />
+          Imprimir / Guardar PDF
+        </button>
+      </div>
+
       {/* Chart */}
       <div className="card chart-container">
         <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Proyección del Crecimiento</h3>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
-            margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
+            margin={{ top: 15, right: 20, left: 20, bottom: 25 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis 
@@ -115,6 +173,21 @@ const CompoundResultsDashboard = ({ data, varianceEnabled }) => {
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
             
+            {profitCrossoverYear && (
+              <ReferenceLine 
+                x={profitCrossoverYear} 
+                stroke="var(--accent-success)" 
+                strokeDasharray="3 3" 
+                label={{ 
+                  value: 'Interés > Aportes', 
+                  fill: 'var(--accent-success)', 
+                  position: 'top', 
+                  fontSize: 11,
+                  fontWeight: 500
+                }} 
+              />
+            )}
+
             <Area 
               type="monotone" 
               dataKey="totalContributions" 

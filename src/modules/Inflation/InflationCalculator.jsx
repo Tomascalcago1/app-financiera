@@ -1,25 +1,71 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import InflationDashboard from './InflationDashboard';
 import { calculateInflation, generateHistoricalChartData } from './InflationEngine';
-import { DollarSign, RotateCcw } from 'lucide-react';
+import HelpModal from '../../components/HelpModal';
+import { DollarSign, RotateCcw, HelpCircle } from 'lucide-react';
 
 const InflationCalculator = () => {
-  const [amount, setAmount] = useState(100);
-  const [fromYear, setFromYear] = useState(1913);
-  const [toYear, setToYear] = useState(2025);
-  const [customRate, setCustomRate] = useState(null); // null = use CPI
-  const [rateInput, setRateInput] = useState('');
+  const [amount, setAmount] = useState(() => {
+    const saved = localStorage.getItem('valia_inflation_amount');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 100;
+  });
+  const [fromYear, setFromYear] = useState(() => {
+    const saved = localStorage.getItem('valia_inflation_fromYear');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 1913;
+  });
+  const [toYear, setToYear] = useState(() => {
+    const saved = localStorage.getItem('valia_inflation_toYear');
+    return saved !== null ? (saved === '' ? '' : Number(saved)) : 2025;
+  });
+  const [customRate, setCustomRate] = useState(() => {
+    const saved = localStorage.getItem('valia_inflation_customRate');
+    return saved !== null ? (saved === 'null' ? null : Number(saved)) : null;
+  }); // null = use CPI
+  const [rateInput, setRateInput] = useState(() => {
+    const saved = localStorage.getItem('valia_inflation_rateInput');
+    return saved !== null ? saved : '';
+  });
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+  // Save states to localStorage
+  useEffect(() => {
+    localStorage.setItem('valia_inflation_amount', amount);
+    localStorage.setItem('valia_inflation_fromYear', fromYear);
+    localStorage.setItem('valia_inflation_toYear', toYear);
+    localStorage.setItem('valia_inflation_customRate', customRate === null ? 'null' : customRate);
+    localStorage.setItem('valia_inflation_rateInput', rateInput);
+  }, [
+    amount,
+    fromYear,
+    toYear,
+    customRate,
+    rateInput
+  ]);
 
   // Calculate using CPI to get the "natural" rate
   const cpiResult = useMemo(() => {
-    if (!fromYear || !toYear || fromYear === toYear) return null;
-    return calculateInflation({ amount, fromYear, toYear, customRate: null });
+    const fYr = Number(fromYear);
+    const tYr = Number(toYear);
+    if (!fYr || !tYr || fYr === tYr) return null;
+    return calculateInflation({ 
+      amount: Number(amount) || 0, 
+      fromYear: fYr, 
+      toYear: tYr, 
+      customRate: null 
+    });
   }, [amount, fromYear, toYear]);
 
   // Calculate using custom rate if set
   const displayResult = useMemo(() => {
+    const fYr = Number(fromYear);
+    const tYr = Number(toYear);
     if (customRate !== null) {
-      return calculateInflation({ amount, fromYear, toYear, customRate: customRate / 100 });
+      return calculateInflation({ 
+        amount: Number(amount) || 0, 
+        fromYear: fYr, 
+        toYear: tYr, 
+        customRate: customRate / 100 
+      });
     }
     return cpiResult;
   }, [amount, fromYear, toYear, customRate, cpiResult]);
@@ -45,16 +91,28 @@ const InflationCalculator = () => {
 
   return (
     <div className="container" style={{ padding: '2rem 0' }}>
-      <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
+      <header className="calculator-header">
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <DollarSign size={32} style={{ color: 'var(--accent-success)' }} />
           Calculadora de Inflación Histórica
         </h1>
         <p>Comprende cómo cambia el poder adquisitivo de tu dinero a lo largo del tiempo.</p>
+        
+        <button 
+          onClick={() => setIsHelpOpen(true)}
+          className="help-btn"
+        >
+          <HelpCircle size={18} className="text-accent-primary" />
+          ¿Cómo funciona?
+        </button>
       </header>
 
       {/* Inputs - Horizontal Layout */}
-      <div className="card animate-fade-in" style={{ marginBottom: '2rem' }}>
+      <div className="card animate-fade-in" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
+          <h2 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Tus Parámetros</h2>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Moneda: USD (Dólares)</span>
+        </div>
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', alignItems: 'end' }}>
           
           <div className="input-group" style={{ marginBottom: 0 }}>
@@ -66,7 +124,7 @@ const InflationCalculator = () => {
                 className="input-field"
                 style={{ paddingLeft: '2rem' }}
                 value={amount}
-                onChange={e => setAmount(Number(e.target.value) || 0)}
+                onChange={e => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
                 step={100}
               />
             </div>
@@ -78,7 +136,7 @@ const InflationCalculator = () => {
               type="number"
               className="input-field"
               value={fromYear}
-              onChange={e => setFromYear(Number(e.target.value))}
+              onChange={e => setFromYear(e.target.value === '' ? '' : Number(e.target.value))}
               min={1635}
               max={2025}
             />
@@ -90,7 +148,7 @@ const InflationCalculator = () => {
               type="number"
               className="input-field"
               value={toYear}
-              onChange={e => setToYear(Number(e.target.value))}
+              onChange={e => setToYear(e.target.value === '' ? '' : Number(e.target.value))}
               min={1635}
               max={2025}
             />
@@ -143,6 +201,35 @@ const InflationCalculator = () => {
         toYear={toYear}
         annualRate={displayedRate}
       />
+      <HelpModal 
+        isOpen={isHelpOpen} 
+        onClose={() => setIsHelpOpen(false)}
+        title="¿Cómo funciona la Inflación Histórica?"
+      >
+        <p>
+          La **inflación** es el aumento sostenido y generalizado de los precios. Cuando hay inflación, el dinero pierde 
+          su valor porque con la misma cantidad de billetes podés comprar menos cosas (pérdida de poder adquisitivo).
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>1. ¿Qué es el CPI (Índice de Precios)?</h3>
+        <p>
+          Para medir la inflación real de forma objetiva, los gobiernos registran el costo de una "canasta básica" de bienes 
+          y servicios (alimentos, vivienda, transporte). Este simulador utiliza el **Índice de Precios al Consumidor (CPI)** 
+          oficial de EE.UU. desde 1913, complementado con datos históricos desde 1635.
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>2. Poder Adquisitivo Equivalente</h3>
+        <p>
+          Si un producto costaba $10 en 1950, la calculadora te dice exactamente cuántos dólares necesitás hoy para 
+          comprar ese mismo producto, reflejando el impacto de la inflación acumulada a lo largo de las décadas.
+        </p>
+
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>3. Tasa de Inflación Personalizada</h3>
+        <p>
+          Además de consultar los datos históricos reales, podés ingresar una tasa de inflación anual personalizada (por ejemplo, 3% o 5%) 
+          para proyectar cómo se deteriorará el valor de tus ahorros a futuro si se mantuviera ese ritmo de aumento de precios.
+        </p>
+      </HelpModal>
     </div>
   );
 };

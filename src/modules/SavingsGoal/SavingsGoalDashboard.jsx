@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import {
   AreaChart,
   Area,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend
+  Legend,
+  ReferenceLine
 } from 'recharts';
-import { TableProperties } from 'lucide-react';
+import { TableProperties, Download, Printer } from 'lucide-react';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -43,12 +43,36 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount }) => {
   if (!data || data.length === 0) {
     return (
       <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-secondary)' }}>
-        Ingresa tu objetivo y plazo para ver el resultado.
+        Ingresa los datos para ver la proyección.
       </div>
     );
   }
 
-  const isAchievable = requiredContribution > 0 || data[0].expected >= goalAmount;
+  const finalYear = data[data.length - 1];
+
+  const exportToCSV = () => {
+    const headers = ['Año', 'Total Aportado', 'Balance Acumulado'];
+    const rows = data.map(row => [
+      row.year,
+      row.totalContributions,
+      row.expected
+    ]);
+    
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `valia_objetivo_ahorro_${finalYear.year}_anos.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportToPDF = () => {
+    window.print();
+  };
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
@@ -59,30 +83,61 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount }) => {
         borderLeft: '4px solid var(--accent-success)'
       }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-          Tu Plan de Ahorro
+          Resultado de tu Meta
         </h2>
-        
-        {data[0].expected >= goalAmount ? (
+        {requiredContribution > 0 ? (
           <p style={{ fontSize: '1.125rem' }}>
-            ¡Tu capital inicial ya alcanzó la meta de <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(goalAmount)}</strong>! No necesitas realizar aportes mensuales.
+            Para alcanzar tu meta de <strong style={{ color: 'var(--text-primary)' }}>{formatCurrency(goalAmount)}</strong> en {finalYear.year} años, 
+            necesitás aportar <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(requiredContribution)}</strong> por mes.
           </p>
         ) : (
-          <p style={{ fontSize: '1.125rem' }}>
-            Para llegar a {formatCurrency(goalAmount)}, necesitas aportar{' '}
-            <strong style={{ color: 'var(--accent-success)', fontSize: '1.5rem' }}>
-              {formatCurrency(requiredContribution)}
-            </strong> por mes.
+          <p style={{ fontSize: '1.125rem', color: 'var(--accent-success)' }}>
+            ¡Tu inversión inicial ya supera tu objetivo de ahorro! No necesitás realizar aportes mensuales adicionales.
           </p>
         )}
+
+        <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-primary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
+          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Desglose de la Meta:</h4>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.875rem' }}>
+            <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+              <span>Total que pondrás de tu bolsillo:</span>
+              <strong>{formatCurrency(finalYear.totalContributions)}</strong>
+            </li>
+            <li style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: 'var(--accent-success)' }}>Dinero generado por intereses:</span>
+              <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(finalYear.expected - finalYear.totalContributions)}</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Export Actions */}
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
+        <button 
+          onClick={exportToCSV}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Download size={16} />
+          Exportar CSV (Excel)
+        </button>
+        <button 
+          onClick={exportToPDF}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Printer size={16} />
+          Imprimir / Guardar PDF
+        </button>
       </div>
 
       {/* Chart */}
       <div className="card chart-container">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>El camino hacia tu objetivo</h3>
+        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Evolución del Plan de Ahorro</h3>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
-            margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
+            margin={{ top: 15, right: 20, left: 20, bottom: 25 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis 
@@ -98,6 +153,19 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount }) => {
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
             
+            <ReferenceLine 
+              y={goalAmount} 
+              stroke="var(--accent-success)" 
+              strokeDasharray="4 4" 
+              label={{ 
+                value: `Meta: ${formatCurrency(goalAmount)}`, 
+                fill: 'var(--accent-success)', 
+                position: 'top',
+                fontSize: 11,
+                fontWeight: 500
+              }} 
+            />
+
             <Area 
               type="monotone" 
               dataKey="totalContributions" 
@@ -107,35 +175,20 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount }) => {
               strokeWidth={2}
               stackId="0"
             />
-
             <Area 
               type="monotone" 
               dataKey="expected" 
-              name="Patrimonio Proyectado" 
+              name="Balance Acumulado" 
               stroke="var(--accent-success)" 
-              fill="url(#colorExpectedSavings)" 
+              fill="url(#colorExpectedGoal)" 
               strokeWidth={3}
             />
-
-            {/* Goal Line (Dotted) */}
-            <Line 
-              type="monotone" 
-              dataKey="goal" 
-              name="Tu Meta" 
-              stroke="var(--accent-warning)" 
-              strokeWidth={2} 
-              strokeDasharray="5 5" 
-              dot={false}
-              activeDot={false}
-            />
-
             <defs>
-              <linearGradient id="colorExpectedSavings" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorExpectedGoal" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--accent-success)" stopOpacity={0.3}/>
                 <stop offset="95%" stopColor="var(--accent-success)" stopOpacity={0}/>
               </linearGradient>
             </defs>
-
           </AreaChart>
         </ResponsiveContainer>
       </div>

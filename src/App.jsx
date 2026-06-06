@@ -4,7 +4,11 @@ import CompoundInterestCalculator from './modules/CompoundInterest/CompoundInter
 import SavingsGoalCalculator from './modules/SavingsGoal/SavingsGoalCalculator';
 import FireCalculator from './modules/FireCalc/FireCalculator';
 import InflationCalculator from './modules/Inflation/InflationCalculator';
-import { Home, Wrench, Wallet } from 'lucide-react';
+import AcercaDe from './pages/AcercaDe';
+import Privacidad from './pages/Privacidad';
+import Terminos from './pages/Terminos';
+import Inicio from './pages/Inicio';
+import { Home, Wrench, Wallet, Info } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('herramientas');
@@ -23,7 +27,17 @@ function App() {
       }}>
         <div className="container header-content">
           {/* Logo/Brand */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 'bold', fontSize: '1.25rem' }}>
+          <div 
+            onClick={() => setActiveTab('inicio')}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.75rem', 
+              fontWeight: 'bold', 
+              fontSize: '1.25rem',
+              cursor: 'pointer'
+            }}
+          >
             <Wallet className="text-accent-primary" />
             <span>Valia</span>
           </div>
@@ -68,6 +82,25 @@ function App() {
               <Wrench size={18} />
               Herramientas
             </button>
+            <button
+              onClick={() => setActiveTab('acerca')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 1rem',
+                backgroundColor: activeTab === 'acerca' ? 'var(--bg-tertiary)' : 'transparent',
+                color: activeTab === 'acerca' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                border: 'none',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer',
+                fontWeight: 500,
+                transition: 'all 0.2s'
+              }}
+            >
+              <Info size={18} />
+              Acerca de
+            </button>
           </nav>
         </div>
       </header>
@@ -75,20 +108,13 @@ function App() {
       {/* Main Content Area */}
       <main style={{ flex: 1, padding: '2rem 0' }}>
         {activeTab === 'inicio' && (
-          <div className="container animate-fade-in" style={{ textAlign: 'center', marginTop: '4rem' }}>
-            <h1 style={{ marginBottom: '1rem' }}>Bienvenido a Valia</h1>
-            <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto' }}>
-              Tu plataforma integral para tomar decisiones financieras inteligentes. 
-              Navega a la pestaña de <strong>Herramientas</strong> para empezar.
-            </p>
-            <button 
-              className="btn btn-primary" 
-              style={{ marginTop: '2rem' }}
-              onClick={() => setActiveTab('herramientas')}
-            >
-              Ver Herramientas
-            </button>
-          </div>
+          <Inicio 
+            onSelectTool={(toolId) => {
+              setActiveTab('herramientas');
+              setActiveTool(toolId);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         )}
 
         {activeTab === 'herramientas' && (
@@ -166,6 +192,10 @@ function App() {
             {activeTool === 'inflation' && <InflationCalculator />}
           </div>
         )}
+
+        {activeTab === 'acerca' && <AcercaDe />}
+        {activeTab === 'privacidad' && <Privacidad />}
+        {activeTab === 'terminos' && <Terminos />}
       </main>
 
       {/* Advertisement Banner Placeholder */}
@@ -190,9 +220,105 @@ function App() {
           <span className="ad-text-mobile" style={{ display: 'none' }}>Espacio Publicitario (320x50)</span>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer style={{ 
+        backgroundColor: 'var(--bg-secondary)', 
+        borderTop: '1px solid var(--border-color)', 
+        padding: '2.5rem 0 2rem 0',
+        marginTop: 'auto'
+      }}>
+        <div className="container" style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          gap: '1.25rem',
+          justifyContent: 'center',
+          textAlign: 'center'
+        }}>
+          <div 
+            onClick={() => setActiveTab('inicio')}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem', 
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+          >
+            <Wallet size={20} className="text-accent-primary" />
+            <span>Valia</span>
+          </div>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>
+            Herramientas educativas gratuitas para ayudarte a tomar decisiones financieras informadas. 
+            Todos los cálculos se realizan localmente en tu navegador.
+          </p>
+          <nav style={{ 
+            display: 'flex', 
+            gap: '1.5rem', 
+            flexWrap: 'wrap', 
+            justifyContent: 'center',
+            margin: '0.5rem 0'
+          }}>
+            <button 
+              onClick={() => {
+                setActiveTab('acerca');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: activeTab === 'acerca' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
+                cursor: 'pointer', 
+                fontSize: '0.875rem', 
+                fontWeight: 500,
+                transition: 'color var(--transition-fast)' 
+              }}
+            >
+              Acerca de
+            </button>
+            <button 
+              onClick={() => {
+                setActiveTab('privacidad');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: activeTab === 'privacidad' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
+                cursor: 'pointer', 
+                fontSize: '0.875rem', 
+                fontWeight: 500,
+                transition: 'color var(--transition-fast)' 
+              }}
+            >
+              Política de Privacidad
+            </button>
+            <button 
+              onClick={() => {
+                setActiveTab('terminos');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: activeTab === 'terminos' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
+                cursor: 'pointer', 
+                fontSize: '0.875rem', 
+                fontWeight: 500,
+                transition: 'color var(--transition-fast)' 
+              }}
+            >
+              Términos de Uso
+            </button>
+          </nav>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>
+            &copy; {new Date().getFullYear()} Valia. Todos los derechos reservados.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
 
 export default App;
-
