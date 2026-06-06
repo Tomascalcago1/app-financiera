@@ -11,6 +11,7 @@ import {
   ReferenceLine
 } from 'recharts';
 import { TableProperties, Download, Printer } from 'lucide-react';
+import AdvisorCTA from '../../components/AdvisorCTA';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -239,6 +240,9 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs =
         </div>
       )}
 
+      <AdvisorCTA 
+        whatsappText="Hola! Calculé mi meta de ahorro en Valia y me gustaría contactar a un asesor de Balanz para elegir los mejores fondos comunes de inversión." 
+      />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import {
   ResponsiveContainer, Legend, ReferenceLine
 } from 'recharts';
 import { TableProperties, TrendingUp, TrendingDown, BarChart3, Download, Printer } from 'lucide-react';
+import AdvisorCTA from '../../components/AdvisorCTA';
 
 const formatCurrency = (value) => {
   if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
@@ -232,15 +233,9 @@ const FireResultsDashboard = ({ results, inputs = {} }) => {
       )}
 
       {/* Affiliate CTA */}
-      <div className="card no-print" style={{ marginTop: '1rem', background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05))', border: '1px solid var(--accent-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <h4 style={{ fontSize: '1rem', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>¿Listo para empezar a invertir?</h4>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Contactá a nuestro asesor asociado en <strong>Balanz</strong> para armar tu portafolio ideal y alcanzar tus metas financieras.</p>
-        </div>
-        <button className="btn btn-primary" onClick={() => alert("Acá iría el link de referido a Balanz o al WhatsApp de tu amigo")} style={{ whiteSpace: 'nowrap' }}>
-          Contactar Asesor
-        </button>
-      </div>
+      <AdvisorCTA 
+        whatsappText="Hola! Completé la simulación FIRE en Valia y quiero asesoramiento sobre cómo estructurar mi portafolio para el retiro con Balanz." 
+      />
     </div>
   );
 };

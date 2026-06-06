@@ -10,8 +10,11 @@ import {
   ArrowRight, 
   Lock, 
   Database,
-  EyeOff
+  EyeOff,
+  Home,
+  Percent
 } from 'lucide-react';
+import AdvisorCTA from '../components/AdvisorCTA';
 
 const Inicio = ({ onSelectTool }) => {
   const [monthlySavings, setMonthlySavings] = useState(200);
@@ -69,6 +72,27 @@ const Inicio = ({ onSelectTool }) => {
       icon: <DollarSign size={24} style={{ color: 'var(--accent-success)' }} />,
       desc: 'Visualiza la pérdida de poder adquisitivo del dinero a lo largo del tiempo con registros oficiales e históricos desde 1635.',
       color: 'var(--accent-success)'
+    },
+    {
+      id: 'hipotecario-uva',
+      name: 'Crédito Hipotecario UVA',
+      icon: <Home size={24} className="text-accent-primary" />,
+      desc: 'Simulá créditos hipotecarios UVA vs tasa fija, comparando el sistema Francés y Alemán con la inflación de Argentina.',
+      color: 'var(--accent-primary)'
+    },
+    {
+      id: 'comparador-historico',
+      name: 'Dólar vs Plazo Fijo vs Merval',
+      icon: <TrendingUp size={24} style={{ color: 'var(--accent-success)' }} />,
+      desc: 'Compará el rendimiento histórico real en pesos de ahorrar en dólares blue, plazo fijo tradicional, plazo fijo UVA y el Merval desde 2015.',
+      color: 'var(--accent-success)'
+    },
+    {
+      id: 'sueldo-neto',
+      name: 'Sueldo Neto Freelancer',
+      icon: <Percent size={24} className="text-accent-primary" />,
+      desc: 'Calculá tus ingresos netos en mano estimando la cuota del Monotributo 2026, comisiones de cobro e Ingresos Brutos.',
+      color: 'var(--accent-primary)'
     }
   ];
 
@@ -320,6 +344,15 @@ const Inicio = ({ onSelectTool }) => {
               </button>
             </div>
           ))}
+        </div>
+
+        {/* Lead Gen Advisor CTA banner */}
+        <div style={{ marginTop: '3rem' }}>
+          <AdvisorCTA 
+            title="¿Querés delegar tus inversiones en un profesional?"
+            description="Contactá a nuestro asesor asociado en Balanz para estructurar tu cartera de inversión, abrir tu cuenta sin costo y operar los mejores FCI del mercado."
+            whatsappText="Hola! Vengo de Valia y me gustaría recibir asesoramiento para armar mi portafolio de inversiones."
+          />
         </div>
       </section>
 

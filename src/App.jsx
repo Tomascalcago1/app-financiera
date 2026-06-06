@@ -4,6 +4,10 @@ import CompoundInterestCalculator from './modules/CompoundInterest/CompoundInter
 import SavingsGoalCalculator from './modules/SavingsGoal/SavingsGoalCalculator';
 import FireCalculator from './modules/FireCalc/FireCalculator';
 import InflationCalculator from './modules/Inflation/InflationCalculator';
+import HipotecarioUvaCalculator from './modules/HipotecarioUva/HipotecarioUvaCalculator';
+import ComparadorHistorico from './modules/ComparadorHistorico/ComparadorHistorico';
+import SueldoNetoCalculator from './modules/SueldoNeto/SueldoNetoCalculator';
+
 import AcercaDe from './pages/AcercaDe';
 import Privacidad from './pages/Privacidad';
 import Terminos from './pages/Terminos';
@@ -182,6 +186,42 @@ function App() {
                 >
                   Inflación Histórica
                 </button>
+                <button
+                  className="btn"
+                  onClick={() => setActiveTool('hipotecario-uva')}
+                  style={{
+                    backgroundColor: activeTool === 'hipotecario-uva' ? 'var(--accent-primary)' : 'transparent',
+                    color: activeTool === 'hipotecario-uva' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'hipotecario-uva' ? '600' : '500',
+                    boxShadow: activeTool === 'hipotecario-uva' ? 'var(--shadow-sm)' : 'none',
+                  }}
+                >
+                  Crédito UVA
+                </button>
+                <button
+                  className="btn"
+                  onClick={() => setActiveTool('comparador-historico')}
+                  style={{
+                    backgroundColor: activeTool === 'comparador-historico' ? 'var(--accent-primary)' : 'transparent',
+                    color: activeTool === 'comparador-historico' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'comparador-historico' ? '600' : '500',
+                    boxShadow: activeTool === 'comparador-historico' ? 'var(--shadow-sm)' : 'none',
+                  }}
+                >
+                  Dólar vs PF vs Merval
+                </button>
+                <button
+                  className="btn"
+                  onClick={() => setActiveTool('sueldo-neto')}
+                  style={{
+                    backgroundColor: activeTool === 'sueldo-neto' ? 'var(--accent-primary)' : 'transparent',
+                    color: activeTool === 'sueldo-neto' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'sueldo-neto' ? '600' : '500',
+                    boxShadow: activeTool === 'sueldo-neto' ? 'var(--shadow-sm)' : 'none',
+                  }}
+                >
+                  Sueldo Neto Freelancer
+                </button>
               </div>
             </div>
 
@@ -190,6 +230,9 @@ function App() {
             {activeTool === 'savings-goal' && <SavingsGoalCalculator />}
             {activeTool === 'fire' && <FireCalculator />}
             {activeTool === 'inflation' && <InflationCalculator />}
+            {activeTool === 'hipotecario-uva' && <HipotecarioUvaCalculator />}
+            {activeTool === 'comparador-historico' && <ComparadorHistorico />}
+            {activeTool === 'sueldo-neto' && <SueldoNetoCalculator />}
           </div>
         )}
 

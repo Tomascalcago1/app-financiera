@@ -11,6 +11,7 @@ import {
   ReferenceLine
 } from 'recharts';
 import { TableProperties, Download, Printer } from 'lucide-react';
+import AdvisorCTA from '../../components/AdvisorCTA';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -307,6 +308,9 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, inputs = {} }) => {
         </div>
       )}
 
+      <AdvisorCTA 
+        whatsappText="Hola! Estuve proyectando mis ahorros con la calculadora de Interés Compuesto en Valia y quiero asesoramiento para poner en práctica este plan con Balanz." 
+      />
     </div>
   );
 };
