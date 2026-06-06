@@ -37,12 +37,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const ResultsDashboard = ({ data, inputs = {} }) => {
-  if (!data || data.length === 0) return null;
-
-  const finalYear = data[data.length - 1];
-  const buyWins = finalYear.buyNetWorth > finalYear.rentNetWorth;
-  const difference = Math.abs(finalYear.buyNetWorth - finalYear.rentNetWorth);
-
   // Calcular el año de cruce (equilibrio)
   const crossoverYear = useMemo(() => {
     if (!data || data.length < 2) return null;
@@ -55,6 +49,12 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
     }
     return null;
   }, [data]);
+
+  if (!data || data.length === 0) return null;
+
+  const finalYear = data[data.length - 1];
+  const buyWins = finalYear.buyNetWorth > finalYear.rentNetWorth;
+  const difference = Math.abs(finalYear.buyNetWorth - finalYear.rentNetWorth);
 
   const exportToCSV = () => {
     const headers = ['Año', 'Patrimonio Comprando (Net Worth)', 'Patrimonio Alquilando (Net Worth)', 'Valor Propiedad', 'Deuda Hipoteca'];

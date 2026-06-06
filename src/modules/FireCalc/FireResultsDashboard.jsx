@@ -34,6 +34,13 @@ const CustomTooltip = ({ active, payload, label }) => {
 const FireResultsDashboard = ({ results, inputs = {} }) => {
   const [showTable, setShowTable] = useState(false);
 
+  const chartData = results?.chartData;
+
+  // Extraer el capital inicial del portafolio desde el primer punto de la mediana
+  const initialPortfolio = useMemo(() => {
+    return chartData && chartData.length > 0 ? chartData[0].median : null;
+  }, [chartData]);
+
   if (!results) {
     return (
       <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', color: 'var(--text-secondary)' }}>
@@ -42,13 +49,8 @@ const FireResultsDashboard = ({ results, inputs = {} }) => {
     );
   }
 
-  const { successRate, totalSimulations, survivedCount, statistics, chartData, simulations } = results;
+  const { successRate, totalSimulations, survivedCount, statistics, simulations } = results;
   const rateColor = successRate >= 90 ? 'var(--accent-success)' : successRate >= 75 ? 'var(--accent-warning)' : 'var(--accent-danger)';
-
-  // Extraer el capital inicial del portafolio desde el primer punto de la mediana
-  const initialPortfolio = useMemo(() => {
-    return chartData && chartData.length > 0 ? chartData[0].median : null;
-  }, [chartData]);
 
   const retirementLength = chartData ? chartData.length - 1 : 30;
 
