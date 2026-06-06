@@ -441,8 +441,10 @@ input[type="number"] {
   }
 }
 
-.print-only-section {
-  display: none !important;
+@media screen {
+  .print-only-section {
+    display: none !important;
+  }
 }
 
 

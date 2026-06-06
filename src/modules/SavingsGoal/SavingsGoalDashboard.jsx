@@ -87,6 +87,7 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs =
           <div><strong>Ahorros Iniciales:</strong> {formatCurrency(inputs.initialInvestment)}</div>
           <div><strong>Plazo Deseado:</strong> {inputs.years} años</div>
           <div><strong>Tasa de Interés Estimada (TNA):</strong> {inputs.interestRate}%</div>
+          <div><strong>Aporte Mensual Requerido:</strong> {requiredContribution > 0 ? formatCurrency(requiredContribution) : 'No requiere aportes adicionales'}</div>
         </div>
       </div>
       

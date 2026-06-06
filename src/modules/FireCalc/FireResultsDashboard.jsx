@@ -21,8 +21,8 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Año {label} de retiro</p>
         {payload.map((entry, i) => (
           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.15rem' }}>
-            <span style={{ color: entry.color, fontSize: '0.8.5rem' }}>{entry.name}:</span>
-            <strong style={{ fontSize: '0.8.5rem' }}>{formatCurrencyFull(entry.value)}</strong>
+            <span style={{ color: entry.color, fontSize: '0.85rem' }}>{entry.name}:</span>
+            <strong style={{ fontSize: '0.85rem' }}>{formatCurrencyFull(entry.value)}</strong>
           </div>
         ))}
       </div>

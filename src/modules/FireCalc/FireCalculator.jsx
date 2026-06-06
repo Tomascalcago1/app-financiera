@@ -8,35 +8,35 @@ import { Flame, Settings2, HelpCircle } from 'lucide-react';
 const FireCalculator = () => {
   const [portfolioValue, setPortfolioValue] = useState(() => {
     const saved = localStorage.getItem('valia_fire_portfolioValue');
-    return saved !== null ? saved : '';
+    return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [retirementLength, setRetirementLength] = useState(() => {
     const saved = localStorage.getItem('valia_fire_retirementLength');
-    return saved !== null ? saved : '';
+    return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [withdrawalStrategy, setWithdrawalStrategy] = useState(() => {
     const saved = localStorage.getItem('valia_fire_withdrawalStrategy');
-    return saved !== null ? saved : 'constant-dollar';
+    return saved !== null && saved !== 'undefined' ? saved : 'constant-dollar';
   });
   const [withdrawalAmount, setWithdrawalAmount] = useState(() => {
     const saved = localStorage.getItem('valia_fire_withdrawalAmount');
-    return saved !== null ? saved : '';
+    return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [withdrawalPercent, setWithdrawalPercent] = useState(() => {
     const saved = localStorage.getItem('valia_fire_withdrawalPercent');
-    return saved !== null ? saved : '';
+    return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [stockAlloc, setStockAlloc] = useState(() => {
     const saved = localStorage.getItem('valia_fire_stockAlloc');
-    return saved !== null ? (saved === '' ? '' : Number(saved)) : 80;
+    return saved !== null && saved !== 'undefined' && saved !== '' ? Number(saved) : 80;
   });
   const [bondAlloc, setBondAlloc] = useState(() => {
     const saved = localStorage.getItem('valia_fire_bondAlloc');
-    return saved !== null ? (saved === '' ? '' : Number(saved)) : 20;
+    return saved !== null && saved !== 'undefined' && saved !== '' ? Number(saved) : 20;
   });
   const [cashAlloc, setCashAlloc] = useState(() => {
     const saved = localStorage.getItem('valia_fire_cashAlloc');
-    return saved !== null ? (saved === '' ? '' : Number(saved)) : 0;
+    return saved !== null && saved !== 'undefined' && saved !== '' ? Number(saved) : 0;
   });
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -70,14 +70,14 @@ const FireCalculator = () => {
     if (allocSum !== 100) return null;
 
     return runFireSimulation({
-      portfolioValue: Number(portfolioValue),
-      retirementLength: Number(retirementLength),
+      portfolioValue: Number(portfolioValue) || 0,
+      retirementLength: Number(retirementLength) || 0,
       withdrawalStrategy,
       withdrawalAmount: Number(withdrawalAmount) || 0,
       withdrawalPercent: (Number(withdrawalPercent) || 0) / 100,
-      stockAllocation: Number(stockAlloc) / 100,
-      bondAllocation: Number(bondAlloc) / 100,
-      cashAllocation: Number(cashAlloc) / 100,
+      stockAllocation: (Number(stockAlloc) || 0) / 100,
+      bondAllocation: (Number(bondAlloc) || 0) / 100,
+      cashAllocation: (Number(cashAlloc) || 0) / 100,
     });
   }, [portfolioValue, retirementLength, withdrawalStrategy, withdrawalAmount, withdrawalPercent, stockAlloc, bondAlloc, cashAlloc, allocSum]);
 
