@@ -234,7 +234,7 @@ const FireResultsDashboard = ({ results, inputs = {} }) => {
 
       {/* Affiliate CTA */}
       <AdvisorCTA 
-        whatsappText="Hola! Completé la simulación FIRE en Valia y quiero asesoramiento sobre cómo estructurar mi portafolio para el retiro con Balanz." 
+        goalContext="retiro"
       />
     </div>
   );

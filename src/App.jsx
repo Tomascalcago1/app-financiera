@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import BuyVsRentCalculator from './modules/BuyVsRent/BuyVsRentCalculator';
 import CompoundInterestCalculator from './modules/CompoundInterest/CompoundInterestCalculator';
 import SavingsGoalCalculator from './modules/SavingsGoal/SavingsGoalCalculator';
@@ -7,17 +7,34 @@ import InflationCalculator from './modules/Inflation/InflationCalculator';
 import HipotecarioUvaCalculator from './modules/HipotecarioUva/HipotecarioUvaCalculator';
 import ComparadorHistorico from './modules/ComparadorHistorico/ComparadorHistorico';
 import SueldoNetoCalculator from './modules/SueldoNeto/SueldoNetoCalculator';
+import BrokerComparator from './modules/BrokerComparator/BrokerComparator';
 
 import AcercaDe from './pages/AcercaDe';
 import Privacidad from './pages/Privacidad';
 import Terminos from './pages/Terminos';
 import Inicio from './pages/Inicio';
-import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight } from 'lucide-react';
+import Asesores from './pages/Asesores';
+import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('herramientas');
   const [activeTool, setActiveTool] = useState('buy-vs-rent');
   const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const handleChangeTab = (e) => {
+      if (e.detail === 'asesores') {
+        setActiveTab('asesores');
+      } else if (e.detail === 'herramientas') {
+        setActiveTab('herramientas');
+      } else if (e.detail === 'inicio') {
+        setActiveTab('inicio');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    window.addEventListener('change-tab', handleChangeTab);
+    return () => window.removeEventListener('change-tab', handleChangeTab);
+  }, []);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -96,6 +113,25 @@ function App() {
             >
               <Wrench size={18} />
               Herramientas
+            </button>
+            <button
+              onClick={() => setActiveTab('asesores')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 1rem',
+                backgroundColor: activeTab === 'asesores' ? 'var(--bg-tertiary)' : 'transparent',
+                color: activeTab === 'asesores' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                border: 'none',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer',
+                fontWeight: 500,
+                transition: 'all 0.2s'
+              }}
+            >
+              <Users size={18} />
+              Asesores
             </button>
             <button
               onClick={() => setActiveTab('acerca')}
@@ -266,6 +302,18 @@ function App() {
                 >
                   Sueldo Neto Freelancer
                 </button>
+                <button
+                  className="btn"
+                  onClick={() => setActiveTool('broker-comparator')}
+                  style={{
+                    backgroundColor: activeTool === 'broker-comparator' ? 'var(--accent-primary)' : 'transparent',
+                    color: activeTool === 'broker-comparator' ? '#090D16' : 'var(--text-secondary)',
+                    fontWeight: activeTool === 'broker-comparator' ? '600' : '500',
+                    boxShadow: activeTool === 'broker-comparator' ? 'var(--shadow-sm)' : 'none',
+                  }}
+                >
+                  Comparador de Brokers
+                </button>
               </div>
 
               {/* Right Slide Button */}
@@ -302,9 +350,11 @@ function App() {
             {activeTool === 'hipotecario-uva' && <HipotecarioUvaCalculator />}
             {activeTool === 'comparador-historico' && <ComparadorHistorico />}
             {activeTool === 'sueldo-neto' && <SueldoNetoCalculator />}
+            {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
           </div>
         )}
 
+        {activeTab === 'asesores' && <Asesores />}
         {activeTab === 'acerca' && <AcercaDe />}
         {activeTab === 'privacidad' && <Privacidad />}
         {activeTab === 'terminos' && <Terminos />}

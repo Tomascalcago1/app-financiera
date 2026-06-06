@@ -369,7 +369,7 @@ const HipotecarioUvaCalculator = () => {
               <AdvisorCTA 
                 title="¿Querés asesoramiento para calificar a un crédito UVA?"
                 description="Hablá con nuestro asesor en Balanz para evaluar cómo armar tu portafolio de inversión y generar los avales necesarios para adquirir tu vivienda."
-                whatsappText={`Hola! Estuve simulando un crédito hipotecario UVA en Valia por un monto de ${formatCurrency(loanAmount)} a ${years} años y me gustaría recibir asesoramiento financiero.`}
+                goalContext="vivienda"
               />
             </>
           )}

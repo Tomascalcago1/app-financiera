@@ -93,6 +93,13 @@ const Inicio = ({ onSelectTool }) => {
       icon: <Percent size={24} className="text-accent-primary" />,
       desc: 'Calculá tus ingresos netos en mano estimando la cuota del Monotributo 2026, comisiones de cobro e Ingresos Brutos.',
       color: 'var(--accent-primary)'
+    },
+    {
+      id: 'broker-comparator',
+      name: 'Comparador de Brokers',
+      icon: <TrendingUp size={24} className="text-accent-primary" />,
+      desc: 'Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.',
+      color: 'var(--accent-primary)'
     }
   ];
 
@@ -351,7 +358,6 @@ const Inicio = ({ onSelectTool }) => {
           <AdvisorCTA 
             title="¿Querés delegar tus inversiones en un profesional?"
             description="Contactá a nuestro asesor asociado en Balanz para estructurar tu cartera de inversión, abrir tu cuenta sin costo y operar los mejores FCI del mercado."
-            whatsappText="Hola! Vengo de Valia y me gustaría recibir asesoramiento para armar mi portafolio de inversiones."
           />
         </div>
       </section>

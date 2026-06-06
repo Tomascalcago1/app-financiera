@@ -4,10 +4,13 @@ import { MessageSquare } from 'lucide-react';
 const AdvisorCTA = ({ 
   title = '¿Listo para empezar a invertir?',
   description = 'Contactá a nuestro asesor asociado en Balanz para armar tu portafolio ideal y alcanzar tus metas financieras.',
-  whatsappText = 'Hola! Vengo de Valia y me gustaría recibir asesoramiento para armar mi portafolio de inversiones.'
+  goalContext = 'ahorro' // 'ahorro' | 'retiro' | 'vivienda' | 'otro'
 }) => {
-  const whatsappNumber = '5491130843105'; // Teléfono del asesor asociado (Balanz)
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappText)}`;
+  const handleClick = (e) => {
+    e.preventDefault();
+    localStorage.setItem('valia_advisor_goal_context', goalContext);
+    window.dispatchEvent(new CustomEvent('change-tab', { detail: 'asesores' }));
+  };
 
   return (
     <div className="card no-print" style={{ 
@@ -45,23 +48,22 @@ const AdvisorCTA = ({
           </p>
         </div>
       </div>
-      <a 
-        href={whatsappUrl} 
-        target="_blank" 
-        rel="noopener noreferrer" 
+      <button 
+        onClick={handleClick} 
         className="btn btn-primary" 
         style={{ 
           whiteSpace: 'nowrap', 
-          textDecoration: 'none', 
           display: 'inline-flex', 
           alignItems: 'center',
           gap: '0.5rem',
           padding: '0.75rem 1.5rem',
-          fontWeight: 600
+          fontWeight: 600,
+          border: 'none',
+          cursor: 'pointer'
         }}
       >
         Contactar Asesor
-      </a>
+      </button>
     </div>
   );
 };
