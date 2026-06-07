@@ -4,6 +4,8 @@ import {
   ResponsiveContainer, ReferenceLine
 } from 'recharts';
 import { Download, Printer } from 'lucide-react';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(value);
@@ -58,17 +60,16 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
 
       {/* Print-only Report Header & Parameters */}
-      <div className="print-only-section">
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Inflación Histórica</h2>
-        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
-        
-        <div className="print-params-grid">
-          <div><strong>Monto Inicial:</strong> {formatCurrency(amount)}</div>
-          <div><strong>Desde el Año:</strong> {fromYear}</div>
-          <div><strong>Hasta el Año:</strong> {toYear}</div>
-          <div><strong>Tasa de Inflación Utilizada:</strong> {annualRate.toFixed(2)}%</div>
-        </div>
-      </div>
+      <PrintReportHeader 
+        title="Reporte de Simulación: Inflación Histórica"
+        subtitle="Ficha de Planificación del Poder Adquisitivo"
+        params={[
+          { label: 'Monto Inicial', value: formatCurrency(amount) },
+          { label: 'Desde el Año', value: String(fromYear) },
+          { label: 'Hasta el Año', value: String(toYear) },
+          { label: 'Tasa de Inflación Utilizada', value: `${annualRate.toFixed(2)}%` }
+        ]}
+      />
 
       {/* Main Result */}
       <div className="card" style={{
@@ -202,6 +203,7 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
           </div>
         </div>
       )}
+      <PrintAdvisorCTA />
     </div>
   );
 };

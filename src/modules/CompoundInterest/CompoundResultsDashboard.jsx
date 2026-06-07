@@ -12,6 +12,8 @@ import {
 } from 'recharts';
 import { TableProperties, Download, Printer, Share2 } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -102,21 +104,20 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} 
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       
       {/* Print-only Report Header & Parameters */}
-      <div className="print-only-section">
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Interés Compuesto</h2>
-        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
-        
-        <div className="print-params-grid">
-          <div><strong>Inversión Inicial:</strong> {formatCurrency(inputs.initialInvestment)}</div>
-          <div><strong>Aporte Mensual:</strong> {formatCurrency(inputs.monthlyContribution)}</div>
-          <div><strong>Horizonte Temporal:</strong> {inputs.years} años</div>
-          <div><strong>Tasa de Interés (TNA):</strong> {inputs.interestRate}%</div>
-          <div><strong>Capitalización:</strong> {compoundFrequencyLabel}</div>
-          {varianceEnabled && (
-            <div><strong>Rango de Variación:</strong> ±{inputs.varianceRange}%</div>
-          )}
-        </div>
-      </div>
+      <PrintReportHeader 
+        title="Reporte de Simulación: Interés Compuesto"
+        subtitle="Ficha de Planificación de Ahorros e Inversión"
+        params={[
+          { label: 'Inversión Inicial', value: formatCurrency(inputs.initialInvestment) },
+          { label: 'Aporte Mensual', value: formatCurrency(inputs.monthlyContribution) },
+          { label: 'Horizonte Temporal', value: `${inputs.years} años` },
+          { label: 'Tasa de Interés (TNA)', value: `${inputs.interestRate}%` },
+          { label: 'Frecuencia de Capitalización', value: compoundFrequencyLabel },
+          ...(varianceEnabled ? [
+            { label: 'Rango de Variación', value: `±${inputs.varianceRange}%` }
+          ] : [])
+        ]}
+      />
       
       {/* Summary Banner */}
       <div className="card" style={{
@@ -329,6 +330,7 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} 
       <AdvisorCTA 
         whatsappText="Hola! Estuve proyectando mis ahorros con la calculadora de Interés Compuesto en Valia y quiero asesoramiento para poner en práctica este plan con Balanz." 
       />
+      <PrintAdvisorCTA />
     </div>
   );
 };

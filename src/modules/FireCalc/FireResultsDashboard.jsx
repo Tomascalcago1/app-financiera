@@ -5,6 +5,8 @@ import {
 } from 'recharts';
 import { TableProperties, TrendingUp, TrendingDown, BarChart3, Download, Printer, Share2 } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (value) => {
   if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
@@ -95,18 +97,17 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       
       {/* Print-only Report Header & Parameters */}
-      <div className="print-only-section">
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Simulador FIRE</h2>
-        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
-        
-        <div className="print-params-grid">
-          <div><strong>Valor de Portafolio:</strong> {formatCurrencyFull(inputs.portfolioValue)}</div>
-          <div><strong>Duración del Retiro:</strong> {inputs.retirementLength} años</div>
-          <div><strong>Estrategia de Retiro:</strong> {strategyLabel}</div>
-          <div><strong>Retiro Inicial:</strong> {withdrawalVal}</div>
-          <div><strong>Distribución Portafolio:</strong> Acciones {inputs.stockAlloc}% / Bonos {inputs.bondAlloc}% / Efectivo {inputs.cashAlloc}%</div>
-        </div>
-      </div>
+      <PrintReportHeader 
+        title="Reporte de Simulación: FIRE (Retiro Temprano)"
+        subtitle="Ficha de Planificación FIRE y Sustentabilidad Financiera"
+        params={[
+          { label: 'Valor del Portafolio', value: formatCurrencyFull(inputs.portfolioValue) },
+          { label: 'Duración del Retiro', value: `${inputs.retirementLength} años` },
+          { label: 'Estrategia de Retiro', value: strategyLabel },
+          { label: 'Retiro Inicial', value: withdrawalVal },
+          { label: 'Distribución Portafolio', value: `Acciones ${inputs.stockAlloc}% / Bonos ${inputs.bondAlloc}% / Efectivo ${inputs.cashAlloc}%` }
+        ]}
+      />
 
       {/* Success Rate */}
       <div className="card" style={{
@@ -254,6 +255,7 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
       <AdvisorCTA 
         goalContext="retiro"
       />
+      <PrintAdvisorCTA />
     </div>
   );
 };

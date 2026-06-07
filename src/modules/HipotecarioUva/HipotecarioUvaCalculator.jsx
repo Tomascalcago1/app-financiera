@@ -24,6 +24,8 @@ import {
 import FinancialInput from '../../components/FinancialInput';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -290,6 +292,17 @@ const HipotecarioUvaCalculator = () => {
             </div>
           ) : (
             <>
+              <PrintReportHeader 
+                title="Reporte de Simulación: Crédito Hipotecario UVA vs Tasa Fija"
+                subtitle="Ficha de Planificación de Crédito Hipotecario"
+                params={[
+                  { label: 'Valor del Préstamo', value: formatCurrency(loanAmount) },
+                  { label: 'Plazo del Crédito', value: `${years} años` },
+                  { label: 'Tasa de Interés del Banco (TNA)', value: `${interestRate}%` },
+                  { label: 'Inflación Anual Proyectada', value: `${inflationRate}%` },
+                  { label: 'Sistema de Amortización', value: amortizationSystem === 'french' ? 'Francés (Cuota UVA constante)' : 'Alemán (Amortización UVA constante)' }
+                ]}
+              />
               {/* Summary Cards */}
               <div className="card" style={{
                 textAlign: 'center',
@@ -410,6 +423,7 @@ const HipotecarioUvaCalculator = () => {
                 description="Hablá con nuestro asesor en Balanz para evaluar cómo armar tu portafolio de inversión y generar los avales necesarios para adquirir tu vivienda."
                 goalContext="vivienda"
               />
+              <PrintAdvisorCTA />
             </>
           )}
         </div>

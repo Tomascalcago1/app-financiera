@@ -20,6 +20,8 @@ import {
 import FinancialInput from '../../components/FinancialInput';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -262,6 +264,18 @@ const SueldoNetoCalculator = () => {
 
         {/* Results Panel */}
         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animationDelay: '100ms' }}>
+          <PrintReportHeader 
+            title="Reporte de Sueldo Neto Freelancer y Monotributo"
+            subtitle="Ficha de Planificación Impositiva para Freelancers"
+            params={[
+              { label: 'Facturación Mensual', value: currency === 'USD' ? `u$s ${grossIncome}` : formatCurrency(grossIncome) },
+              { label: 'Moneda', value: currency === 'USD' ? 'Dólares (USD)' : 'Pesos (ARS)' },
+              ...(currency === 'USD' ? [{ label: 'Tipo de Cambio MEP', value: formatCurrency(exchangeRate) }] : []),
+              { label: 'Tipo de Actividad', value: activity === 'services' ? 'Prestación de Servicios' : 'Venta de Bienes Muebles' },
+              { label: 'Alícuota Ingresos Brutos (IIBB)', value: `${iibbPercent}%` },
+              { label: 'Comisión de Plataforma / Cobro', value: `${platformFee}%` }
+            ]}
+          />
           {/* Main Net Income Card */}
           <div className="card" style={{
             textAlign: 'center',
@@ -399,6 +413,7 @@ const SueldoNetoCalculator = () => {
             description="Contactá a nuestro asesor en Balanz para evaluar cómo canalizar tus excedentes de facturación de manera fiscalmente eficiente y armar tu portafolio."
             whatsappText={`Hola! Estuve calculando mis ingresos netos en Valia y quiero asesoramiento financiero sobre cómo invertir mi facturación mensual de ${formatCurrency(calculations.netIncome)}.`}
           />
+          <PrintAdvisorCTA />
         </div>
       </div>
 

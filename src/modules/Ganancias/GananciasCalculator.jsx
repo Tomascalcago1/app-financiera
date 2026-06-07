@@ -21,6 +21,8 @@ import {
 import FinancialInput from '../../components/FinancialInput';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -418,6 +420,21 @@ const GananciasCalculator = () => {
 
         {/* Results Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <PrintReportHeader 
+            title="Reporte de Impuesto a las Ganancias (4° Categoría 2026)"
+            subtitle="Ficha de Planificación Impositiva en Relación de Dependencia"
+            params={[
+              { label: 'Sueldo Bruto Mensual', value: formatCurrency(grossIncome) },
+              { label: 'Moneda / Tipo de Cambio', value: currency === 'USD' ? `Dólares (MEP: $${exchangeRate})` : 'Pesos (ARS)' },
+              { label: 'Cónyuge a Cargo', value: hasSpouse ? 'Sí' : 'No' },
+              { label: 'Hijos a Cargo', value: String(childrenCount) },
+              { label: 'Hijos con Discapacidad', value: String(disabledChildrenCount) },
+              { label: 'Zona Patagónica', value: isPatagonia ? 'Sí' : 'No' },
+              { label: 'Deducción Prepaga', value: formatCurrency(monthlyPrepaga) },
+              { label: 'Deducción Alquiler', value: formatCurrency(monthlyRent) },
+              { label: 'Deducción Personal Doméstico', value: formatCurrency(monthlyDomesticService) }
+            ]}
+          />
           
           {/* Sueldo Neto de Bolsillo Card */}
           <div className="card animate-fade-in" style={{
@@ -564,12 +581,12 @@ const GananciasCalculator = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Advisor CTA */}
           <AdvisorCTA 
             title="¿Querés optimizar tu retención de Ganancias?"
             description="Contactá a nuestro asesor en Balanz para evaluar cómo canalizar tus deducciones e invertir eficientemente tus ingresos de bolsillo."
             goalContext="ahorro"
           />
+          <PrintAdvisorCTA />
 
         </div>
 

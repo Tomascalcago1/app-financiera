@@ -21,6 +21,8 @@ import {
 import FinancialInput from '../../components/FinancialInput';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -239,6 +241,16 @@ const ComparadorHistorico = () => {
 
         {/* Results Panel */}
         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animationDelay: '100ms' }}>
+          <PrintReportHeader 
+            title="Reporte de Simulación: Dólar vs Plazo Fijo vs Merval"
+            subtitle="Comparador Histórico de Activos Financieros (Argentina)"
+            params={[
+              { label: 'Capital Inicial', value: formatCurrency(initialCapital) },
+              { label: 'Aporte Mensual', value: formatCurrency(monthlyContribution) },
+              { label: 'Período de Comparación', value: period === '3yr' ? 'Últimos 3 años (2023 - 2025)' : period === '5yr' ? 'Últimos 5 años (2021 - 2025)' : 'Período Completo (2015 - 2025)' },
+              { label: 'Nota de Datos', value: 'Simulación con retornos reales históricos mensuales.' }
+            ]}
+          />
           {/* Winner banner */}
           <div className="card" style={{
             textAlign: 'center',
@@ -362,6 +374,7 @@ const ComparadorHistorico = () => {
             description="Contactá a nuestro asesor en Balanz para diseñar una estrategia de inversión diversificada en FCI, CEDEARs y Obligaciones Negociables."
             whatsappText="Hola! Estuve usando el Comparador Histórico en Valia y quiero asesoramiento para diversificar mis ahorros en fondos comunes de inversión, acciones y CEDEARs con Balanz."
           />
+          <PrintAdvisorCTA />
         </div>
       </div>
 

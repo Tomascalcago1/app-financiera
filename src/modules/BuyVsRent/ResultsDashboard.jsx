@@ -11,6 +11,8 @@ import {
   ReferenceLine
 } from 'recharts';
 import { Download, Printer } from 'lucide-react';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -87,27 +89,24 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       
       {/* Print-only Report Header & Parameters */}
-      <div className="print-only-section">
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: ¿Comprar o Alquilar?</h2>
-        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
-        
-        <div className="print-params-grid">
-          <div><strong>Precio de la Propiedad:</strong> {formatCurrency(inputs.propertyPrice)}</div>
-          <div><strong>Capital Inicial (Ahorros):</strong> {formatCurrency(inputs.initialCapital)}</div>
-          <div><strong>Alquiler Mensual:</strong> {formatCurrency(inputs.monthlyRent)}</div>
-          <div><strong>Horizonte Temporal:</strong> {inputs.years} años</div>
-          <div><strong>Inflación Anual Estimada:</strong> {inputs.inflationRate}%</div>
-          <div><strong>Rendimiento Inversión (TNA):</strong> {inputs.investmentReturn}%</div>
-          <div><strong>Apreciación de Propiedad (Anual):</strong> {inputs.propertyAppreciation}%</div>
-          <div><strong>Mantenimiento Anual Propiedad:</strong> {inputs.maintenanceRate}%</div>
-          {inputs.propertyPrice > inputs.initialCapital && (
-            <>
-              <div><strong>Tasa de Hipoteca (Anual):</strong> {inputs.mortgageRate}%</div>
-              <div><strong>Plazo de Hipoteca:</strong> {inputs.mortgageYears} años</div>
-            </>
-          )}
-        </div>
-      </div>
+      <PrintReportHeader 
+        title="Reporte de Simulación: ¿Comprar o Alquilar?"
+        subtitle="Ficha de Planificación Inmobiliaria"
+        params={[
+          { label: 'Precio de la Propiedad', value: formatCurrency(inputs.propertyPrice) },
+          { label: 'Capital Inicial (Ahorros)', value: formatCurrency(inputs.initialCapital) },
+          { label: 'Alquiler Mensual Inicial', value: formatCurrency(inputs.monthlyRent) },
+          { label: 'Horizonte Temporal', value: `${inputs.years} años` },
+          { label: 'Inflación Anual Estimada', value: `${inputs.inflationRate}%` },
+          { label: 'Rendimiento Inversión (TNA)', value: `${inputs.investmentReturn}%` },
+          { label: 'Apreciación Anual Propiedad', value: `${inputs.propertyAppreciation}%` },
+          { label: 'Mantenimiento Anual Propiedad', value: `${inputs.maintenanceRate}%` },
+          ...(inputs.propertyPrice > inputs.initialCapital ? [
+            { label: 'Tasa Hipotecaria (Anual)', value: `${inputs.mortgageRate}%` },
+            { label: 'Plazo de Hipoteca', value: `${inputs.mortgageYears} años` }
+          ] : [])
+        ]}
+      />
       
       {/* Summary Banner */}
       <div className="card" style={{
@@ -246,6 +245,7 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
         </ResponsiveContainer>
       </div>
 
+      <PrintAdvisorCTA />
     </div>
   );
 };

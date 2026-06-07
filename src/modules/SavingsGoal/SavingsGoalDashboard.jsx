@@ -12,6 +12,8 @@ import {
 } from 'recharts';
 import { TableProperties, Download, Printer } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
+import PrintReportHeader from '../../components/PrintReportHeader';
+import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -79,18 +81,17 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs =
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       
       {/* Print-only Report Header & Parameters */}
-      <div className="print-only-section">
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', color: '#0f172a' }}>Reporte Financiero: Objetivo de Ahorro</h2>
-        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Generado por Valia (valia-finanzas.vercel.app) el {new Date().toLocaleDateString('es-AR')}</p>
-        
-        <div className="print-params-grid">
-          <div><strong>Monto de la Meta:</strong> {formatCurrency(inputs.goalAmount)}</div>
-          <div><strong>Ahorros Iniciales:</strong> {formatCurrency(inputs.initialInvestment)}</div>
-          <div><strong>Plazo Deseado:</strong> {inputs.years} años</div>
-          <div><strong>Tasa de Interés Estimada (TNA):</strong> {inputs.interestRate}%</div>
-          <div><strong>Aporte Mensual Requerido:</strong> {requiredContribution > 0 ? formatCurrency(requiredContribution) : 'No requiere aportes adicionales'}</div>
-        </div>
-      </div>
+      <PrintReportHeader 
+        title="Reporte de Simulación: Objetivo de Ahorro"
+        subtitle="Ficha de Planificación de Metas de Ahorro"
+        params={[
+          { label: 'Monto de la Meta', value: formatCurrency(inputs.goalAmount) },
+          { label: 'Ahorros Iniciales', value: formatCurrency(inputs.initialInvestment) },
+          { label: 'Plazo Deseado', value: `${inputs.years} años` },
+          { label: 'Tasa de Interés Estimada (TNA)', value: `${inputs.interestRate}%` },
+          { label: 'Aporte Mensual Requerido', value: requiredContribution > 0 ? formatCurrency(requiredContribution) : 'No requiere aportes adicionales' }
+        ]}
+      />
       
       {/* Summary Banner */}
       <div className="card" style={{
@@ -243,6 +244,7 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs =
       <AdvisorCTA 
         whatsappText="Hola! Calculé mi meta de ahorro en Valia y me gustaría contactar a un asesor de Balanz para elegir los mejores fondos comunes de inversión." 
       />
+      <PrintAdvisorCTA />
     </div>
   );
 };
