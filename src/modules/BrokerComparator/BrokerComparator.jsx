@@ -32,19 +32,38 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
   // Dataset of Argentine brokers
   const brokersData = useMemo(() => [
     {
-      id: 'balanz',
-      name: 'Balanz',
+      id: 'balanz_valia',
+      name: 'Balanz (Exclusivo Valia)',
       recommended: true,
-      commissionAcciones: '0.50%',
-      commissionAccionesRaw: 0.005,
-      commissionONs: '0.50%',
-      commissionONsRaw: 0.005,
+      commissionAcciones: '0.40%',
+      commissionAccionesRaw: 0.004,
+      commissionONs: '0.40%',
+      commissionONsRaw: 0.004,
+      commissionLetras: '0.40%',
+      commissionLetrasRaw: 0.004,
       tnaRemunerada: '38.0%',
       tnaRemuneradaRaw: 0.38,
-      benefit: 'Asesor matriculado CNV asignado sin cargo + Apertura bonificada de por vida + Bonificación de comisiones preferenciales.',
+      benefit: 'Asesor matriculado CNV asignado sin cargo + Apertura bonificada de por vida + Tasa de comisiones preferencial al 0.40%.',
       ctaText: 'Obtener Beneficio Valia',
       ctaType: 'internal',
       link: null
+    },
+    {
+      id: 'balanz',
+      name: 'Balanz (Estándar)',
+      recommended: false,
+      commissionAcciones: '0.60%',
+      commissionAccionesRaw: 0.006,
+      commissionONs: '0.60%',
+      commissionONsRaw: 0.006,
+      commissionLetras: '0.60%',
+      commissionLetrasRaw: 0.006,
+      tnaRemunerada: '38.0%',
+      tnaRemuneradaRaw: 0.38,
+      benefit: 'Soporte general automatizado por canales de atención comunes. Sin asesor personal idóneo asignado.',
+      ctaText: 'Ver Web Oficial',
+      ctaType: 'external',
+      link: 'https://www.balanz.com/'
     },
     {
       id: 'ppi',
@@ -54,6 +73,8 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       commissionAccionesRaw: 0.006,
       commissionONs: '0.60%',
       commissionONsRaw: 0.006,
+      commissionLetras: '0.60%',
+      commissionLetrasRaw: 0.006,
       tnaRemunerada: '37.2%',
       tnaRemuneradaRaw: 0.372,
       benefit: 'Soporte general automatizado. Sin bonificaciones exclusivas.',
@@ -69,6 +90,8 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       commissionAccionesRaw: 0.0065, // aproximado neto
       commissionONs: '0.50% + IVA',
       commissionONsRaw: 0.0060,
+      commissionLetras: '0.50% + IVA',
+      commissionLetrasRaw: 0.0060,
       tnaRemunerada: '36.5%',
       tnaRemuneradaRaw: 0.365,
       benefit: 'Soporte general. Sin asesoramiento personalizado bonificado.',
@@ -84,12 +107,65 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       commissionAccionesRaw: 0.002, // promedio ponderado / demoras
       commissionONs: '0.50%',
       commissionONsRaw: 0.005,
+      commissionLetras: '0.50%',
+      commissionLetrasRaw: 0.005,
       tnaRemunerada: '35.0%',
       tnaRemuneradaRaw: 0.35,
       benefit: 'Soporte general por chatbot. Sin asesor idóneo asignado.',
       ctaText: 'Ver Web Oficial',
       ctaType: 'external',
       link: 'https://cocos.capital/'
+    },
+    {
+      id: 'bullmarket',
+      name: 'Bull Market Brokers',
+      recommended: false,
+      commissionAcciones: '0.50% + IVA + Der.',
+      commissionAccionesRaw: 0.0065,
+      commissionONs: '0.50% + IVA',
+      commissionONsRaw: 0.0060,
+      commissionLetras: '0.50% + IVA',
+      commissionLetrasRaw: 0.0060,
+      tnaRemunerada: '35.5%',
+      tnaRemuneradaRaw: 0.355,
+      benefit: 'Soporte por ticket y chat general. Costos de retiro aplicables en ciertas operaciones.',
+      ctaText: 'Ver Web Oficial',
+      ctaType: 'external',
+      link: 'https://bullmarketbrokers.com/'
+    },
+    {
+      id: 'banza',
+      name: 'Banza',
+      recommended: false,
+      commissionAcciones: '0.50% + IVA',
+      commissionAccionesRaw: 0.0060,
+      commissionONs: '0.50%',
+      commissionONsRaw: 0.0050,
+      commissionLetras: '0.50%',
+      commissionLetrasRaw: 0.0050,
+      tnaRemunerada: '36.0%',
+      tnaRemuneradaRaw: 0.36,
+      benefit: 'Operación simplificada desde app móvil. Sin asesoramiento personalizado bonificado.',
+      ctaText: 'Ver Web Oficial',
+      ctaType: 'external',
+      link: 'https://www.banza.com.ar/'
+    },
+    {
+      id: 'inviu',
+      name: 'Inviu',
+      recommended: false,
+      commissionAcciones: '0.70% + IVA',
+      commissionAccionesRaw: 0.0085,
+      commissionONs: '0.70%',
+      commissionONsRaw: 0.0070,
+      commissionLetras: '0.70%',
+      commissionLetrasRaw: 0.0070,
+      tnaRemunerada: '34.0%',
+      tnaRemuneradaRaw: 0.34,
+      benefit: 'Soporte a través de red de asesores independientes. Mínimos de operación según asesor.',
+      ctaText: 'Ver Web Oficial',
+      ctaType: 'external',
+      link: 'https://inviu.com.ar/'
     },
     {
       id: 'mercadopago',
@@ -99,6 +175,8 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       commissionAccionesRaw: 0.015,
       commissionONs: 'No disponible',
       commissionONsRaw: null,
+      commissionLetras: 'No disponible',
+      commissionLetrasRaw: null,
       tnaRemunerada: '36.8%',
       tnaRemuneradaRaw: 0.368,
       benefit: 'FCI automático de bajo rendimiento. Sin asesor ni acceso a bonos/ONs directas.',
@@ -114,6 +192,8 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       commissionAccionesRaw: null,
       commissionONs: 'No disponible',
       commissionONsRaw: null,
+      commissionLetras: 'No disponible',
+      commissionLetrasRaw: null,
       tnaRemunerada: '37.5%',
       tnaRemuneradaRaw: 0.375,
       benefit: 'Billetera virtual con remuneración diaria. Sin acceso a bolsa ni asesores.',
@@ -142,10 +222,10 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       const monthlyYieldRaw = annualYieldRaw / 12;
       const monthlyYieldText = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(monthlyYieldRaw);
 
-      // Estimated advisory cost (Balanz is 0, others typically charge or you don't get it)
+      // Estimated advisory cost (Balanz Exclusivo is 0, others typically charge or you don't get it)
       // Industry standard personal advisor is at least 1.0% of portfolio annually or $50k fixed minimum
-      const advisoryCostText = b.id === 'balanz' ? 'Bonificado ($0)' : 'Sin Asesor / Soporte general';
-      const savings = b.id === 'balanz' ? 'Destacado' : '';
+      const advisoryCostText = b.id === 'balanz_valia' ? 'Bonificado ($0)' : 'Sin Asesor / Soporte general';
+      const savings = b.id === 'balanz_valia' ? 'Destacado' : '';
 
       return {
         ...b,
@@ -159,7 +239,7 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
   }, [brokersData, tradeAmount, cashBalance]);
 
   // Find Balanz for comparison callouts
-  const balanzResults = simulatorResults.find(r => r.id === 'balanz');
+  const balanzResults = simulatorResults.find(r => r.id === 'balanz_valia');
 
   const faqs = [
     {
@@ -232,7 +312,7 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: 'var(--text-primary)' }}>
                 <CheckCircle size={16} className="text-accent-primary" />
-                Comisiones Reducidas al 0.5%
+                Comisiones Reducidas al 0.4%
               </div>
             </div>
           </div>
@@ -282,14 +362,15 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
           boxShadow: 'var(--shadow-md)',
           backgroundColor: 'var(--bg-secondary)'
         }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '750px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '950px' }}>
             <thead>
               <tr style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '2px solid var(--border-color)' }}>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>Broker / Plataforma</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>Comisión Acciones / CEDEARs</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>Comisión ONs (Bonos Corp)</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>Comisión Letras y Bonos</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', textAlign: 'right' }}>Remunerada (TNA)</th>
-                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', width: '30%' }}>Beneficio Exclusivo Valia</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', width: '25%' }}>Beneficio Exclusivo Valia</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', textAlign: 'center' }}>Acción</th>
               </tr>
             </thead>
@@ -342,6 +423,11 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
                     {/* Commission ONs */}
                     <td style={{ padding: '1.25rem 1rem', color: isRecommended ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                       {broker.commissionONs}
+                    </td>
+
+                    {/* Commission Letras y Bonos */}
+                    <td style={{ padding: '1.25rem 1rem', color: isRecommended ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                      {broker.commissionLetras || 'No disponible'}
                     </td>
 
                     {/* TNA Remunerada */}
