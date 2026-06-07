@@ -23,6 +23,7 @@ import {
 } from 'recharts';
 import FinancialInput from '../../components/FinancialInput';
 import AdvisorCTA from '../../components/AdvisorCTA';
+import HelpModal from '../../components/HelpModal';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -444,47 +445,6 @@ const HipotecarioUvaCalculator = () => {
   );
 };
 
-// Simple HelpModal inline definition or fallback (to keep file self-contained in imports)
-const HelpModal = ({ isOpen, onClose, title, children }) => {
-  if (!isOpen) return null;
-  return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.75)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: '1rem'
-    }} onClick={onClose}>
-      <div className="card" style={{
-        maxWidth: '550px',
-        width: '100%',
-        maxHeight: '85vh',
-        overflowY: 'auto',
-        backgroundColor: '#0f172a',
-        border: '1px solid var(--border-color)',
-        padding: '2rem',
-        position: 'relative'
-      }} onClick={e => e.stopPropagation()}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>{title}</h2>
-        <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {children}
-        </div>
-        <button 
-          onClick={onClose} 
-          className="btn btn-primary" 
-          style={{ marginTop: '1.5rem', width: '100%', justifyContent: 'center' }}
-        >
-          Entendido
-        </button>
-      </div>
-    </div>
-  );
-};
+// HelpModal component is now imported from ../../components/HelpModal
 
 export default HipotecarioUvaCalculator;

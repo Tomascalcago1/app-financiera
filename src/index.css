@@ -373,10 +373,7 @@ input[type="number"] {
 }
 
 .help-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   background: var(--bg-tertiary);
@@ -387,22 +384,11 @@ input[type="number"] {
   cursor: pointer;
   font-size: 0.875rem;
   transition: all var(--transition-fast);
+  margin-top: 0.75rem;
 }
 
 .help-btn:hover {
   background: var(--border-color);
-}
-
-@media (max-width: 768px) {
-  .calculator-header {
-    padding-top: 3.5rem;
-  }
-  .help-btn {
-    top: 0;
-    right: 50%;
-    transform: translateX(50%);
-    white-space: nowrap;
-  }
 }
 
 /* Print Styles for PDF Export */

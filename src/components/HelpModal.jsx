@@ -2,30 +2,51 @@ import React from 'react';
 import { Info, X } from 'lucide-react';
 
 const HelpModal = ({ isOpen, onClose, title = '¿Cómo funcionan los cálculos?', children }) => {
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.8)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000, // Por encima del header sticky
-      padding: '1rem'
-    }}>
-      <div className="card animate-fade-in" style={{
-        maxWidth: '600px',
-        width: '100%',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        position: 'relative',
-        boxShadow: 'var(--shadow-md)',
-        border: '1px solid var(--border-color)',
-        backgroundColor: 'var(--bg-secondary)',
-        padding: '2rem'
-      }}>
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1100, // Por encima de todo, incluyendo header sticky
+        padding: '1rem'
+      }}
+      onClick={onClose}
+    >
+      <div 
+        className="card animate-fade-in" 
+        style={{
+          maxWidth: '600px',
+          width: '100%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          position: 'relative',
+          boxShadow: 'var(--shadow-md)',
+          border: '1px solid var(--border-color)',
+          backgroundColor: 'var(--bg-secondary)',
+          padding: '2rem'
+        }}
+        onClick={e => e.stopPropagation()}
+      >
         <button 
           onClick={onClose}
           style={{
