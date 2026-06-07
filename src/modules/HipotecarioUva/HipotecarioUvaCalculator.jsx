@@ -9,8 +9,10 @@ import {
   Download,
   Printer,
   TableProperties,
-  Share2
+  Share2,
+  Image
 } from 'lucide-react';
+import { exportChartToPNG } from '../../utils/chartExporter';
 import {
   LineChart,
   Line,
@@ -366,10 +368,18 @@ const HipotecarioUvaCalculator = () => {
                   <Printer size={16} />
                   Imprimir Reporte
                 </button>
+                <button 
+                  onClick={() => exportChartToPNG('uva-chart-container', 'valia_credito_hipotecario_uva.png')}
+                  className="btn btn-outline" 
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                >
+                  <Image size={16} />
+                  Descargar Gráfico
+                </button>
               </div>
 
               {/* Chart */}
-              <div className="card chart-container">
+              <div className="card chart-container" id="uva-chart-container">
                 <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Evolución de la Cuota Mensual Proyectada</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={simulation.yearlyData} margin={{ top: 15, right: 20, left: 10, bottom: 25 }}>

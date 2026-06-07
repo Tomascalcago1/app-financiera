@@ -8,8 +8,10 @@ import {
   Printer,
   Plus,
   Minus,
-  Share2
+  Share2,
+  Image
 } from 'lucide-react';
+import { exportChartToPNG } from '../../utils/chartExporter';
 import {
   PieChart,
   Pie,
@@ -555,10 +557,18 @@ const GananciasCalculator = () => {
               <Printer size={16} />
               Imprimir Reporte
             </button>
+            <button 
+              onClick={() => exportChartToPNG('ganancias-chart-container', 'valia_impuesto_a_las_ganancias.png')}
+              className="btn btn-outline" 
+              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+            >
+              <Image size={16} />
+              Descargar Gráfico
+            </button>
           </div>
 
           {/* Recharts PieChart */}
-          <div className="card chart-container animate-fade-in" style={{ height: '320px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="card chart-container animate-fade-in" id="ganancias-chart-container" style={{ height: '320px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <h3 style={{ marginBottom: '1rem', fontSize: '1.05rem', alignSelf: 'flex-start' }}>Distribución de tu Salario Bruto</h3>
             <ResponsiveContainer width="100%" height="80%">
               <PieChart>

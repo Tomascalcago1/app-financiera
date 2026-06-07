@@ -3,10 +3,11 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, ReferenceLine
 } from 'recharts';
-import { TableProperties, TrendingUp, TrendingDown, BarChart3, Download, Printer, Share2 } from 'lucide-react';
+import { TableProperties, TrendingUp, TrendingDown, BarChart3, Download, Printer, Share2, Image } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
+import { exportChartToPNG } from '../../utils/chartExporter';
 
 const formatCurrency = (value) => {
   if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
@@ -176,10 +177,18 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
           <Printer size={16} />
           Imprimir / Guardar PDF
         </button>
+        <button 
+          onClick={() => exportChartToPNG('fire-chart-container', 'valia_simulador_fire.png')}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Image size={16} />
+          Descargar Gráfico
+        </button>
       </div>
 
       {/* Chart */}
-      <div className="card chart-container">
+      <div className="card chart-container" id="fire-chart-container">
         <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Rango de Resultados del Portafolio</h3>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 15, right: 20, left: 20, bottom: 25 }}>

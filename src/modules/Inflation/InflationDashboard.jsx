@@ -3,9 +3,10 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine
 } from 'recharts';
-import { Download, Printer } from 'lucide-react';
+import { Download, Printer, Image } from 'lucide-react';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
+import { exportChartToPNG } from '../../utils/chartExporter';
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(value);
@@ -126,6 +127,14 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
           <Printer size={16} />
           Imprimir / Guardar PDF
         </button>
+        <button 
+          onClick={() => exportChartToPNG('inflation-chart-container', 'valia_inflacion_historica.png')}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Image size={16} />
+          Descargar Gráfico
+        </button>
       </div>
 
       {/* Large Historical Chart */}
@@ -137,7 +146,7 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
           <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginBottom: '1rem' }}>
             Muestra cómo $100 de 1635 habrían crecido en términos nominales hasta hoy.
           </p>
-          <div className="chart-container-large">
+          <div className="chart-container-large" id="inflation-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 15, right: 20, left: 20, bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />

@@ -10,10 +10,11 @@ import {
   Legend,
   ReferenceLine
 } from 'recharts';
-import { TableProperties, Download, Printer, Share2 } from 'lucide-react';
+import { TableProperties, Download, Printer, Share2, Image } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
+import { exportChartToPNG } from '../../utils/chartExporter';
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
@@ -192,10 +193,18 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} 
           <Printer size={16} />
           Imprimir / Guardar PDF
         </button>
+        <button 
+          onClick={() => exportChartToPNG('compound-chart-container', 'valia_interes_compuesto.png')}
+          className="btn btn-outline" 
+          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+        >
+          <Image size={16} />
+          Descargar Gráfico
+        </button>
       </div>
 
       {/* Chart */}
-      <div className="card chart-container">
+      <div className="card chart-container" id="compound-chart-container">
         <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Proyección del Crecimiento</h3>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart

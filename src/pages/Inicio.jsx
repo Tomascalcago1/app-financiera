@@ -12,7 +12,8 @@ import {
   Database,
   EyeOff,
   Home,
-  Percent
+  Percent,
+  Scale
 } from 'lucide-react';
 import AdvisorCTA from '../components/AdvisorCTA';
 
@@ -106,6 +107,13 @@ const Inicio = ({ onSelectTool }) => {
       name: 'Comparador de Brokers',
       icon: <TrendingUp size={24} className="text-accent-primary" />,
       desc: 'Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.',
+      color: 'var(--accent-primary)'
+    },
+    {
+      id: 'installments-vs-cash',
+      name: '¿Cuotas o Efectivo?',
+      icon: <Scale size={24} className="text-accent-primary" />,
+      desc: 'Simulá si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones.',
       color: 'var(--accent-primary)'
     }
   ];

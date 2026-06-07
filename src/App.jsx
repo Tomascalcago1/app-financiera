@@ -9,6 +9,7 @@ import ComparadorHistorico from './modules/ComparadorHistorico/ComparadorHistori
 import SueldoNetoCalculator from './modules/SueldoNeto/SueldoNetoCalculator';
 import BrokerComparator from './modules/BrokerComparator/BrokerComparator';
 import GananciasCalculator from './modules/Ganancias/GananciasCalculator';
+import InstallmentsVsCashCalculator from './modules/InstallmentsVsCash/InstallmentsVsCashCalculator';
 
 import AcercaDe from './pages/AcercaDe';
 import Privacidad from './pages/Privacidad';
@@ -16,13 +17,14 @@ import Terminos from './pages/Terminos';
 import Inicio from './pages/Inicio';
 import Asesores from './pages/Asesores';
 import Blog from './pages/Blog';
-import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen } from 'lucide-react';
+import Glosario from './pages/Glosario';
+import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    const validTabs = ['inicio', 'herramientas', 'educacion', 'asesores', 'acerca', 'privacidad', 'terminos'];
+    const validTabs = ['inicio', 'herramientas', 'educacion', 'glosario', 'asesores', 'acerca', 'privacidad', 'terminos'];
     if (tab && validTabs.includes(tab)) return tab;
     if (params.get('tool')) return 'herramientas';
     return 'herramientas';
@@ -40,7 +42,8 @@ function App() {
       'comparador-historico', 
       'sueldo-neto', 
       'ganancias', 
-      'broker-comparator'
+      'broker-comparator',
+      'installments-vs-cash'
     ];
     if (tool && validTools.includes(tool)) return tool;
     return 'buy-vs-rent';
@@ -160,6 +163,25 @@ function App() {
             >
               <BookOpen size={18} />
               Educación
+            </button>
+            <button
+              onClick={() => setActiveTab('glosario')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 1rem',
+                backgroundColor: activeTab === 'glosario' ? 'var(--bg-tertiary)' : 'transparent',
+                color: activeTab === 'glosario' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                border: 'none',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer',
+                fontWeight: 500,
+                transition: 'all 0.2s'
+              }}
+            >
+              <Book size={18} />
+              Glosario
             </button>
             <button
               onClick={() => setActiveTab('asesores')}
@@ -410,6 +432,19 @@ function App() {
                   >
                     Comparador de Brokers
                   </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('installments-vs-cash')}
+                    style={{
+                      backgroundColor: activeTool === 'installments-vs-cash' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'installments-vs-cash' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'installments-vs-cash' ? '600' : '500',
+                      boxShadow: activeTool === 'installments-vs-cash' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    ¿Cuotas o Efectivo?
+                  </button>
                 </div>
 
                 {/* Right Slide Button */}
@@ -449,12 +484,14 @@ function App() {
                 {activeTool === 'sueldo-neto' && <SueldoNetoCalculator />}
                 {activeTool === 'ganancias' && <GananciasCalculator />}
                 {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
+                {activeTool === 'installments-vs-cash' && <InstallmentsVsCashCalculator />}
               </div>
             </div>
           )}
 
           {activeTab === 'asesores' && <Asesores />}
           {activeTab === 'educacion' && <Blog />}
+          {activeTab === 'glosario' && <Glosario />}
           {activeTab === 'acerca' && <AcercaDe />}
           {activeTab === 'privacidad' && <Privacidad />}
           {activeTab === 'terminos' && <Terminos />}
@@ -518,6 +555,23 @@ function App() {
               }}
             >
               Educación
+            </button>
+            <button 
+              onClick={() => {
+                setActiveTab('glosario');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: activeTab === 'glosario' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
+                cursor: 'pointer', 
+                fontSize: '0.875rem', 
+                fontWeight: 500,
+                transition: 'color var(--transition-fast)' 
+              }}
+            >
+              Glosario
             </button>
             <button 
               onClick={() => {

@@ -16,8 +16,10 @@ import {
   Printer, 
   TrendingUp, 
   TrendingDown, 
-  TableProperties 
+  TableProperties,
+  Image 
 } from 'lucide-react';
+import { exportChartToPNG } from '../../utils/chartExporter';
 import FinancialInput from '../../components/FinancialInput';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
@@ -313,10 +315,18 @@ const ComparadorHistorico = () => {
               <Printer size={16} />
               Imprimir Reporte
             </button>
+            <button 
+              onClick={() => exportChartToPNG('history-chart-container', 'valia_comparacion_historica.png')}
+              className="btn btn-outline" 
+              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+            >
+              <Image size={16} />
+              Descargar Gráfico
+            </button>
           </div>
 
           {/* Chart */}
-          <div className="card chart-container">
+          <div className="card chart-container" id="history-chart-container">
             <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Progresión Histórica del Capital</h3>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={simulation.chartData} margin={{ top: 15, right: 20, left: 10, bottom: 25 }}>
