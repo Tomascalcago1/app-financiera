@@ -28,64 +28,52 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
     // Seteamos dimensiones explícitas al SVG clonado
     clonedSvg.setAttribute('width', width);
     clonedSvg.setAttribute('height', height);
+    clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-    // Creamos e inyectamos un bloque <style> dentro del SVG clonado para que tenga las variables de CSS
-    // y los estilos requeridos por Recharts en su contexto de renderizado aislado (Blob/Image).
-    const styleElement = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-    let cssStyles = `
-      :root, svg {
-        --bg-primary: #090D16;
-        --bg-secondary: #0F172A;
-        --bg-tertiary: #1E293B;
-        --text-primary: #F8FAFC;
-        --text-secondary: #94A3B8;
-        --text-tertiary: #64748B;
-        --accent-primary: #06B6D4;
-        --accent-success: #10B981;
-        --accent-warning: #F59E0B;
-        --accent-danger: #EF4444;
-        --border-color: #334155;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      }
-      svg {
-        background-color: #090D16;
-      }
-      /* Estilos básicos de Recharts para textos y grillas */
-      .recharts-text, .recharts-label {
-        fill: #94A3B8 !important;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-      }
-      .recharts-cartesian-grid-horizontal line,
-      .recharts-cartesian-grid-vertical line {
-        stroke: #334155 !important;
-        stroke-width: 1px !important;
-      }
-    `;
+    // Función recursiva para copiar todos los estilos computados del SVG original al clon.
+    // Esto inlinea los estilos (colores de fuente, grosores, opacidad, rellenos) resolviendo
+    // variables CSS y clases. Evita usar tags de <style> que Safari bloquea por seguridad en canvas.
+    const copyComputedStyles = (src, dest) => {
+      const computed = window.getComputedStyle(src);
+      const propertiesToCopy = [
+        'fill',
+        'stroke',
+        'stroke-width',
+        'stroke-dasharray',
+        'font-size',
+        'font-family',
+        'font-weight',
+        'opacity',
+        'display',
+        'visibility',
+        'text-anchor'
+      ];
+      
+      propertiesToCopy.forEach(prop => {
+        const val = computed.getPropertyValue(prop);
+        if (val) {
+          dest.style.setProperty(prop, val);
+        }
+      });
 
-    // Intentamos recolectar dinámicamente las reglas de CSS de Recharts inyectadas en la página
-    try {
-      for (const sheet of document.styleSheets) {
-        try {
-          for (const rule of sheet.cssRules) {
-            if (rule.cssText.includes('recharts') || rule.cssText.includes('recharts-surface')) {
-              cssStyles += rule.cssText + '\n';
-            }
+      const srcChildren = src.children;
+      const destChildren = dest.children;
+      if (srcChildren && destChildren) {
+        for (let i = 0; i < srcChildren.length; i++) {
+          if (srcChildren[i] && destChildren[i]) {
+            copyComputedStyles(srcChildren[i], destChildren[i]);
           }
-        } catch (e) {
-          // Ignorar hojas de estilo externas por restricciones de CORS
         }
       }
-    } catch (sheetErr) {
-      console.warn('No se pudieron clonar los estilos dinámicos de Recharts:', sheetErr);
-    }
+    };
 
-    styleElement.textContent = cssStyles;
-    clonedSvg.insertBefore(styleElement, clonedSvg.firstChild);
+    // Copiamos los estilos computados en línea
+    copyComputedStyles(svgElement, clonedSvg);
 
     // Convertimos el SVG a string XML
     let svgString = new XMLSerializer().serializeToString(clonedSvg);
     
-    // Reemplazamos las variables de CSS nativas por sus equivalentes de color en el tema oscuro de Valia
+    // Reemplazos de variables CSS nativas por sus equivalentes de color (como respaldo)
     svgString = svgString.replace(/var\(--text-primary\)/g, '#F8FAFC');
     svgString = svgString.replace(/var\(--text-secondary\)/g, '#94A3B8');
     svgString = svgString.replace(/var\(--text-tertiary\)/g, '#64748B');
@@ -156,4 +144,3 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
     alert('Ocurrió un error al intentar exportar el gráfico a imagen.');
   }
 };
-
