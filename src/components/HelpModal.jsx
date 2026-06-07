@@ -26,10 +26,11 @@ const HelpModal = ({ isOpen, onClose, title = '¿Cómo funcionan los cálculos?'
         top: 0, left: 0, right: 0, bottom: 0,
         backgroundColor: 'rgba(0,0,0,0.8)',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
         zIndex: 1100, // Por encima de todo, incluyendo header sticky
-        padding: '1rem'
+        padding: '1rem',
+        overflowY: 'auto'
       }}
       onClick={onClose}
     >
@@ -38,13 +39,13 @@ const HelpModal = ({ isOpen, onClose, title = '¿Cómo funcionan los cálculos?'
         style={{
           maxWidth: '600px',
           width: '100%',
-          maxHeight: '90vh',
-          overflowY: 'auto',
           position: 'relative',
           boxShadow: 'var(--shadow-md)',
           border: '1px solid var(--border-color)',
           backgroundColor: 'var(--bg-secondary)',
-          padding: '2rem'
+          padding: '2rem',
+          marginTop: '6vh',
+          marginBottom: '6vh'
         }}
         onClick={e => e.stopPropagation()}
       >
