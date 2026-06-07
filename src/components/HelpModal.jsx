@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { Info, X } from 'lucide-react';
 
 const HelpModal = ({ isOpen, onClose, title = '¿Cómo funcionan los cálculos?', children }) => {
@@ -18,7 +19,7 @@ const HelpModal = ({ isOpen, onClose, title = '¿Cómo funcionan los cálculos?'
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div 
       style={{
         position: 'fixed',
@@ -90,7 +91,8 @@ const HelpModal = ({ isOpen, onClose, title = '¿Cómo funcionan los cálculos?'
           Entendido
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
