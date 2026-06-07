@@ -8,7 +8,8 @@ import {
   Info,
   Download,
   Printer,
-  TableProperties
+  TableProperties,
+  Share2
 } from 'lucide-react';
 import {
   LineChart,
@@ -38,13 +39,42 @@ const formatUva = (val) => {
 };
 
 const HipotecarioUvaCalculator = () => {
-  const [loanAmount, setLoanAmount] = useState(40000000); // 40 millones de pesos por defecto
-  const [years, setYears] = useState(20);
-  const [interestRate, setInterestRate] = useState(5.5); // UVA + 5.5%
-  const [inflationRate, setInflationRate] = useState(40); // 40% inflación anual
-  const [amortizationSystem, setAmortizationSystem] = useState('french'); // 'french' | 'german'
+  const queryParams = new URLSearchParams(window.location.search);
+  const getNumericParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    return val !== null && !isNaN(val) ? Number(val) : fallback;
+  };
+  const getStringParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    return val !== null ? val : fallback;
+  };
+
+  const [loanAmount, setLoanAmount] = useState(() => getNumericParam('loan', 40000000)); // 40 millones de pesos por defecto
+  const [years, setYears] = useState(() => getNumericParam('yrs', 20));
+  const [interestRate, setInterestRate] = useState(() => getNumericParam('rate', 5.5)); // UVA + 5.5%
+  const [inflationRate, setInflationRate] = useState(() => getNumericParam('infl', 40)); // 40% inflación anual
+  const [amortizationSystem, setAmortizationSystem] = useState(() => getStringParam('sys', 'french')); // 'french' | 'german'
   const [showTable, setShowTable] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('tool', 'hipotecario-uva');
+    params.set('loan', loanAmount);
+    params.set('yrs', years);
+    params.set('rate', interestRate);
+    params.set('infl', inflationRate);
+    params.set('sys', amortizationSystem);
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+      })
+      .catch(err => console.error('Error al copiar el enlace: ', err));
+  };
 
   const UVA_INITIAL_VALUE = 1350; // Valor del UVA al inicio de la simulación
 
@@ -298,6 +328,14 @@ const HipotecarioUvaCalculator = () => {
 
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
+                <button 
+                  onClick={handleShare}
+                  className="btn btn-outline" 
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                >
+                  <Share2 size={16} />
+                  {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
+                </button>
                 <button 
                   onClick={exportToCSV}
                   className="btn btn-outline" 

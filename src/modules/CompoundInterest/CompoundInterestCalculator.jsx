@@ -6,39 +6,84 @@ import HelpModal from '../../components/HelpModal';
 import { TrendingUp, Settings2, HelpCircle } from 'lucide-react';
 
 const CompoundInterestCalculator = () => {
+  const queryParams = new URLSearchParams(window.location.search);
+  const getNumericParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    return val !== null && !isNaN(val) ? Number(val) : fallback;
+  };
+  const getBoolParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    if (val === 'true') return true;
+    if (val === 'false') return false;
+    return fallback;
+  };
+
   // Main Variables
   const [initialInvestment, setInitialInvestment] = useState(() => {
+    const q = queryParams.get('init');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_compound_initialInvestment');
     return saved !== null ? saved : '';
   });
   const [monthlyContribution, setMonthlyContribution] = useState(() => {
+    const q = queryParams.get('contrib');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_compound_monthlyContribution');
     return saved !== null ? saved : '';
   });
   const [years, setYears] = useState(() => {
+    const q = queryParams.get('yrs');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_compound_years');
     return saved !== null ? saved : '';
   });
   const [interestRate, setInterestRate] = useState(() => {
+    const q = queryParams.get('rate');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_compound_interestRate');
     return saved !== null ? saved : '';
   });
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   
   // Advanced Variables
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(() => getBoolParam('showAdv', false));
   const [varianceRange, setVarianceRange] = useState(() => {
+    const q = queryParams.get('varRange');
+    if (q !== null && !isNaN(q)) return Number(q);
     const saved = localStorage.getItem('valia_compound_varianceRange');
     return saved !== null ? (saved === '' ? '' : Number(saved)) : 2;
   });
   const [compoundFrequency, setCompoundFrequency] = useState(() => {
+    const q = queryParams.get('freq');
+    if (q !== null && !isNaN(q)) return Number(q);
     const saved = localStorage.getItem('valia_compound_compoundFrequency');
     return saved !== null ? Number(saved) : 1;
   });
   const [enableVariance, setEnableVariance] = useState(() => {
+    const q = queryParams.get('var');
+    if (q === 'true') return true;
+    if (q === 'false') return false;
     const saved = localStorage.getItem('valia_compound_enableVariance');
     return saved !== null ? saved === 'true' : false;
   });
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('tool', 'compound-interest');
+    if (initialInvestment) params.set('init', initialInvestment);
+    if (monthlyContribution) params.set('contrib', monthlyContribution);
+    if (years) params.set('yrs', years);
+    if (interestRate) params.set('rate', interestRate);
+    if (enableVariance) {
+      params.set('var', 'true');
+      params.set('varRange', varianceRange);
+    }
+    if (compoundFrequency !== 1) params.set('freq', compoundFrequency);
+    if (showAdvanced) params.set('showAdv', 'true');
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    return navigator.clipboard.writeText(shareUrl);
+  };
 
   // Save states to localStorage
   useEffect(() => {
@@ -211,6 +256,7 @@ const CompoundInterestCalculator = () => {
           <CompoundResultsDashboard 
             data={simulationData} 
             varianceEnabled={enableVariance} 
+            onShare={handleShare}
             inputs={{
               initialInvestment,
               monthlyContribution,

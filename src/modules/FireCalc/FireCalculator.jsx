@@ -3,42 +3,84 @@ import FinancialInput from '../../components/FinancialInput';
 import FireResultsDashboard from './FireResultsDashboard';
 import { runFireSimulation } from './FireSimulationEngine';
 import HelpModal from '../../components/HelpModal';
-import { Flame, Settings2, HelpCircle } from 'lucide-react';
+import { Flame, Settings2, HelpCircle, Share2 } from 'lucide-react';
 
 const FireCalculator = () => {
+  const queryParams = new URLSearchParams(window.location.search);
+  const getNumericParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    return val !== null && !isNaN(val) ? Number(val) : fallback;
+  };
+  const getStringParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    return val !== null ? val : fallback;
+  };
+
   const [portfolioValue, setPortfolioValue] = useState(() => {
+    const q = queryParams.get('port');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_fire_portfolioValue');
     return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [retirementLength, setRetirementLength] = useState(() => {
+    const q = queryParams.get('len');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_fire_retirementLength');
     return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [withdrawalStrategy, setWithdrawalStrategy] = useState(() => {
+    const q = queryParams.get('strat');
+    if (q !== null) return q;
     const saved = localStorage.getItem('valia_fire_withdrawalStrategy');
     return saved !== null && saved !== 'undefined' ? saved : 'constant-dollar';
   });
   const [withdrawalAmount, setWithdrawalAmount] = useState(() => {
+    const q = queryParams.get('amt');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_fire_withdrawalAmount');
     return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [withdrawalPercent, setWithdrawalPercent] = useState(() => {
+    const q = queryParams.get('pct');
+    if (q !== null && !isNaN(q)) return q;
     const saved = localStorage.getItem('valia_fire_withdrawalPercent');
     return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [stockAlloc, setStockAlloc] = useState(() => {
+    const q = queryParams.get('stock');
+    if (q !== null && !isNaN(q)) return Number(q);
     const saved = localStorage.getItem('valia_fire_stockAlloc');
     return saved !== null && saved !== 'undefined' && saved !== '' ? Number(saved) : 80;
   });
   const [bondAlloc, setBondAlloc] = useState(() => {
+    const q = queryParams.get('bond');
+    if (q !== null && !isNaN(q)) return Number(q);
     const saved = localStorage.getItem('valia_fire_bondAlloc');
     return saved !== null && saved !== 'undefined' && saved !== '' ? Number(saved) : 20;
   });
   const [cashAlloc, setCashAlloc] = useState(() => {
+    const q = queryParams.get('cash');
+    if (q !== null && !isNaN(q)) return Number(q);
     const saved = localStorage.getItem('valia_fire_cashAlloc');
     return saved !== null && saved !== 'undefined' && saved !== '' ? Number(saved) : 0;
   });
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('tool', 'fire');
+    if (portfolioValue) params.set('port', portfolioValue);
+    if (retirementLength) params.set('len', retirementLength);
+    if (withdrawalStrategy) params.set('strat', withdrawalStrategy);
+    if (withdrawalAmount) params.set('amt', withdrawalAmount);
+    if (withdrawalPercent) params.set('pct', withdrawalPercent);
+    params.set('stock', stockAlloc);
+    params.set('bond', bondAlloc);
+    params.set('cash', cashAlloc);
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    return navigator.clipboard.writeText(shareUrl);
+  };
 
   // Save states to localStorage
   useEffect(() => {
@@ -140,6 +182,7 @@ const FireCalculator = () => {
         <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
           <FireResultsDashboard 
             results={results} 
+            onShare={handleShare}
             inputs={{
               portfolioValue,
               retirementLength,

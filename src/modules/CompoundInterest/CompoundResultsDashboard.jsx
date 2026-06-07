@@ -10,7 +10,7 @@ import {
   Legend,
   ReferenceLine
 } from 'recharts';
-import { TableProperties, Download, Printer } from 'lucide-react';
+import { TableProperties, Download, Printer, Share2 } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
 
 const formatCurrency = (value) => {
@@ -41,8 +41,9 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const CompoundResultsDashboard = ({ data, varianceEnabled, inputs = {} }) => {
+const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} }) => {
   const [showTable, setShowTable] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   const profitCrossoverYear = useMemo(() => {
     if (!data) return null;
@@ -157,6 +158,23 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, inputs = {} }) => {
 
       {/* Export Actions */}
       <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
+        {onShare && (
+          <button 
+            onClick={() => {
+              onShare()
+                .then(() => {
+                  setShareCopied(true);
+                  setTimeout(() => setShareCopied(false), 2000);
+                })
+                .catch(err => console.error('Error al compartir: ', err));
+            }}
+            className="btn btn-outline" 
+            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+          >
+            <Share2 size={16} />
+            {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
+          </button>
+        )}
         <button 
           onClick={exportToCSV}
           className="btn btn-outline" 

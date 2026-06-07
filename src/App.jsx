@@ -19,8 +19,32 @@ import Blog from './pages/Blog';
 import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen } from 'lucide-react';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('herramientas');
-  const [activeTool, setActiveTool] = useState('buy-vs-rent');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    const validTabs = ['inicio', 'herramientas', 'educacion', 'asesores', 'acerca', 'privacidad', 'terminos'];
+    if (tab && validTabs.includes(tab)) return tab;
+    if (params.get('tool')) return 'herramientas';
+    return 'herramientas';
+  });
+  const [activeTool, setActiveTool] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tool = params.get('tool');
+    const validTools = [
+      'buy-vs-rent', 
+      'compound-interest', 
+      'savings-goal', 
+      'fire', 
+      'inflation', 
+      'hipotecario-uva', 
+      'comparador-historico', 
+      'sueldo-neto', 
+      'ganancias', 
+      'broker-comparator'
+    ];
+    if (tool && validTools.includes(tool)) return tool;
+    return 'buy-vs-rent';
+  });
   const scrollRef = useRef(null);
 
   useEffect(() => {

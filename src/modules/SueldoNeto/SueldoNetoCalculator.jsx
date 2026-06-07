@@ -6,7 +6,8 @@ import {
   TrendingUp, 
   AlertTriangle,
   Download,
-  Printer
+  Printer,
+  Share2
 } from 'lucide-react';
 import {
   PieChart,
@@ -28,13 +29,43 @@ const formatCurrency = (val) => {
 };
 
 const SueldoNetoCalculator = () => {
-  const [grossIncome, setGrossIncome] = useState(1500000); // 1.5 millones por defecto
-  const [currency, setCurrency] = useState('ARS'); // 'ARS' | 'USD'
-  const [exchangeRate, setExchangeRate] = useState(1200); // Cotización MEP por defecto
-  const [activity, setActivity] = useState('services'); // 'services' | 'goods'
-  const [iibbPercent, setIibbPercent] = useState(3.0); // 3% Ingresos Brutos
-  const [platformFee, setPlatformFee] = useState(2.5); // 2.5% comisiones de cobro
+  const queryParams = new URLSearchParams(window.location.search);
+  const getNumericParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    return val !== null && !isNaN(val) ? Number(val) : fallback;
+  };
+  const getStringParam = (key, fallback) => {
+    const val = queryParams.get(key);
+    return val !== null ? val : fallback;
+  };
+
+  const [grossIncome, setGrossIncome] = useState(() => getNumericParam('gross', 1500000)); // 1.5 millones por defecto
+  const [currency, setCurrency] = useState(() => getStringParam('currency', 'ARS')); // 'ARS' | 'USD'
+  const [exchangeRate, setExchangeRate] = useState(() => getNumericParam('exRate', 1200)); // Cotización MEP por defecto
+  const [activity, setActivity] = useState(() => getStringParam('activity', 'services')); // 'services' | 'goods'
+  const [iibbPercent, setIibbPercent] = useState(() => getNumericParam('iibb', 3.0)); // 3% Ingresos Brutos
+  const [platformFee, setPlatformFee] = useState(() => getNumericParam('fee', 2.5)); // 2.5% comisiones de cobro
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('tool', 'sueldo-neto');
+    params.set('gross', grossIncome);
+    params.set('currency', currency);
+    if (currency === 'USD') params.set('exRate', exchangeRate);
+    params.set('activity', activity);
+    params.set('iibb', iibbPercent);
+    params.set('fee', platformFee);
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+      })
+      .catch(err => console.error('Error al copiar el enlace: ', err));
+  };
 
   const getMonotributoScale = (annualBilling, act) => {
     if (annualBilling > 108357084.05) {
@@ -319,6 +350,14 @@ const SueldoNetoCalculator = () => {
 
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
+            <button 
+              onClick={handleShare}
+              className="btn btn-outline" 
+              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+            >
+              <Share2 size={16} />
+              {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
+            </button>
             <button 
               onClick={() => window.print()}
               className="btn btn-outline" 
