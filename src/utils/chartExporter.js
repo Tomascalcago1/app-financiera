@@ -9,7 +9,9 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
     return;
   }
 
-  const svgElement = container.querySelector('svg');
+  // Buscamos primero el SVG principal de Recharts (svg.recharts-surface) para evitar
+  // seleccionar pequeños SVGs de leyendas, marcadores o íconos internos.
+  const svgElement = container.querySelector('svg.recharts-surface') || container.querySelector('svg');
   if (!svgElement) {
     console.error('No se encontró ningún elemento SVG dentro del contenedor.');
     return;
