@@ -158,206 +158,245 @@ function App() {
 
       {/* Main Content Area */}
       <main style={{ flex: 1, padding: '2rem 0' }}>
-        {activeTab === 'inicio' && (
-          <Inicio 
-            onSelectTool={(toolId) => {
-              setActiveTab('herramientas');
-              setActiveTool(toolId);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          />
-        )}
+        <div key={activeTab} className="animate-fade-in">
+          {activeTab === 'inicio' && (
+            <Inicio 
+              onSelectTool={(toolId) => {
+                setActiveTab('herramientas');
+                setActiveTool(toolId);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+          )}
 
-        {activeTab === 'herramientas' && (
-          <div className="animate-fade-in">
-            {/* Tool Selector Carousel Wrapper */}
-            <div className="tool-selector-container container" style={{ position: 'relative', paddingLeft: '2.5rem', paddingRight: '2.5rem', display: 'flex', alignItems: 'center' }}>
-              
-              {/* Left Slide Button */}
-              <button 
-                onClick={() => scroll('left')}
-                className="scroll-btn scroll-btn-left"
-                style={{
+          {activeTab === 'herramientas' && (
+            <div>
+              {/* Tool Selector Carousel Wrapper */}
+              <div className="tool-selector-container container" style={{ position: 'relative', paddingLeft: '2.5rem', paddingRight: '2.5rem', display: 'flex', alignItems: 'center' }}>
+                
+                {/* Left Fade Edge */}
+                <div style={{
                   position: 'absolute',
-                  left: '0.5rem',
-                  zIndex: 10,
-                  backgroundColor: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '50%',
-                  width: '36px',
-                  height: '36px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  color: 'var(--text-primary)',
-                  boxShadow: 'var(--shadow-sm)',
-                  transition: 'all 0.2s',
-                }}
-              >
-                <ChevronLeft size={20} />
-              </button>
+                  left: '2.5rem',
+                  top: '6px',
+                  bottom: '6px',
+                  width: '40px',
+                  background: 'linear-gradient(to right, var(--bg-primary) 0%, transparent 100%)',
+                  pointerEvents: 'none',
+                  zIndex: 5,
+                  borderRadius: 'var(--border-radius-lg) 0 0 var(--border-radius-lg)'
+                }} />
 
-              <div 
-                ref={scrollRef}
-                className="tool-selector-scroll"
-                style={{
-                  scrollBehavior: 'smooth',
-                  width: '100%'
-                }}
-              >
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('buy-vs-rent')}
+                {/* Right Fade Edge */}
+                <div style={{
+                  position: 'absolute',
+                  right: '2.5rem',
+                  top: '6px',
+                  bottom: '6px',
+                  width: '40px',
+                  background: 'linear-gradient(to left, var(--bg-primary) 0%, transparent 100%)',
+                  pointerEvents: 'none',
+                  zIndex: 5,
+                  borderRadius: '0 var(--border-radius-lg) var(--border-radius-lg) 0'
+                }} />
+
+                {/* Left Slide Button */}
+                <button 
+                  onClick={() => scroll('left')}
+                  className="scroll-btn scroll-btn-left"
                   style={{
-                    backgroundColor: activeTool === 'buy-vs-rent' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'buy-vs-rent' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'buy-vs-rent' ? '600' : '500',
-                    boxShadow: activeTool === 'buy-vs-rent' ? 'var(--shadow-sm)' : 'none',
+                    position: 'absolute',
+                    left: '0.5rem',
+                    zIndex: 10,
+                    backgroundColor: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '50%',
+                    width: '36px',
+                    height: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: 'var(--text-primary)',
+                    boxShadow: 'var(--shadow-sm)',
+                    transition: 'all 0.2s',
                   }}
                 >
-                  ¿Alquilar o Comprar?
+                  <ChevronLeft size={20} />
                 </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('compound-interest')}
+
+                <div 
+                  ref={scrollRef}
+                  className="tool-selector-scroll"
                   style={{
-                    backgroundColor: activeTool === 'compound-interest' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'compound-interest' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'compound-interest' ? '600' : '500',
-                    boxShadow: activeTool === 'compound-interest' ? 'var(--shadow-sm)' : 'none',
+                    scrollBehavior: 'smooth',
+                    width: '100%'
                   }}
                 >
-                  Interés Compuesto
-                </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('savings-goal')}
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('buy-vs-rent')}
+                    style={{
+                      backgroundColor: activeTool === 'buy-vs-rent' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'buy-vs-rent' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'buy-vs-rent' ? '600' : '500',
+                      boxShadow: activeTool === 'buy-vs-rent' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    ¿Alquilar o Comprar?
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('compound-interest')}
+                    style={{
+                      backgroundColor: activeTool === 'compound-interest' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'compound-interest' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'compound-interest' ? '600' : '500',
+                      boxShadow: activeTool === 'compound-interest' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Interés Compuesto
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('savings-goal')}
+                    style={{
+                      backgroundColor: activeTool === 'savings-goal' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'savings-goal' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'savings-goal' ? '600' : '500',
+                      boxShadow: activeTool === 'savings-goal' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Objetivo de Ahorro
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('fire')}
+                    style={{
+                      backgroundColor: activeTool === 'fire' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'fire' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'fire' ? '600' : '500',
+                      boxShadow: activeTool === 'fire' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Simulador FIRE
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('inflation')}
+                    style={{
+                      backgroundColor: activeTool === 'inflation' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'inflation' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'inflation' ? '600' : '500',
+                      boxShadow: activeTool === 'inflation' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Inflación Histórica
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('hipotecario-uva')}
+                    style={{
+                      backgroundColor: activeTool === 'hipotecario-uva' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'hipotecario-uva' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'hipotecario-uva' ? '600' : '500',
+                      boxShadow: activeTool === 'hipotecario-uva' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Crédito UVA
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('comparador-historico')}
+                    style={{
+                      backgroundColor: activeTool === 'comparador-historico' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'comparador-historico' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'comparador-historico' ? '600' : '500',
+                      boxShadow: activeTool === 'comparador-historico' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Dólar vs PF vs Merval
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('sueldo-neto')}
+                    style={{
+                      backgroundColor: activeTool === 'sueldo-neto' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'sueldo-neto' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'sueldo-neto' ? '600' : '500',
+                      boxShadow: activeTool === 'sueldo-neto' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Sueldo Neto Freelancer
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => setActiveTool('broker-comparator')}
+                    style={{
+                      backgroundColor: activeTool === 'broker-comparator' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'broker-comparator' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'broker-comparator' ? '600' : '500',
+                      boxShadow: activeTool === 'broker-comparator' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Comparador de Brokers
+                  </button>
+                </div>
+
+                {/* Right Slide Button */}
+                <button 
+                  onClick={() => scroll('right')}
+                  className="scroll-btn scroll-btn-right"
                   style={{
-                    backgroundColor: activeTool === 'savings-goal' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'savings-goal' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'savings-goal' ? '600' : '500',
-                    boxShadow: activeTool === 'savings-goal' ? 'var(--shadow-sm)' : 'none',
+                    position: 'absolute',
+                    right: '0.5rem',
+                    zIndex: 10,
+                    backgroundColor: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '50%',
+                    width: '36px',
+                    height: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: 'var(--text-primary)',
+                    boxShadow: 'var(--shadow-sm)',
+                    transition: 'all 0.2s',
                   }}
                 >
-                  Objetivo de Ahorro
-                </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('fire')}
-                  style={{
-                    backgroundColor: activeTool === 'fire' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'fire' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'fire' ? '600' : '500',
-                    boxShadow: activeTool === 'fire' ? 'var(--shadow-sm)' : 'none',
-                  }}
-                >
-                  Simulador FIRE
-                </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('inflation')}
-                  style={{
-                    backgroundColor: activeTool === 'inflation' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'inflation' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'inflation' ? '600' : '500',
-                    boxShadow: activeTool === 'inflation' ? 'var(--shadow-sm)' : 'none',
-                  }}
-                >
-                  Inflación Histórica
-                </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('hipotecario-uva')}
-                  style={{
-                    backgroundColor: activeTool === 'hipotecario-uva' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'hipotecario-uva' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'hipotecario-uva' ? '600' : '500',
-                    boxShadow: activeTool === 'hipotecario-uva' ? 'var(--shadow-sm)' : 'none',
-                  }}
-                >
-                  Crédito UVA
-                </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('comparador-historico')}
-                  style={{
-                    backgroundColor: activeTool === 'comparador-historico' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'comparador-historico' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'comparador-historico' ? '600' : '500',
-                    boxShadow: activeTool === 'comparador-historico' ? 'var(--shadow-sm)' : 'none',
-                  }}
-                >
-                  Dólar vs PF vs Merval
-                </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('sueldo-neto')}
-                  style={{
-                    backgroundColor: activeTool === 'sueldo-neto' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'sueldo-neto' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'sueldo-neto' ? '600' : '500',
-                    boxShadow: activeTool === 'sueldo-neto' ? 'var(--shadow-sm)' : 'none',
-                  }}
-                >
-                  Sueldo Neto Freelancer
-                </button>
-                <button
-                  className="btn"
-                  onClick={() => setActiveTool('broker-comparator')}
-                  style={{
-                    backgroundColor: activeTool === 'broker-comparator' ? 'var(--accent-primary)' : 'transparent',
-                    color: activeTool === 'broker-comparator' ? '#090D16' : 'var(--text-secondary)',
-                    fontWeight: activeTool === 'broker-comparator' ? '600' : '500',
-                    boxShadow: activeTool === 'broker-comparator' ? 'var(--shadow-sm)' : 'none',
-                  }}
-                >
-                  Comparador de Brokers
+                  <ChevronRight size={20} />
                 </button>
               </div>
 
-              {/* Right Slide Button */}
-              <button 
-                onClick={() => scroll('right')}
-                className="scroll-btn scroll-btn-right"
-                style={{
-                  position: 'absolute',
-                  right: '0.5rem',
-                  zIndex: 10,
-                  backgroundColor: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '50%',
-                  width: '36px',
-                  height: '36px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  color: 'var(--text-primary)',
-                  boxShadow: 'var(--shadow-sm)',
-                  transition: 'all 0.2s',
-                }}
-              >
-                <ChevronRight size={20} />
-              </button>
+              <div key={activeTool} className="animate-fade-in">
+                {activeTool === 'buy-vs-rent' && <BuyVsRentCalculator />}
+                {activeTool === 'compound-interest' && <CompoundInterestCalculator />}
+                {activeTool === 'savings-goal' && <SavingsGoalCalculator />}
+                {activeTool === 'fire' && <FireCalculator />}
+                {activeTool === 'inflation' && <InflationCalculator />}
+                {activeTool === 'hipotecario-uva' && <HipotecarioUvaCalculator />}
+                {activeTool === 'comparador-historico' && <ComparadorHistorico />}
+                {activeTool === 'sueldo-neto' && <SueldoNetoCalculator />}
+                {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
+              </div>
             </div>
+          )}
 
-            {activeTool === 'buy-vs-rent' && <BuyVsRentCalculator />}
-            {activeTool === 'compound-interest' && <CompoundInterestCalculator />}
-            {activeTool === 'savings-goal' && <SavingsGoalCalculator />}
-            {activeTool === 'fire' && <FireCalculator />}
-            {activeTool === 'inflation' && <InflationCalculator />}
-            {activeTool === 'hipotecario-uva' && <HipotecarioUvaCalculator />}
-            {activeTool === 'comparador-historico' && <ComparadorHistorico />}
-            {activeTool === 'sueldo-neto' && <SueldoNetoCalculator />}
-            {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
-          </div>
-        )}
-
-        {activeTab === 'asesores' && <Asesores />}
-        {activeTab === 'acerca' && <AcercaDe />}
-        {activeTab === 'privacidad' && <Privacidad />}
-        {activeTab === 'terminos' && <Terminos />}
+          {activeTab === 'asesores' && <Asesores />}
+          {activeTab === 'acerca' && <AcercaDe />}
+          {activeTab === 'privacidad' && <Privacidad />}
+          {activeTab === 'terminos' && <Terminos />}
+        </div>
       </main>
 
       {/* Advertisement Banner Placeholder */}
