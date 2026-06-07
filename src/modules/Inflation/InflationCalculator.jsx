@@ -27,6 +27,12 @@ const InflationCalculator = () => {
   });
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
+  const blockInvalidChar = (e) => {
+    if (e.key === 'e' || e.key === 'E') {
+      e.preventDefault();
+    }
+  };
+
   // Save states to localStorage
   useEffect(() => {
     localStorage.setItem('valia_inflation_amount', amount);
@@ -125,6 +131,7 @@ const InflationCalculator = () => {
                 style={{ paddingLeft: '2rem' }}
                 value={amount}
                 onChange={e => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
+                onKeyDown={blockInvalidChar}
                 step={100}
               />
             </div>
@@ -137,6 +144,7 @@ const InflationCalculator = () => {
               className="input-field"
               value={fromYear}
               onChange={e => setFromYear(e.target.value === '' ? '' : Number(e.target.value))}
+              onKeyDown={blockInvalidChar}
               min={1635}
               max={2025}
             />
@@ -149,6 +157,7 @@ const InflationCalculator = () => {
               className="input-field"
               value={toYear}
               onChange={e => setToYear(e.target.value === '' ? '' : Number(e.target.value))}
+              onKeyDown={blockInvalidChar}
               min={1635}
               max={2025}
             />
@@ -179,6 +188,7 @@ const InflationCalculator = () => {
                 }}
                 value={customRate !== null ? rateInput : displayedRate.toFixed(2)}
                 onChange={e => handleRateChange(e.target.value)}
+                onKeyDown={blockInvalidChar}
                 step={0.1}
               />
               <span style={{ position: 'absolute', right: '1rem', color: 'var(--text-secondary)', pointerEvents: 'none' }}>%</span>

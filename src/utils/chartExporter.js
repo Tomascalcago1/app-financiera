@@ -42,13 +42,13 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
     svgString = svgString.replace(/var\(--bg-secondary\)/g, '#0F172A');
     svgString = svgString.replace(/var\(--bg-tertiary\)/g, '#1E293B');
 
-    // Codificamos a base64 (soportando caracteres especiales/Unicode de etiquetas)
-    const encodedSvg = window.btoa(unescape(encodeURIComponent(svgString)));
-    const svgUrl = `data:image/svg+xml;base64,${encodedSvg}`;
+    // Usamos Blob y URL.createObjectURL para mayor compatibilidad y soporte de caracteres unicode
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const svgUrl = URL.createObjectURL(svgBlob);
 
     const img = new Image();
-    img.src = svgUrl;
-
+    
+    // Definimos el onload y onerror ANTES de asignar el src
     img.onload = () => {
       // Creamos un canvas con el doble de densidad para que la imagen PNG se vea nítida en pantallas Retina y 4K
       const scale = 2;
@@ -71,17 +71,34 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
       ctx.lineWidth = 1;
       ctx.strokeRect(0, 0, width, height);
 
-      // Exportamos a un DataURL de PNG y forzamos la descarga del navegador
-      const pngUrl = canvas.toDataURL('image/png');
-      const downloadLink = document.createElement('a');
-      downloadLink.href = pngUrl;
-      downloadLink.download = filename;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+      try {
+        // Exportamos a un DataURL de PNG y forzamos la descarga del navegador
+        const pngUrl = canvas.toDataURL('image/png');
+        const downloadLink = document.createElement('a');
+        downloadLink.href = pngUrl;
+        downloadLink.download = filename;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      } catch (toDataUrlErr) {
+        console.error('Error al generar DataURL desde el canvas:', toDataUrlErr);
+        alert('No se pudo exportar la imagen debido a una restricción de seguridad del navegador.');
+      }
+
+      // Liberamos el objeto URL para no causar fugas de memoria
+      URL.revokeObjectURL(svgUrl);
     };
+
+    img.onerror = (err) => {
+      console.error('Error al cargar el SVG clonado como imagen:', err);
+      alert('Error al procesar el gráfico para la descarga.');
+      URL.revokeObjectURL(svgUrl);
+    };
+
+    img.src = svgUrl;
   } catch (err) {
     console.error('Error al exportar gráfico a PNG:', err);
     alert('Ocurrió un error al intentar exportar el gráfico a imagen.');
   }
 };
+

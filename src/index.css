@@ -393,8 +393,22 @@ input[type="number"] {
 
 /* Print Styles for PDF Export */
 @media print {
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    --border-color: #cbd5e1;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-glow: none;
+  }
+
   body {
     background: #ffffff !important;
+    background-color: #ffffff !important;
     color: #0f172a !important;
   }
   
@@ -425,9 +439,18 @@ input[type="number"] {
   /* Light style for cards in print */
   .card {
     background: #f8fafc !important;
+    background-color: #f8fafc !important;
+    background-image: none !important;
     border: 1px solid #cbd5e1 !important;
     box-shadow: none !important;
     page-break-inside: avoid;
+  }
+
+  /* Force background transparency inside cards to prevent dark boxes in print */
+  .card div, .card p, .card h2, .card h3, .card h4, .card span, .card strong {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #0f172a !important;
   }
   
   main {

@@ -44,6 +44,12 @@ const FinancialInput = ({
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'e' || e.key === 'E') {
+      e.preventDefault();
+    }
+  };
+
   // Formatear el valor cuando el input no tiene el foco
   const displayValue = isFocused 
     ? localValue 
@@ -79,6 +85,7 @@ const FinancialInput = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           min={min}
           max={max}
           step={step}
