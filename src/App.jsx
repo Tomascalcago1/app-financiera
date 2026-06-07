@@ -399,28 +399,7 @@ function App() {
         </div>
       </main>
 
-      {/* Advertisement Banner Placeholder */}
-      <div style={{ padding: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
-        <div 
-          className="ad-banner"
-          style={{ 
-            width: '100%', 
-            maxWidth: '728px', 
-            height: '90px', 
-            backgroundColor: 'var(--bg-tertiary)', 
-            border: '1px dashed var(--text-tertiary)', 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            color: 'var(--text-tertiary)', 
-            fontSize: '0.875rem', 
-            borderRadius: '4px' 
-          }}
-        >
-          <span className="ad-text-desktop">Espacio Publicitario (728x90)</span>
-          <span className="ad-text-mobile" style={{ display: 'none' }}>Espacio Publicitario (320x50)</span>
-        </div>
-      </div>
+
 
       {/* Footer */}
       <footer style={{ 
