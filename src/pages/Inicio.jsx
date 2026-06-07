@@ -95,6 +95,13 @@ const Inicio = ({ onSelectTool }) => {
       color: 'var(--accent-primary)'
     },
     {
+      id: 'ganancias',
+      name: 'Simulador de Ganancias',
+      icon: <Percent size={24} className="text-accent-primary" />,
+      desc: 'Calculá la retención del Impuesto a las Ganancias sobre tu sueldo (4° categoría) con las deducciones y escalas oficiales de 2026.',
+      color: 'var(--accent-primary)'
+    },
+    {
       id: 'broker-comparator',
       name: 'Comparador de Brokers',
       icon: <TrendingUp size={24} className="text-accent-primary" />,

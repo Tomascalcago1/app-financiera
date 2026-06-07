@@ -8,13 +8,15 @@ import HipotecarioUvaCalculator from './modules/HipotecarioUva/HipotecarioUvaCal
 import ComparadorHistorico from './modules/ComparadorHistorico/ComparadorHistorico';
 import SueldoNetoCalculator from './modules/SueldoNeto/SueldoNetoCalculator';
 import BrokerComparator from './modules/BrokerComparator/BrokerComparator';
+import GananciasCalculator from './modules/Ganancias/GananciasCalculator';
 
 import AcercaDe from './pages/AcercaDe';
 import Privacidad from './pages/Privacidad';
 import Terminos from './pages/Terminos';
 import Inicio from './pages/Inicio';
 import Asesores from './pages/Asesores';
-import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import Blog from './pages/Blog';
+import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('herramientas');
@@ -29,6 +31,8 @@ function App() {
         setActiveTab('herramientas');
       } else if (e.detail === 'inicio') {
         setActiveTab('inicio');
+      } else if (e.detail === 'educacion') {
+        setActiveTab('educacion');
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -113,6 +117,25 @@ function App() {
             >
               <Wrench size={18} />
               Herramientas
+            </button>
+            <button
+              onClick={() => setActiveTab('educacion')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 1rem',
+                backgroundColor: activeTab === 'educacion' ? 'var(--bg-tertiary)' : 'transparent',
+                color: activeTab === 'educacion' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                border: 'none',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer',
+                fontWeight: 500,
+                transition: 'all 0.2s'
+              }}
+            >
+              <BookOpen size={18} />
+              Educación
             </button>
             <button
               onClick={() => setActiveTab('asesores')}
@@ -339,6 +362,19 @@ function App() {
                   </button>
                   <button
                     className="btn"
+                    onClick={() => setActiveTool('ganancias')}
+                    style={{
+                      backgroundColor: activeTool === 'ganancias' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'ganancias' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'ganancias' ? '600' : '500',
+                      boxShadow: activeTool === 'ganancias' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Simulador Ganancias
+                  </button>
+                  <button
+                    className="btn"
                     onClick={() => setActiveTool('broker-comparator')}
                     style={{
                       backgroundColor: activeTool === 'broker-comparator' ? 'var(--accent-primary)' : 'transparent',
@@ -387,12 +423,14 @@ function App() {
                 {activeTool === 'hipotecario-uva' && <HipotecarioUvaCalculator />}
                 {activeTool === 'comparador-historico' && <ComparadorHistorico />}
                 {activeTool === 'sueldo-neto' && <SueldoNetoCalculator />}
+                {activeTool === 'ganancias' && <GananciasCalculator />}
                 {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
               </div>
             </div>
           )}
 
           {activeTab === 'asesores' && <Asesores />}
+          {activeTab === 'educacion' && <Blog />}
           {activeTab === 'acerca' && <AcercaDe />}
           {activeTab === 'privacidad' && <Privacidad />}
           {activeTab === 'terminos' && <Terminos />}
@@ -440,6 +478,23 @@ function App() {
             justifyContent: 'center',
             margin: '0.5rem 0'
           }}>
+            <button 
+              onClick={() => {
+                setActiveTab('educacion');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: activeTab === 'educacion' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
+                cursor: 'pointer', 
+                fontSize: '0.875rem', 
+                fontWeight: 500,
+                transition: 'color var(--transition-fast)' 
+              }}
+            >
+              Educación
+            </button>
             <button 
               onClick={() => {
                 setActiveTab('acerca');
