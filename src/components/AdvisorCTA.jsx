@@ -49,8 +49,8 @@ const AdvisorCTA = ({
         </div>
       </div>
       <button 
-        onClick={handleClick} 
-        className="btn btn-primary" 
+        disabled
+        className="btn" 
         style={{ 
           whiteSpace: 'nowrap', 
           display: 'inline-flex', 
@@ -59,10 +59,13 @@ const AdvisorCTA = ({
           padding: '0.75rem 1.5rem',
           fontWeight: 600,
           border: 'none',
-          cursor: 'pointer'
+          cursor: 'not-allowed',
+          backgroundColor: 'var(--bg-tertiary)',
+          color: 'var(--text-secondary)',
+          opacity: 0.7
         }}
       >
-        Contactar Asesor
+        Próximamente
       </button>
     </div>
   );

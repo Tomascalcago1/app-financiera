@@ -67,6 +67,24 @@ function App() {
     return () => window.removeEventListener('change-tab', handleChangeTab);
   }, []);
 
+  // MutationObserver temporal para ocultar todos los botones de "Descargar Gráfico"
+  useEffect(() => {
+    const hideDownloadButtons = () => {
+      document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.includes('Descargar Gráfico')) {
+          btn.style.setProperty('display', 'none', 'important');
+        }
+      });
+    };
+
+    hideDownloadButtons();
+
+    const observer = new MutationObserver(hideDownloadButtons);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
+
   const scroll = (direction) => {
     if (scrollRef.current) {
       const scrollAmount = 250;

@@ -231,12 +231,22 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
             )}
 
             <button 
-              type="submit" 
-              className="btn btn-primary"
-              style={{ width: '100%', justifyContent: 'center', padding: '0.875rem', fontWeight: 600, marginTop: '0.5rem' }}
+              type="button" 
+              disabled
+              className="btn"
+              style={{ 
+                width: '100%', 
+                justifyContent: 'center', 
+                padding: '0.875rem', 
+                fontWeight: 600, 
+                marginTop: '0.5rem',
+                cursor: 'not-allowed',
+                backgroundColor: 'var(--bg-tertiary)',
+                color: 'var(--text-secondary)',
+                opacity: 0.7
+              }}
             >
-              Asignar Asesor e Iniciar WhatsApp
-              <ArrowRight size={18} />
+              Próximamente
             </button>
           </form>
         </div>
