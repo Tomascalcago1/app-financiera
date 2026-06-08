@@ -431,7 +431,7 @@ const GananciasCalculator = () => {
               { label: 'Cónyuge a Cargo', value: hasSpouse ? 'Sí' : 'No' },
               { label: 'Hijos a Cargo', value: String(childrenCount) },
               { label: 'Hijos con Discapacidad', value: String(disabledChildrenCount) },
-              { label: 'Zona Patagónica', value: isPatagonia ? 'Sí' : 'No' },
+              { label: 'Zona Patagónica', value: isPatagonico ? 'Sí' : 'No' },
               { label: 'Deducción Prepaga', value: formatCurrency(monthlyPrepaga) },
               { label: 'Deducción Alquiler', value: formatCurrency(monthlyRent) },
               { label: 'Deducción Personal Doméstico', value: formatCurrency(monthlyDomesticService) }
