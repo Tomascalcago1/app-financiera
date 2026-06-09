@@ -67,6 +67,154 @@ const AcercaDe = () => {
         </ul>
       </section>
 
+      {/* Compromisos de Confianza */}
+      <section className="card" style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
+          Nuestros Compromisos de Confianza
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Shield size={16} />
+              Privacidad Absoluta
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', margin: 0 }}>
+              No requerimos registro de usuarios, correos electrónicos ni tarjetas de crédito. Tus datos financieros nunca se envían ni guardan en un servidor externo.
+            </p>
+          </div>
+          <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Target size={16} />
+              Rigor y Transparencia
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', margin: 0 }}>
+              Utilizamos fórmulas estándares del mercado, datos históricos oficiales e índices provistos por entidades reguladas o académicas de renombre.
+            </p>
+          </div>
+          <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Heart size={16} />
+              Independencia Editorial
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', margin: 0 }}>
+              Valia es un portal de acceso libre y gratuito. No recibimos comisiones ocultas por recomendar productos ni colocamos anuncios invasivos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Metodología Matemática */}
+      <section className="card" style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
+          Metodología Matemática de Cálculo
+        </h2>
+        <p style={{ fontSize: '0.9rem', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>
+          En Valia creemos en la transparencia absoluta. A continuación, detallamos los modelos matemáticos y algoritmos lógicos empleados por nuestros simuladores:
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Interés Compuesto */}
+          <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+            <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+              1. Interés Compuesto con Aportes
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+              Calcula el crecimiento del capital con capitalización periódica (mensual) combinando el interés compuesto clásico y la anualidad ordinaria (aportes):
+            </p>
+            <div style={{ 
+              fontFamily: 'monospace', 
+              background: 'rgba(0,0,0,0.25)', 
+              padding: '0.75rem', 
+              borderRadius: '4px', 
+              fontSize: '0.85rem', 
+              color: 'var(--accent-primary)',
+              textAlign: 'center',
+              margin: '0.5rem 0'
+            }}>
+              VF = CI * (1 + r/n)^(n*t) + PMT * [((1 + r/n)^(n*t) - 1) / (r/n)]
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+              Donde: <strong>VF</strong> = Valor Futuro • <strong>CI</strong> = Capital Inicial • <strong>PMT</strong> = Aporte Mensual • <strong>r</strong> = Tasa de Interés Anual Nominal • <strong>n</strong> = Frecuencia de Capitalización (12) • <strong>t</strong> = Tiempo en Años.
+            </div>
+          </div>
+
+          {/* Créditos UVA */}
+          <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+            <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+              2. Amortización de Créditos UVA
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+              El capital prestado se convierte a Unidades de Valor Adquisitivo (UVA) al valor de cotización del día de firma del crédito. El saldo de la deuda se amortiza en UVAs bajo el sistema Francés o Alemán, indexándose las cuotas resultantes según la inflación del IPC:
+            </p>
+            <div style={{ 
+              fontFamily: 'monospace', 
+              background: 'rgba(0,0,0,0.25)', 
+              padding: '0.75rem', 
+              borderRadius: '4px', 
+              fontSize: '0.85rem', 
+              color: 'var(--accent-primary)',
+              textAlign: 'center',
+              margin: '0.5rem 0'
+            }}>
+              Cuota UVA (Francés) = Deuda UVA * [i_u * (1 + i_u)^k] / [((1 + i_u)^k) - 1]
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+              Donde: <strong>i_u</strong> = Tasa de interés mensual real pactada • <strong>k</strong> = Cuotas restantes. La cuota en pesos es: <strong>Cuota ($) = Cuota UVA * Valor UVA de Facturación (ajustado por CER)</strong>.
+            </div>
+          </div>
+
+          {/* FIRE */}
+          <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+            <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+              3. Simulación de Retiro FIRE (Regla del 4%)
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+              Basada en el estudio de asignación de activos de la Universidad de Trinity. El simulador evalúa la probabilidad de supervivencia patrimonial mediante "backtesting" continuo, corriendo la cartera contra series reales mensuales del S&P 500 y Bonos del Tesoro de EE.UU. desde 1926:
+            </p>
+            <div style={{ 
+              fontFamily: 'monospace', 
+              background: 'rgba(0,0,0,0.25)', 
+              padding: '0.75rem', 
+              borderRadius: '4px', 
+              fontSize: '0.85rem', 
+              color: 'var(--accent-primary)',
+              textAlign: 'center',
+              margin: '0.5rem 0'
+            }}>
+              Retiro_t = Gasto_Inicial * (1 + Inflación_Acumulada_t)
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+              El saldo de la cartera se actualiza mes a mes: <strong>Saldo_t = (Saldo_t-1 - Retiro_t/12) * (1 + Retorno_Mercado_t)</strong>. Si el saldo cae a cero antes del plazo objetivo, la simulación se considera fallida.
+            </div>
+          </div>
+
+          {/* Impuesto a las Ganancias */}
+          <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+            <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+              4. Impuestos y Escalas Progresivas
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+              Para estimar el Impuesto a las Ganancias (4° categoría) y las cuotas de Monotributo vigentes para el período fiscal 2026, aplicamos las escalas progresivas provistas por los marcos regulatorios de la AFIP/ARCA:
+            </p>
+            <div style={{ 
+              fontFamily: 'monospace', 
+              background: 'rgba(0,0,0,0.25)', 
+              padding: '0.75rem', 
+              borderRadius: '4px', 
+              fontSize: '0.85rem', 
+              color: 'var(--accent-primary)',
+              textAlign: 'center',
+              margin: '0.5rem 0'
+            }}>
+              Impuesto Neto = Cargo_Fijo + (Ganancia_Neta_Imponible - Piso_Escala) * Alícuota_Marginal
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+              Donde: <strong>Ganancia Neta Imponible</strong> = Ingreso Bruto - Deducciones Generales (mínimo no imponible, cargas de familia, prepagas, alquileres) - Aportes de ley.
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Disclaimer */}
       <section className="card" style={{ 
         marginBottom: '2rem',

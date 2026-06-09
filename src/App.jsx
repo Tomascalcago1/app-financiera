@@ -95,16 +95,38 @@ function App() {
     }
   };
 
+  const getTabStyle = (tabName) => {
+    const isActive = activeTab === tabName;
+    return {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.4rem',
+      padding: '0.45rem 0.85rem',
+      backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
+      color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+      border: '1px solid',
+      borderColor: isActive ? 'rgba(6, 182, 212, 0.25)' : 'transparent',
+      borderRadius: 'var(--border-radius-sm)',
+      cursor: 'pointer',
+      fontWeight: 500,
+      fontSize: '0.875rem',
+      transition: 'all 0.15s ease-in-out'
+    };
+  };
+
   return (
     <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Navigation Bar */}
       <header style={{ 
-        backgroundColor: 'var(--bg-secondary)', 
-        borderBottom: '1px solid var(--border-color)',
-        padding: '1rem 0',
+        backgroundColor: 'rgba(15, 23, 42, 0.85)', 
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(51, 65, 85, 0.4)',
+        padding: '0.75rem 0',
         position: 'sticky',
         top: 0,
-        zIndex: 100
+        zIndex: 100,
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
       }}>
         <div className="container header-content">
           {/* Logo/Brand */}
@@ -112,131 +134,44 @@ function App() {
             onClick={() => setActiveTab('inicio')}
             style={{ 
               display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.75rem', 
-              fontWeight: 'bold', 
-              fontSize: '1.25rem',
-              cursor: 'pointer'
+              flexDirection: 'column',
+              cursor: 'pointer',
+              userSelect: 'none'
             }}
           >
-            <Wallet className="text-accent-primary" />
-            <span>Valia</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Wallet className="text-accent-primary" size={20} />
+              <span style={{ fontWeight: '700', fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>Valia</span>
+            </div>
+            <span style={{ fontSize: '0.625rem', color: 'var(--text-secondary)', fontWeight: '600', marginTop: '0.15rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              Portal Financiero Educativo
+            </span>
           </div>
 
           {/* Navigation Tabs */}
           <nav className="nav-tabs">
-            <button
-              onClick={() => setActiveTab('inicio')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: activeTab === 'inicio' ? 'var(--bg-tertiary)' : 'transparent',
-                color: activeTab === 'inicio' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                border: 'none',
-                borderRadius: 'var(--border-radius-sm)',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s'
-              }}
-            >
-              <Home size={18} />
+            <button onClick={() => setActiveTab('inicio')} style={getTabStyle('inicio')}>
+              <Home size={16} />
               Inicio
             </button>
-            <button
-              onClick={() => setActiveTab('herramientas')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: activeTab === 'herramientas' ? 'var(--bg-tertiary)' : 'transparent',
-                color: activeTab === 'herramientas' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                border: 'none',
-                borderRadius: 'var(--border-radius-sm)',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s'
-              }}
-            >
-              <Wrench size={18} />
+            <button onClick={() => setActiveTab('herramientas')} style={getTabStyle('herramientas')}>
+              <Wrench size={16} />
               Herramientas
             </button>
-            <button
-              onClick={() => setActiveTab('educacion')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: activeTab === 'educacion' ? 'var(--bg-tertiary)' : 'transparent',
-                color: activeTab === 'educacion' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                border: 'none',
-                borderRadius: 'var(--border-radius-sm)',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s'
-              }}
-            >
-              <BookOpen size={18} />
+            <button onClick={() => setActiveTab('educacion')} style={getTabStyle('educacion')}>
+              <BookOpen size={16} />
               Educación
             </button>
-            <button
-              onClick={() => setActiveTab('glosario')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: activeTab === 'glosario' ? 'var(--bg-tertiary)' : 'transparent',
-                color: activeTab === 'glosario' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                border: 'none',
-                borderRadius: 'var(--border-radius-sm)',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s'
-              }}
-            >
-              <Book size={18} />
+            <button onClick={() => setActiveTab('glosario')} style={getTabStyle('glosario')}>
+              <Book size={16} />
               Glosario
             </button>
-            <button
-              onClick={() => setActiveTab('asesores')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: activeTab === 'asesores' ? 'var(--bg-tertiary)' : 'transparent',
-                color: activeTab === 'asesores' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                border: 'none',
-                borderRadius: 'var(--border-radius-sm)',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s'
-              }}
-            >
-              <Users size={18} />
+            <button onClick={() => setActiveTab('asesores')} style={getTabStyle('asesores')}>
+              <Users size={16} />
               Asesores
             </button>
-            <button
-              onClick={() => setActiveTab('acerca')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: activeTab === 'acerca' ? 'var(--bg-tertiary)' : 'transparent',
-                color: activeTab === 'acerca' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                border: 'none',
-                borderRadius: 'var(--border-radius-sm)',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s'
-              }}
-            >
-              <Info size={18} />
+            <button onClick={() => setActiveTab('acerca')} style={getTabStyle('acerca')}>
+              <Info size={16} />
               Acerca de
             </button>
           </nav>
@@ -522,129 +457,196 @@ function App() {
       <footer style={{ 
         backgroundColor: 'var(--bg-secondary)', 
         borderTop: '1px solid var(--border-color)', 
-        padding: '2.5rem 0 2rem 0',
+        padding: '3.5rem 0 2rem 0',
         marginTop: 'auto'
       }}>
         <div className="container" style={{ 
           display: 'flex', 
           flexDirection: 'column', 
-          alignItems: 'center', 
-          gap: '1.25rem',
-          justifyContent: 'center',
-          textAlign: 'center'
+          gap: '2.5rem'
         }}>
-          <div 
-            onClick={() => setActiveTab('inicio')}
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.5rem', 
-              fontWeight: 'bold',
-              cursor: 'pointer'
-            }}
-          >
-            <Wallet size={20} className="text-accent-primary" />
-            <span>Valia</span>
-          </div>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>
-            Herramientas educativas gratuitas para ayudarte a tomar decisiones financieras informadas. 
-            Todos los cálculos se realizan localmente en tu navegador.
-          </p>
-          <nav style={{ 
-            display: 'flex', 
-            gap: '1.5rem', 
-            flexWrap: 'wrap', 
-            justifyContent: 'center',
-            margin: '0.5rem 0'
+          {/* 4-Column Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '2rem'
           }}>
-            <button 
-              onClick={() => {
-                setActiveTab('educacion');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                color: activeTab === 'educacion' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
-                cursor: 'pointer', 
-                fontSize: '0.875rem', 
-                fontWeight: 500,
-                transition: 'color var(--transition-fast)' 
-              }}
-            >
-              Educación
-            </button>
-            <button 
-              onClick={() => {
-                setActiveTab('glosario');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                color: activeTab === 'glosario' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
-                cursor: 'pointer', 
-                fontSize: '0.875rem', 
-                fontWeight: 500,
-                transition: 'color var(--transition-fast)' 
-              }}
-            >
-              Glosario
-            </button>
-            <button 
-              onClick={() => {
-                setActiveTab('acerca');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                color: activeTab === 'acerca' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
-                cursor: 'pointer', 
-                fontSize: '0.875rem', 
-                fontWeight: 500,
-                transition: 'color var(--transition-fast)' 
-              }}
-            >
-              Acerca de
-            </button>
-            <button 
-              onClick={() => {
-                setActiveTab('privacidad');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                color: activeTab === 'privacidad' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
-                cursor: 'pointer', 
-                fontSize: '0.875rem', 
-                fontWeight: 500,
-                transition: 'color var(--transition-fast)' 
-              }}
-            >
-              Política de Privacidad
-            </button>
-            <button 
-              onClick={() => {
-                setActiveTab('terminos');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                color: activeTab === 'terminos' ? 'var(--accent-primary)' : 'var(--text-secondary)', 
-                cursor: 'pointer', 
-                fontSize: '0.875rem', 
-                fontWeight: 500,
-                transition: 'color var(--transition-fast)' 
-              }}
-            >
-              Términos de Uso
-            </button>
-          </nav>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>
-            &copy; {new Date().getFullYear()} Valia. Todos los derechos reservados.
+            {/* Col 1: Brand Info */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div 
+                onClick={() => {
+                  setActiveTab('inicio');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.5rem', 
+                  fontWeight: '700',
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  color: 'var(--text-primary)'
+                }}
+              >
+                <Wallet size={20} className="text-accent-primary" />
+                <span>Valia</span>
+              </div>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
+                Herramientas educativas gratuitas para simulación y planificación patrimonial autónoma. Privacidad garantizada por diseño local.
+              </p>
+              <div style={{ 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '0.4rem', 
+                fontSize: '0.75rem', 
+                color: 'var(--accent-success)',
+                fontWeight: 600,
+                marginTop: '0.25rem'
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-success)' }} />
+                Seguridad Local Auditada
+              </div>
+            </div>
+
+            {/* Col 2: Simuladores */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <strong style={{ fontSize: '0.875rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Simuladores
+              </strong>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-start' }}>
+                {[
+                  { label: '¿Comprar o Alquilar?', tool: 'buy-vs-rent' },
+                  { label: 'Interés Compuesto', tool: 'compound-interest' },
+                  { label: 'Crédito Hipotecario UVA', tool: 'hipotecario-uva' },
+                  { label: 'Simulador FIRE', tool: 'fire' },
+                  { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash' }
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setActiveTab('herramientas');
+                      setActiveTool(item.tool);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: activeTool === item.tool && activeTab === 'herramientas' ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'color var(--transition-fast)'
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Col 3: Recursos */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <strong style={{ fontSize: '0.875rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Recursos
+              </strong>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-start' }}>
+                {[
+                  { label: 'Educación Financiera', tab: 'educacion' },
+                  { label: 'Glosario de Términos', tab: 'glosario' },
+                  { label: 'Acerca de Valia', tab: 'acerca' },
+                  { label: 'Contacto de Soporte', tab: 'acerca' }
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setActiveTab(item.tab);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: activeTab === item.tab ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'color var(--transition-fast)'
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Col 4: Seguridad & Legal */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <strong style={{ fontSize: '0.875rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Transparencia & Legal
+              </strong>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-start' }}>
+                {[
+                  { label: 'Términos de Uso', tab: 'terminos' },
+                  { label: 'Política de Privacidad', tab: 'privacidad' },
+                  { label: 'Fórmulas y Metodologías', tab: 'acerca' }
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setActiveTab(item.tab);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: activeTab === item.tab ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'color var(--transition-fast)'
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Lower Legal Disclaimer & Copyright */}
+          <div style={{ 
+            borderTop: '1px solid var(--border-color)', 
+            paddingTop: '1.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem'
+          }}>
+            <p style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', maxWidth: '100%', margin: 0, lineHeight: '1.5', textAlign: 'justify' }}>
+              <strong>Aviso Legal y Advertencia de Riesgo:</strong> Valia es una plataforma de contenido puramente educativo e ilustrativo. 
+              Los cálculos, proyecciones, datos históricos y resultados simulados no constituyen asesoramiento financiero, recomendación de inversión, 
+              oferta de adquisición o venta de valores, ni consultoría fiscal o legal. El rendimiento pasado de los activos financieros 
+              no garantiza ni predice retornos futuros. Cada usuario es plenamente responsable de evaluar los riesgos y beneficios de sus decisiones 
+              patrimoniales. Se recomienda la consulta con asesores financieros idóneos matriculados ante la Comisión Nacional de Valores (CNV) antes de operar.
+            </p>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              flexWrap: 'wrap', 
+              gap: '0.5rem',
+              fontSize: '0.75rem', 
+              color: 'var(--text-tertiary)',
+              marginTop: '0.25rem'
+            }}>
+              <div>
+                &copy; {new Date().getFullYear()} Valia. Todos los derechos reservados.
+              </div>
+              <div style={{ color: 'var(--text-tertiary)' }}>
+                Desarrollado con fines educativos 🇦🇷
+              </div>
+            </div>
           </div>
         </div>
       </footer>
