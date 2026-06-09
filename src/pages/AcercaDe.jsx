@@ -51,7 +51,7 @@ const AcercaDe = () => {
             { name: '¿Comprar o Alquilar?', desc: 'Compara financieramente ambos escenarios considerando hipoteca, inversiones, inflación y apreciación inmobiliaria.' },
             { name: 'Interés Compuesto', desc: 'Proyecta el crecimiento de tu capital a lo largo del tiempo con escenarios optimista y conservador.' },
             { name: 'Objetivo de Ahorro', desc: 'Calcula exactamente cuánto debés aportar por mes para alcanzar una meta financiera.' },
-            { name: 'Simulador FIRE', desc: 'Backtesting de retiro con 99 años de datos históricos reales del mercado estadounidense (desde 1926).' },
+            { name: 'Simulador de Retiro', desc: 'Backtesting de retiro con 99 años de datos históricos reales del mercado estadounidense (desde 1926).' },
             { name: 'Inflación Histórica', desc: 'Comprende cómo cambia el poder adquisitivo del dinero con datos desde 1635 hasta hoy.' },
           ].map((tool, i) => (
             <li key={i} style={{ 
@@ -166,7 +166,7 @@ const AcercaDe = () => {
           {/* FIRE */}
           <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
             <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-              3. Simulación de Retiro FIRE (Regla del 4%)
+              3. Simulación de Retiro Temprano (Regla del 4%)
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
               Basada en el estudio de asignación de activos de la Universidad de Trinity. El simulador evalúa la probabilidad de supervivencia patrimonial mediante "backtesting" continuo, corriendo la cartera contra series reales mensuales del S&P 500 y Bonos del Tesoro de EE.UU. desde 1926:
@@ -232,7 +232,7 @@ const AcercaDe = () => {
         </p>
         <p style={{ marginBottom: '1rem' }}>
           El rendimiento pasado no garantiza resultados futuros. Las simulaciones con datos históricos 
-          (como el Simulador FIRE) muestran lo que <em>habría ocurrido</em> en períodos pasados, pero no 
+          (como el Simulador de Retiro) muestran lo que <em>habría ocurrido</em> en períodos pasados, pero no 
           predicen el comportamiento futuro del mercado.
         </p>
         <p>
@@ -250,7 +250,7 @@ const AcercaDe = () => {
         <ul style={{ paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-secondary)' }}>
           <li><strong>S&P 500, Bonos del Tesoro y T-Bills:</strong> Datos anuales desde 1926 (fuente: Robert Shiller, Yale University).</li>
           <li><strong>Índice de Precios al Consumidor (CPI):</strong> Bureau of Labor Statistics de EE.UU., con datos interpolados desde 1635.</li>
-          <li><strong>Metodología FIRE:</strong> Basada en el estudio Trinity y la herramienta <a href="https://ficalc.app" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>ficalc.app</a>.</li>
+          <li><strong>Metodología de Retiro Temprano:</strong> Basada en el estudio Trinity y la herramienta <a href="https://ficalc.app" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>ficalc.app</a>.</li>
           <li><strong>Fórmulas de Interés Compuesto:</strong> Validadas contra <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>Investor.gov</a>.</li>
         </ul>
       </section>

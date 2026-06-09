@@ -68,7 +68,8 @@ const FireCalculator = () => {
 
   const handleShare = () => {
     const params = new URLSearchParams();
-    params.set('tool', 'fire');
+    params.set('seccion', 'herramientas');
+    params.set('herramienta', 'simulador-de-retiro');
     if (portfolioValue) params.set('port', portfolioValue);
     if (retirementLength) params.set('len', retirementLength);
     if (withdrawalStrategy) params.set('strat', withdrawalStrategy);
@@ -200,10 +201,10 @@ const FireCalculator = () => {
       {/* Guía SEO y Contexto Financiero */}
       <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          Guía de Retiro Temprano: El Movimiento FIRE y la Regla del 4%
+          Guía de Retiro Temprano y la Regla del 4%
         </h2>
         <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-          El movimiento FIRE (Financial Independence, Retire Early) promueve el ahorro agresivo y la inversión inteligente para lograr la libertad de dejar el trabajo tradicional mucho antes de la edad de jubilación obligatoria. Para determinar la viabilidad de un plan de retiro temprano, este simulador somete tu estrategia a más de 90 años de historia financiera real.
+          El concepto de Retiro Temprano (Independencia Financiera) promueve el ahorro planificado y la inversión inteligente para lograr la libertad de dejar el trabajo tradicional mucho antes de la edad de jubilación obligatoria. Para determinar la viabilidad de un plan de retiro temprano, este simulador somete tu estrategia a más de 90 años de historia financiera real.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
           <div>
@@ -230,11 +231,10 @@ const FireCalculator = () => {
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}
-        title="¿Cómo funciona la simulación FIRE?"
+        title="¿Cómo funciona la simulación de retiro?"
       >
         <p>
-          **FIRE** son las siglas de *Financial Independence, Retire Early* (Independencia Financiera, Retiro Temprano). 
-          Consiste en vivir de tus inversiones sin tener la necesidad de trabajar.
+          La planificación del **Retiro Temprano** (Independencia Financiera) consiste en vivir de tus inversiones sin tener la necesidad de trabajar de forma tradicional.
         </p>
 
         <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>1. Backtesting Histórico (El Viaje en el Tiempo)</h3>

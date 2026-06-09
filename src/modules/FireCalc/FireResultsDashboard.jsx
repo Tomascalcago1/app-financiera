@@ -76,7 +76,7 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
     
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `valia_fire_progression_${retirementLength}_anos.csv`);
+    link.setAttribute("download", `valia_retiro_progreso_${retirementLength}_anos.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -178,7 +178,7 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
           Imprimir / Guardar PDF
         </button>
         <button 
-          onClick={() => exportChartToPNG('fire-chart-container', 'valia_simulador_fire.png')}
+          onClick={() => exportChartToPNG('fire-chart-container', 'valia_simulador_retiro.png')}
           className="btn btn-outline" 
           style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
         >

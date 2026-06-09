@@ -45,7 +45,7 @@ const Asesores = () => {
     const advisorPhone = '5491130843105'; // WhatsApp del asesor Balanz
     const goalText = goal === 'otro' ? customGoal : 
                      goal === 'ahorro' ? 'Ahorro a largo plazo' :
-                     goal === 'retiro' ? 'Retiro anticipado (FIRE)' : 'Comprar una vivienda';
+                      goal === 'retiro' ? 'Retiro anticipado' : 'Comprar una vivienda';
 
     const profileText = profile === 'conservador' ? 'Conservador (Preservar capital)' :
                         profile === 'moderado' ? 'Moderado (Crecimiento balanceado)' : 'Agresivo (Máximo crecimiento)';
@@ -211,7 +211,7 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
                 style={{ appearance: 'auto' }}
               >
                 <option value="ahorro">Ahorro y Preservación a Largo Plazo</option>
-                <option value="retiro">Retiro Temprano (Simulación FIRE)</option>
+                <option value="retiro">Retiro Temprano / Jubilación</option>
                 <option value="vivienda">Comprar una Propiedad o Vivienda</option>
                 <option value="otro">Otro objetivo</option>
               </select>

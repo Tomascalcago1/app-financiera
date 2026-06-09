@@ -21,16 +21,16 @@ const Blog = () => {
 
   const articles = [
     {
-      id: 'regla-4-por-ciento-fire',
+      id: 'regla-4-por-ciento-retiro',
       title: 'La Regla del 4% en Argentina: ¿Cómo calcular tu retiro temprano?',
-      summary: 'Descubrí los fundamentos de la simulación FIRE (Financial Independence, Retire Early) y cómo adaptar la regla matemática del retiro seguro al contexto de inflación y devaluación local.',
+      summary: 'Descubrí los fundamentos de la simulación de retiro temprano (independencia financiera) y cómo adaptar la regla matemática del retiro seguro al contexto de inflación y devaluación local.',
       date: '07 de Junio, 2026',
       readTime: '6 min de lectura',
       category: 'inversiones',
       icon: <Flame size={20} className="text-accent-warning" />,
       content: (
         <div>
-          <p>La **Regla del 4%** es el cimiento matemático del movimiento mundial **FIRE** (Financial Independence, Retire Early). Originada en el famoso <em>Estudio Trinity</em> de 1998 en Estados Unidos, esta regla establece que un inversor puede retirar el 4% de su portafolio acumulado durante el primer año de retiro, ajustar esa cantidad por inflación en los años siguientes, y tener una probabilidad cercana al 95% de que sus fondos duren al menos 30 años sin agotarse.</p>
+          <p>La **Regla del 4%** es el cimiento matemático de la planificación del **Retiro Temprano** (Independencia Financiera). Originada en el famoso <em>Estudio Trinity</em> de 1998 en Estados Unidos, esta regla establece que un inversor puede retirar el 4% de su portafolio acumulado durante el primer año de retiro, ajustar esa cantidad por inflación en los años siguientes, y tener una probabilidad cercana al 95% de que sus fondos duren al menos 30 años sin agotarse.</p>
           
           <h3>¿Cómo se calcula en la práctica?</h3>
           <p>Si tus gastos anuales proyectados para vivir de rentas son de <strong>u$s 12.000</strong> (unos u$s 1.000 por mes), para calcular el tamaño de tu portafolio necesario debés multiplicar tu gasto anual por 25 (el inverso de 4%):</p>
@@ -53,7 +53,7 @@ const Blog = () => {
             <li><strong>Fondos de Emergencia y Liquidez:</strong> Contar con un colchón de 1 a 2 años de gastos líquidos en cuentas remuneradas o Fondos Comunes de Inversión (FCI) Money Market evita tener que liquidar acciones en momentos de mercado bajista (el llamado "riesgo de secuencia de retornos").</li>
           </ul>
 
-          <p>Hacer un <em>backtesting</em> o simulación histórica (como la que ofrece nuestro <strong>Simulador FIRE</strong> en la pestaña Herramientas) te permite analizar cómo le hubiera ido a tu dinero atravesando crisis reales como la burbuja de las puntocom (2000), la crisis subprime (2008) o la Gran Depresión de 1929, brindándote tranquilidad científica antes de dar el gran paso.</p>
+          <p>Hacer un <em>backtesting</em> o simulación histórica (como la que ofrece nuestro <strong>Simulador de Retiro</strong> en la pestaña Herramientas) te permite analizar cómo le hubiera ido a tu dinero atravesando crisis reales como la burbuja de las puntocom (2000), la crisis subprime (2008) o la Gran Depresión de 1929, brindándote tranquilidad científica antes de dar el gran paso.</p>
         </div>
       )
     },
@@ -344,7 +344,7 @@ const Blog = () => {
               <input 
                 type="text" 
                 className="input-field" 
-                placeholder="Buscar artículos (ej: FIRE, Interés compuesto)..."
+                placeholder="Buscar artículos (ej: Retiro, Interés compuesto)..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{ paddingLeft: '2.5rem', width: '100%', height: '44px', borderRadius: '50px' }}

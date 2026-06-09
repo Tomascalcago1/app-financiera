@@ -66,7 +66,7 @@ const Inicio = ({ onSelectTool }) => {
     },
     {
       id: 'fire',
-      name: 'Simulador FIRE (Retiro Temprano)',
+      name: 'Simulador de Retiro Temprano',
       icon: <Flame size={24} style={{ color: 'var(--accent-warning)' }} />,
       desc: 'Poné a prueba tu estrategia de retiro haciendo un "backtesting" contra 99 años de datos históricos reales del mercado financiero.',
       color: 'var(--accent-warning)'

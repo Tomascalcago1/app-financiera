@@ -85,6 +85,7 @@ function App() {
         'comprar-o-alquilar': 'buy-vs-rent',
         'interes-compuesto': 'compound-interest',
         'objetivo-de-ahorro': 'savings-goal',
+        'simulador-de-retiro': 'fire',
         'simulador-fire': 'fire',
         'inflacion-historica': 'inflation',
         'hipotecario-uva': 'hipotecario-uva',
@@ -110,7 +111,7 @@ function App() {
       'buy-vs-rent': 'comprar-o-alquilar',
       'compound-interest': 'interes-compuesto',
       'savings-goal': 'objetivo-de-ahorro',
-      'fire': 'simulador-fire',
+      'fire': 'simulador-de-retiro',
       'inflation': 'inflacion-historica',
       'hipotecario-uva': 'hipotecario-uva',
       'comparador-historico': 'comparador-historico',
@@ -180,6 +181,7 @@ function App() {
             'comprar-o-alquilar': 'buy-vs-rent',
             'interes-compuesto': 'compound-interest',
             'objetivo-de-ahorro': 'savings-goal',
+            'simulador-de-retiro': 'fire',
             'simulador-fire': 'fire',
             'inflacion-historica': 'inflation',
             'hipotecario-uva': 'hipotecario-uva',
@@ -527,7 +529,7 @@ function App() {
                     Objetivo de Ahorro
                   </a>
                   <a
-                    href="?seccion=herramientas&herramienta=simulador-fire"
+                    href="?seccion=herramientas&herramienta=simulador-de-retiro"
                     className="btn"
                     onClick={(e) => { e.preventDefault(); setActiveTool('fire'); }}
                     style={{
@@ -542,7 +544,7 @@ function App() {
                       transition: 'all var(--transition-fast)'
                     }}
                   >
-                    Simulador FIRE
+                    Simulador de Retiro
                   </a>
                   <a
                     href="?seccion=herramientas&herramienta=inflacion-historica"
