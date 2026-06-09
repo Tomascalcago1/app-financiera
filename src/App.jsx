@@ -1,24 +1,58 @@
-import React, { useState, useRef, useEffect } from 'react';
-import BuyVsRentCalculator from './modules/BuyVsRent/BuyVsRentCalculator';
-import CompoundInterestCalculator from './modules/CompoundInterest/CompoundInterestCalculator';
-import SavingsGoalCalculator from './modules/SavingsGoal/SavingsGoalCalculator';
-import FireCalculator from './modules/FireCalc/FireCalculator';
-import InflationCalculator from './modules/Inflation/InflationCalculator';
-import HipotecarioUvaCalculator from './modules/HipotecarioUva/HipotecarioUvaCalculator';
-import ComparadorHistorico from './modules/ComparadorHistorico/ComparadorHistorico';
-import SueldoNetoCalculator from './modules/SueldoNeto/SueldoNetoCalculator';
-import BrokerComparator from './modules/BrokerComparator/BrokerComparator';
-import GananciasCalculator from './modules/Ganancias/GananciasCalculator';
-import InstallmentsVsCashCalculator from './modules/InstallmentsVsCash/InstallmentsVsCashCalculator';
-
-import AcercaDe from './pages/AcercaDe';
-import Privacidad from './pages/Privacidad';
-import Terminos from './pages/Terminos';
-import Inicio from './pages/Inicio';
-import Asesores from './pages/Asesores';
-import Blog from './pages/Blog';
-import Glosario from './pages/Glosario';
+import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
 import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book } from 'lucide-react';
+
+const BuyVsRentCalculator = lazy(() => import('./modules/BuyVsRent/BuyVsRentCalculator'));
+const CompoundInterestCalculator = lazy(() => import('./modules/CompoundInterest/CompoundInterestCalculator'));
+const SavingsGoalCalculator = lazy(() => import('./modules/SavingsGoal/SavingsGoalCalculator'));
+const FireCalculator = lazy(() => import('./modules/FireCalc/FireCalculator'));
+const InflationCalculator = lazy(() => import('./modules/Inflation/InflationCalculator'));
+const HipotecarioUvaCalculator = lazy(() => import('./modules/HipotecarioUva/HipotecarioUvaCalculator'));
+const ComparadorHistorico = lazy(() => import('./modules/ComparadorHistorico/ComparadorHistorico'));
+const SueldoNetoCalculator = lazy(() => import('./modules/SueldoNeto/SueldoNetoCalculator'));
+const BrokerComparator = lazy(() => import('./modules/BrokerComparator/BrokerComparator'));
+const GananciasCalculator = lazy(() => import('./modules/Ganancias/GananciasCalculator'));
+const InstallmentsVsCashCalculator = lazy(() => import('./modules/InstallmentsVsCash/InstallmentsVsCashCalculator'));
+
+const AcercaDe = lazy(() => import('./pages/AcercaDe'));
+const Privacidad = lazy(() => import('./pages/Privacidad'));
+const Terminos = lazy(() => import('./pages/Terminos'));
+const Inicio = lazy(() => import('./pages/Inicio'));
+const Asesores = lazy(() => import('./pages/Asesores'));
+const Blog = lazy(() => import('./pages/Blog'));
+const Glosario = lazy(() => import('./pages/Glosario'));
+
+const LoadingState = () => (
+  <div className="container" style={{ 
+    display: 'flex', 
+    flexDirection: 'column',
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    minHeight: '50vh', 
+    gap: '1.25rem'
+  }}>
+    <div style={{
+      width: '40px',
+      height: '40px',
+      borderRadius: '50%',
+      border: '3px solid rgba(6, 182, 212, 0.15)',
+      borderTopColor: 'var(--accent-primary)',
+      animation: 'spin 1s linear infinite'
+    }} />
+    <style>{`
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    `}</style>
+    <div style={{ 
+      fontSize: '0.9rem', 
+      color: 'var(--text-secondary)', 
+      fontWeight: 500,
+      letterSpacing: '0.05em' 
+    }}>
+      Cargando simulador...
+    </div>
+  </div>
+);
 
 function App() {
   const [activeTab, setActiveTab] = useState(() => {
@@ -180,7 +214,8 @@ function App() {
 
       {/* Main Content Area */}
       <main style={{ flex: 1, padding: '2rem 0' }}>
-        <div key={activeTab} className="animate-fade-in">
+        <Suspense fallback={<LoadingState />}>
+          <div key={activeTab} className="animate-fade-in">
           {activeTab === 'inicio' && (
             <Inicio 
               onSelectTool={(toolId) => {
@@ -449,6 +484,7 @@ function App() {
           {activeTab === 'privacidad' && <Privacidad />}
           {activeTab === 'terminos' && <Terminos />}
         </div>
+        </Suspense>
       </main>
 
 

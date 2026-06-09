@@ -9,7 +9,9 @@ import {
   Flame, 
   TrendingUp, 
   Home,
-  MessageSquare
+  MessageSquare,
+  Scale,
+  Percent
 } from 'lucide-react';
 
 const Blog = () => {
@@ -139,6 +141,92 @@ const Blog = () => {
           <p>Para proyectar cómo afectaría la inflación real y estimar el valor futuro de las cuotas de tu préstamo según el sistema francés o alemán, podés usar nuestra herramienta **Hipotecario UVA** en la pestaña de Herramientas.</p>
         </div>
       )
+    },
+    {
+      id: 'cuotas-vs-efectivo-inflacion',
+      title: '¿Cuotas o Efectivo?: La estrategia para ganarle a la inflación en tus compras',
+      summary: 'Analizamos cómo evaluar el Costo Financiero Total (CFT), la inflación y el rendimiento de tus inversiones para decidir racionalmente entre pagar al contado con descuento o financiar en cuotas.',
+      date: '08 de Junio, 2026',
+      readTime: '5 min de lectura',
+      category: 'ahorro',
+      icon: <Scale size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>En contextos inflacionarios como el de Argentina, tomar decisiones de consumo cotidiano o compras importantes de bienes durables (electrodomésticos, tecnología, viajes) puede volverse complejo. La eterna pregunta surge en cada caja: <strong>¿conviene pagar de contado con descuento, o en cuotas fijas?</strong></p>
+          
+          <h3>La Clave Científica: El Costo Financiero Total (CFT)</h3>
+          <p>Mucha gente comete el error de evaluar únicamente la Tasa Nominal Anual (TNA) de interés de las cuotas. Sin embargo, el indicador financiero definitivo que regula el costo de cualquier financiación es el <strong>Costo Financiero Total (CFT)</strong>, el cual incluye no solo los intereses, sino los cargos de seguro de vida, comisiones administrativas, IVA e impuestos bancarios. Si el CFT es inferior a la inflación esperada, financiarse en cuotas representa una ganancia neta.</p>
+          
+          <h3>El Enfoque del Valor Presente (VP)</h3>
+          <p>Para comparar racionalmente las dos opciones, debemos traer el costo futuro de todas las cuotas al valor del dinero de hoy (descontando la inflación mensual estimada):</p>
+          <p style={{ fontFamily: 'monospace', background: 'rgba(0,0,0,0.25)', padding: '0.5rem 1rem', borderRadius: '4px', textAlign: 'center' }}>
+            Valor Presente total = Suma de [ Cuota_t / (1 + i)^t ]
+          </p>
+          <p>Si el Valor Presente total de las cuotas es menor que el precio de contado con descuento, la financiación es conveniente. Esto ocurre porque estás pagando deuda devaluada con ingresos futuros nominalmente mayores.</p>
+
+          <h3>El Costo de Oportunidad (Inversión del Dinero)</h3>
+          <p>Existe otro factor fundamental: <strong>¿qué hacés con el dinero que no gastás hoy?</strong> Si decidís comprar en cuotas, conservás el efectivo en tu poder. Ese efectivo podés colocarlo en una cuenta de inversión remunerada (como un plazo fijo, billetera digital con TNA activa, o cauciones bursátiles) que devenga rendimientos mes a mes. Al pagar la cuota con los intereses generados, al finalizar la financiación habrás retenido un capital excedente.</p>
+          
+          <p>Para modelar estos escenarios con precisión matemática y evaluar si te conviene pagar de contado o financiar según la tasa de tu billetera y la inflación estimada, podés usar nuestro simulador <strong>¿Cuotas o Efectivo?</strong> en la pestaña de Herramientas.</p>
+        </div>
+      )
+    },
+    {
+      id: 'cedears-fci-primeros-pasos',
+      title: 'CEDEARs y Fondos Comunes (FCI): Cómo proteger tus ahorros de la devaluación',
+      summary: 'Si el plazo fijo tradicional ya no rinde lo suficiente, te explicamos cómo funcionan los CEDEARs para dolarizarte y cómo usar los Fondos Comunes de Inversión para mantener tu liquidez activa.',
+      date: '08 de Junio, 2026',
+      readTime: '6 min de lectura',
+      category: 'inversiones',
+      icon: <TrendingUp size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>Durante años, el Plazo Fijo ha sido el instrumento preferido de los ahorristas en pesos. Sin embargo, en un entorno de tasas de interés reales negativas (cuando la tasa del plazo fijo rinde por debajo de la inflación), el dinero guardado en el banco pierde poder de compra todos los meses. Para salir de este ciclo, existen dos herramientas bursátiles sencillas y accesibles: los <strong>Fondos Comunes de Inversión (FCI)</strong> y los <strong>CEDEARs</strong>.</p>
+          
+          <h3>1. Fondos Comunes de Inversión (FCI): Liquidez Inmediata</h3>
+          <p>Un FCI es una cartera colectiva administrada por profesionales financieros donde aportás pesos junto a otros miles de ahorristas. Las principales ventajas son:</p>
+          <ul>
+            <li><strong>Fácil de operar:</strong> Se suscriben y rescatan desde el home banking o cuentas de inversión en segundos.</li>
+            <li><strong>Liquidez a medida:</strong> Existen fondos <em>Money Market</em> de rescate inmediato (ideal para el dinero del mes) y fondos de renta fija de rescate en 24hs (T+1) o fondos atados a inflación (CER) de rescate en 48hs.</li>
+            <li><strong>Diversificación instantánea:</strong> El fondo distribuye el capital en múltiples bonos, cauciones o letras de tesorería, minimizando el riesgo de un solo emisor.</li>
+          </ul>
+
+          <h3>2. CEDEARs: Dolarización sin Límites</h3>
+          <p>Los <strong>CEDEARs (Certificados de Depósito Argentinos)</strong> representan acciones de empresas globales que cotizan en bolsas internacionales (como Apple, Microsoft, Coca-Cola o Google) y se pueden comprar en pesos en el mercado local.</p>
+          <ul>
+            <li><strong>Protección Cambiaria:</strong> El precio del CEDEAR se mueve en base al valor de la acción en el exterior y a la cotización del dólar libre (contado con liquidación o CCL). Si el dólar sube en Argentina, el valor de tus CEDEARs en pesos sube proporcionalmente, protegiéndote contra la devaluación.</li>
+            <li><strong>Fraccionamiento:</strong> Podés comprar fracciones de acciones desde montos muy bajos, permitiendo acceder al mercado estadounidense sin necesidad de girar fondos al exterior.</li>
+          </ul>
+
+          <p>Para comparar las comisiones de compra/venta de CEDEARs, las TNAs de cuenta remunerada y los beneficios de los distintos operadores de bolsa habilitados ante la CNV, te invitamos a explorar nuestra herramienta de <strong>Comparador de Brokers</strong> en la pestaña de Herramientas.</p>
+        </div>
+      )
+    },
+    {
+      id: 'freelancers-monotributo-exterior',
+      title: 'Freelancers y Trabajo para el Exterior: Impuestos, Monotributo y Liquidación',
+      summary: 'Una guía clara sobre cómo facturar legalmente tus servicios al extranjero en Argentina, las categorías del Monotributo 2026, el impuesto a las Ganancias y los límites para ingresar divisas.',
+      date: '08 de Junio, 2026',
+      readTime: '7 min de lectura',
+      category: 'impuestos',
+      icon: <Percent size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>El mercado de servicios profesionales hacia el exterior (programación, diseño, redacción, marketing) ha crecido de forma exponencial en Argentina. Sin embargo, para los profesionales autónomos, navegar los requerimientos de facturación, impuestos de la AFIP/ARCA y liquidación de cobros puede ser un dolor de cabeza.</p>
+          
+          <h3>El Régimen Simplificado (Monotributo)</h3>
+          <p>El <strong>Monotributo</strong> es el punto de partida legal para cualquier freelancer. Consiste en una cuota unificada mensual que cubre el impuesto a las ganancias, el IVA, la jubilación y la obra social. Las categorías (desde la A hasta la K) se definen según los ingresos brutos facturados de forma anualizada.</p>
+          <p>Para la exportación de servicios, emitís facturas del tipo <strong>Factura E (Exportación)</strong> en dólares o pesos. La exportación de servicios está exenta de IVA, pero sí compute para los topes máximos de facturación anual del régimen simplificado.</p>
+
+          <h3>Ingreso de Divisas (Límite de u$s 12.000)</h3>
+          <p>Según las reglamentaciones del Banco Central de la República Argentina (BCRA), los exportadores de servicios profesionales pueden ingresar hasta <strong>u$s 12.000 anuales de forma directa a sus cuentas bancarias locales en dólares</strong> sin necesidad de pesificarlos obligatoriamente al tipo de cambio oficial del MULC. Toda facturación excedente a ese monto anual debe ser liquidada en pesos en el mercado de cambios en un plazo no mayor a 5 días hábiles desde el cobro.</p>
+
+          <h3>¿Cuándo entra en juego Ganancias?</h3>
+          <p>Si excedés los límites máximos del Monotributo, pasás automáticamente al régimen de Responsable Inscripto. En este régimen, debés liquidar el Impuesto a las Ganancias de 4° categoría sobre tu renta neta imponible aplicando las escalas oficiales y deducciones personales vigentes.</p>
+          
+          <p>Para calcular tu sueldo neto real en pesos estimando comisiones de plataformas (Deel, Wise, Payoneer), retención impositiva de Ingresos Brutos y cuota mensual de monotributo, consultá nuestro simulador de <strong>Sueldo Neto Freelancer</strong> o el <strong>Simulador de Ganancias</strong> en la pestaña de Herramientas.</p>
+        </div>
+      )
     }
   ];
 
@@ -265,7 +353,7 @@ const Blog = () => {
 
             {/* Categories */}
             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {['todos', 'inversiones', 'ahorro', 'vivienda'].map(category => (
+              {['todos', 'inversiones', 'ahorro', 'vivienda', 'impuestos'].map(category => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
