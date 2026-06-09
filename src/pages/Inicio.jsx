@@ -23,6 +23,7 @@ import AdvisorCTA from '../components/AdvisorCTA';
 const Inicio = ({ onSelectTool }) => {
   const [monthlySavings, setMonthlySavings] = useState(200);
   const [openFaq, setOpenFaq] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('todas');
 
   // Calcular interés compuesto rápido (8% anual, capitalización mensual)
   const calculateQuickCompound = (monthly, years) => {
@@ -48,79 +49,94 @@ const Inicio = ({ onSelectTool }) => {
       name: '¿Alquilar o Comprar?',
       icon: <Calculator size={24} className="text-accent-primary" />,
       desc: 'Compara financieramente si te conviene alquilar una propiedad e invertir la diferencia, o comprarla con un crédito hipotecario.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
     },
     {
       id: 'compound-interest',
       name: 'Interés Compuesto',
       icon: <TrendingUp size={24} className="text-accent-primary" />,
       desc: 'Simula el crecimiento a largo plazo de tus inversiones mensuales con escenarios optimistas, realistas y conservadores.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'inversiones'
     },
     {
       id: 'savings-goal',
       name: 'Objetivo de Ahorro',
       icon: <Target size={24} className="text-accent-primary" />,
       desc: 'Calcula exactamente cuánto debés ahorrar e invertir por mes para alcanzar una meta financiera (comprar un auto, viajar, etc.) en un plazo determinado.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
     },
     {
       id: 'fire',
       name: 'Simulador de Retiro Temprano',
       icon: <Flame size={24} style={{ color: 'var(--accent-warning)' }} />,
       desc: 'Poné a prueba tu estrategia de retiro haciendo un "backtesting" contra 99 años de datos históricos reales del mercado financiero.',
-      color: 'var(--accent-warning)'
+      color: 'var(--accent-warning)',
+      category: 'inversiones'
     },
     {
       id: 'inflation',
       name: 'Inflación Histórica',
       icon: <DollarSign size={24} style={{ color: 'var(--accent-success)' }} />,
       desc: 'Visualiza la pérdida de poder adquisitivo del dinero a lo largo del tiempo con registros oficiales e históricos desde 1635.',
-      color: 'var(--accent-success)'
+      color: 'var(--accent-success)',
+      category: 'ahorro-credito'
     },
     {
       id: 'hipotecario-uva',
       name: 'Crédito Hipotecario UVA',
       icon: <Home size={24} className="text-accent-primary" />,
       desc: 'Simulá créditos hipotecarios UVA vs tasa fija, comparando el sistema Francés y Alemán con la inflación de Argentina.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
     },
     {
       id: 'comparador-historico',
       name: 'Dólar vs Plazo Fijo vs Merval',
       icon: <TrendingUp size={24} style={{ color: 'var(--accent-success)' }} />,
       desc: 'Compará el rendimiento histórico real en pesos de ahorrar en dólares blue, plazo fijo tradicional, plazo fijo UVA y el Merval desde 2015.',
-      color: 'var(--accent-success)'
+      color: 'var(--accent-success)',
+      category: 'inversiones'
     },
     {
       id: 'sueldo-neto',
       name: 'Sueldo Neto Freelancer',
       icon: <Percent size={24} className="text-accent-primary" />,
       desc: 'Calculá tus ingresos netos en mano estimando la cuota del Monotributo 2026, comisiones de cobro e Ingresos Brutos.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'impuestos'
     },
     {
       id: 'ganancias',
       name: 'Simulador de Ganancias',
       icon: <Percent size={24} className="text-accent-primary" />,
       desc: 'Calculá la retención del Impuesto a las Ganancias sobre tu sueldo (4° categoría) con las deducciones y escalas oficiales de 2026.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'impuestos'
     },
     {
       id: 'broker-comparator',
       name: 'Comparador de Brokers',
       icon: <TrendingUp size={24} className="text-accent-primary" />,
       desc: 'Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'inversiones'
     },
     {
       id: 'installments-vs-cash',
       name: '¿Cuotas o Efectivo?',
       icon: <Scale size={24} className="text-accent-primary" />,
       desc: 'Simulá si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones.',
-      color: 'var(--accent-primary)'
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
     }
   ];
+
+  const filteredTools = selectedCategory === 'todas' 
+    ? tools 
+    : tools.filter(t => t.category === selectedCategory);
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
@@ -169,7 +185,7 @@ const Inicio = ({ onSelectTool }) => {
           margin: '0 auto',
           lineHeight: '1.6'
         }}>
-          Simuladores interactivos diseñados para proyectar tu ahorro, inversión, retiro y vivienda con datos históricos reales.
+          Simuladores financieros interactivos y 100% privados. Sin registrarse, sin anuncios y procesados de manera local en tu navegador.
         </p>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1rem' }}>
           <button 
@@ -349,19 +365,53 @@ const Inicio = ({ onSelectTool }) => {
 
       {/* 3. Grid of Tools */}
       <section className="container">
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Nuestras Calculadoras</h2>
           <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto' }}>
             Explorá herramientas específicas para simular tus finanzas con precisión científica.
           </p>
         </div>
 
+        {/* Category Filters */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '0.5rem', 
+          justifyContent: 'center', 
+          flexWrap: 'wrap', 
+          marginBottom: '3rem',
+          maxWidth: '800px',
+          margin: '0 auto 3rem auto'
+        }}>
+          {[
+            { id: 'todas', label: 'Todas' },
+            { id: 'inversiones', label: 'Inversión y Retiro' },
+            { id: 'ahorro-credito', label: 'Ahorro y Créditos' },
+            { id: 'impuestos', label: 'Impuestos y Salarios' }
+          ].map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`btn ${selectedCategory === cat.id ? 'btn-primary' : 'btn-outline'}`}
+              style={{ 
+                padding: '0.4rem 1.25rem', 
+                fontSize: '0.85rem', 
+                borderRadius: '50px',
+                fontWeight: selectedCategory === cat.id ? '600' : '400',
+                transition: 'all var(--transition-fast)'
+              }}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-          gap: '1.5rem' 
+          gap: '1.5rem',
+          minHeight: filteredTools.length > 0 ? 'auto' : '200px'
         }}>
-          {tools.map((tool) => (
+          {filteredTools.map((tool) => (
             <div 
               key={tool.id} 
               className="card" 
