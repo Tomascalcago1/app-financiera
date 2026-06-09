@@ -270,6 +270,36 @@ const CompoundInterestCalculator = () => {
 
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Entendiendo la Fórmula: ¿Qué es el Interés Compuesto y cómo calcularlo?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          El interés compuesto representa la reinversión sistemática de los rendimientos generados por una inversión en el capital inicial. Esto produce un efecto de crecimiento exponencial o "bola de nieve", donde los intereses acumulados devengan nuevos intereses en los períodos sucesivos, multiplicando el patrimonio de forma acelerada con el transcurso de los años.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Frecuencia de Capitalización</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Cuanto más frecuente sea la capitalización (diaria o mensual en lugar de anual), más rápido crecerá tu dinero. Esto se debe a que los intereses se suman al capital inicial con mayor asiduidad, comenzando a generar nuevos rendimientos de forma inmediata.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Factor del Tiempo</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El interés compuesto premia la paciencia y el inicio temprano. En horizontes temporales largos (15, 20 o 30 años), la curva de crecimiento se vuelve sumamente empinada. Empezar a ahorrar e invertir cinco años antes puede llegar a duplicar el saldo final acumulado al momento del retiro.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Aportes Periódicos</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Combinar un capital inicial con aportaciones constantes mensuales (anualidad ordinaria) acelera la acumulación de capital drásticamente, amortiguando además las fluctuaciones de precios en el mercado de valores a través del promedio de costos.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

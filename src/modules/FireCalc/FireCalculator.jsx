@@ -197,6 +197,36 @@ const FireCalculator = () => {
         </div>
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Retiro Temprano: El Movimiento FIRE y la Regla del 4%
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          El movimiento FIRE (Financial Independence, Retire Early) promueve el ahorro agresivo y la inversión inteligente para lograr la libertad de dejar el trabajo tradicional mucho antes de la edad de jubilación obligatoria. Para determinar la viabilidad de un plan de retiro temprano, este simulador somete tu estrategia a más de 90 años de historia financiera real.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Estudio Trinity y la Regla del 4%</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              La regla del 4% establece que un jubilado puede retirar el 4% de su portafolio inicial de inversiones durante el primer año y luego ajustar dicho monto por inflación anualmente, con una probabilidad de éxito superior al 95% de no agotar su capital en un período de 30 años, basándose en la rentabilidad histórica de una cartera mixta de acciones y bonos.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Riesgo de Secuencia de Retornos</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El mayor peligro al que se enfrenta un jubilado temprano es el orden de los rendimientos del mercado en los primeros años de su retiro. Si el mercado sufre una fuerte caída justo al jubilarse, el efecto conjunto del retiro de capital y la desvalorización de activos puede vaciar la cartera prematuramente. Un porcentaje mayor en bonos o efectivo ayuda a mitigar este riesgo.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Estrategias de Retiro Dinámicas</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              A diferencia del dólar constante ajustado por inflación, retirar un porcentaje variable de tu cartera cada año te permite recortar gastos en épocas de crisis de mercado y gastar más cuando el portafolio crece. Esto reduce a la larga la probabilidad de agotar el capital, aunque requiere flexibilidad y adaptación en tu nivel de consumo.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

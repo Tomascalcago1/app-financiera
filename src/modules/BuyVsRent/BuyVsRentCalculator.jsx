@@ -256,6 +256,36 @@ const BuyVsRentCalculator = () => {
         </div>
 
       </div>
+
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Análisis: ¿Conviene Alquilar o Comprar Propiedad en Argentina?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          La decisión de alquilar un departamento o comprar una casa mediante un crédito hipotecario no es meramente un deseo habitacional; es una de las determinaciones patrimoniales más trascendentales de la vida. Para comparar ambos escenarios de forma matemáticamente justa, nuestra calculadora evalúa el <strong>costo de oportunidad del dinero</strong>.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Costo del Capital Inicial</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Si tenés ahorros (Capital Inicial), al comprar una propiedad los convertís inmediatamente en ladrillos (un activo ilíquido). Si alquilás, ese capital permanece en tu poder y podés colocarlo en activos financieros de renta variable (acciones, CEDEARs) o renta fija, generando rendimientos compuestos mensuales que multiplican tu riqueza a largo plazo.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Gastos Ocultos de Propietario</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Ser dueño implica costos que el inquilino no asume: impuestos inmobiliarios anuales, expensas extraordinarias, seguros del hogar y mantenimiento edilicio periódico (estimado en 1% anual del valor del inmueble). Estos gastos erosionan la rentabilidad real de la propiedad frente al alquiler de forma constante.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Apreciación Inmobiliaria vs Inflación</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Históricamente, los inmuebles tienden a revalorizarse en dólares a largo plazo, protegiendo al propietario. Sin embargo, para ganarle a una estrategia de alquiler, esa apreciación del ladrillo debe superar la tasa de inflación general y el rendimiento promedio que habrías obtenido invirtiendo tus ahorros en el mercado de capitales.
+            </p>
+          </div>
+        </div>
+      </section>
       
       <HelpModal 
         isOpen={isHelpOpen} 

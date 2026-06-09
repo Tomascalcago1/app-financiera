@@ -84,6 +84,131 @@ function App() {
   });
   const scrollRef = useRef(null);
 
+  // Sincronizar URL con la pestaña y herramienta activa en tiempo real (pushState)
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const currentTab = url.searchParams.get('tab');
+    const currentTool = url.searchParams.get('tool');
+
+    // Solo actualizar la historia si hay un cambio real con respecto a la URL actual
+    const tabChanged = currentTab !== activeTab;
+    const toolChanged = activeTab === 'herramientas' && currentTool !== activeTool;
+    const toolRemoved = activeTab !== 'herramientas' && currentTool !== null;
+
+    if (tabChanged || toolChanged || toolRemoved) {
+      url.searchParams.set('tab', activeTab);
+      if (activeTab === 'herramientas') {
+        url.searchParams.set('tool', activeTool);
+      } else {
+        url.searchParams.delete('tool');
+      }
+      window.history.pushState({}, '', url.toString());
+    }
+  }, [activeTab, activeTool]);
+
+  // Escuchar el evento popstate para soportar navegación con botones Atrás/Adelante del navegador
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      const validTabs = ['inicio', 'herramientas', 'educacion', 'glosario', 'asesores', 'acerca', 'privacidad', 'terminos'];
+      
+      let targetTab = 'herramientas';
+      if (tab && validTabs.includes(tab)) {
+        targetTab = tab;
+      } else if (params.get('tool')) {
+        targetTab = 'herramientas';
+      }
+      
+      setActiveTab(targetTab);
+
+      const tool = params.get('tool');
+      const validTools = [
+        'buy-vs-rent', 
+        'compound-interest', 
+        'savings-goal', 
+        'fire', 
+        'inflation', 
+        'hipotecario-uva', 
+        'comparador-historico', 
+        'sueldo-neto', 
+        'ganancias', 
+        'broker-comparator',
+        'installments-vs-cash'
+      ];
+      if (tool && validTools.includes(tool)) {
+        setActiveTool(tool);
+      } else {
+        setActiveTool('buy-vs-rent');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+
+  // Actualizar metadatos (Título de pestaña y descripción) para SEO dinámico
+  useEffect(() => {
+    let title = "Valia | Planificación y Simuladores Financieros";
+    let desc = "Simuladores financieros gratuitos e independientes para la planificación y simulación de finanzas personales. 100% privados y locales.";
+
+    if (activeTab === 'herramientas') {
+      const toolTitles = {
+        'buy-vs-rent': "Simulador de Comprar o Alquilar Vivienda | Valia",
+        'compound-interest': "Calculadora de Interés Compuesto y Ahorro | Valia",
+        'savings-goal': "Calculadora de Objetivo de Ahorro y Metas | Valia",
+        'fire': "Simulador de Retiro Temprano (FIRE) y Backtesting | Valia",
+        'inflation': "Calculadora de Inflación Histórica | Valia",
+        'hipotecario-uva': "Simulador de Crédito Hipotecario UVA | Valia",
+        'comparador-historico': "Comparador Dólar vs Plazo Fijo vs Merval | Valia",
+        'sueldo-neto': "Calculadora de Sueldo Neto Freelancer | Valia",
+        'ganancias': "Simulador de Impuesto a las Ganancias | Valia",
+        'broker-comparator': "Comparador de Brokers de Inversión | Valia",
+        'installments-vs-cash': "Calculadora de Compras en Cuotas vs Efectivo | Valia"
+      };
+
+      const toolDescs = {
+        'buy-vs-rent': "Compara financieramente si te conviene alquilar una propiedad e invertir la diferencia o comprarla con un crédito hipotecario a largo plazo.",
+        'compound-interest': "Proyecta el crecimiento exponencial de tus ahorros e inversiones mensuales aplicando la fórmula de interés compuesto con aportes.",
+        'savings-goal': "Calcula exactamente cuánto debés ahorrar e invertir por mes para alcanzar una meta financiera (comprar un auto, viajar, etc.) en un plazo determinado.",
+        'fire': "Pon a prueba tu estrategia de retiro haciendo backtesting contra 99 años de datos históricos del S&P 500 y bonos.",
+        'inflation': "Visualiza la pérdida de poder adquisitivo del dinero a lo largo del tiempo con registros oficiales e históricos desde 1635.",
+        'hipotecario-uva': "Simula créditos hipotecarios UVA vs tasa fija, comparando el sistema Francés y Alemán con la inflación de Argentina.",
+        'comparador-historico': "Compara el rendimiento histórico real en pesos de ahorrar en dólares blue, plazo fijo tradicional, plazo fijo UVA y el Merval desde 2015.",
+        'sueldo-neto': "Calcula tus ingresos netos en mano estimando la cuota del Monotributo, comisiones de cobro e Ingresos Brutos.",
+        'ganancias': "Calcula la retención del Impuesto a las Ganancias sobre tu sueldo (4° categoría) con las deducciones y escalas oficiales.",
+        'broker-comparator': "Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.",
+        'installments-vs-cash': "Simula si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones."
+      };
+
+      title = toolTitles[activeTool] || title;
+      desc = toolDescs[activeTool] || desc;
+    } else if (activeTab === 'educacion') {
+      title = "Educación Financiera y Guías de Inversión | Valia";
+      desc = "Artículos prácticos sobre inversiones, interés compuesto, la regla del 4%, créditos UVA y optimización fiscal en Argentina.";
+    } else if (activeTab === 'glosario') {
+      title = "Glosario de Términos Financieros | Valia";
+      desc = "Diccionario financiero: CEDEAR, Obligaciones Negociables, Cauciones, TNA, TEA, UVA, CER y otros conceptos clave explicados de forma sencilla.";
+    } else if (activeTab === 'asesores') {
+      title = "Asesores Financieros Asociados | Valia";
+      desc = "Contactá con un asesor financiero idóneo matriculado ante la CNV para estructurar tu cartera de inversión y operar en el mercado local.";
+    } else if (activeTab === 'acerca') {
+      title = "Acerca de Valia | Portal Educativo Financiero";
+      desc = "Conocé más sobre nuestro portal educativo independiente de finanzas personales, nuestros compromisos de confianza y rigor matemático.";
+    } else if (activeTab === 'privacidad') {
+      title = "Política de Privacidad | Valia";
+      desc = "Leé nuestra política de privacidad: procesamiento local de datos financieros en el cliente y sin rastreo de cookies personales.";
+    } else if (activeTab === 'terminos') {
+      title = "Términos de Uso | Valia";
+      desc = "Términos y condiciones de uso de las herramientas educativas e informativas y exclusión de asesoramiento financiero.";
+    }
+
+    document.title = title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', desc);
+  }, [activeTab, activeTool]);
+
   useEffect(() => {
     const handleChangeTab = (e) => {
       if (e.detail === 'asesores') {
@@ -184,30 +309,30 @@ function App() {
 
           {/* Navigation Tabs */}
           <nav className="nav-tabs">
-            <button onClick={() => setActiveTab('inicio')} style={getTabStyle('inicio')}>
+            <a href="?tab=inicio" onClick={(e) => { e.preventDefault(); setActiveTab('inicio'); }} style={getTabStyle('inicio')}>
               <Home size={16} />
               Inicio
-            </button>
-            <button onClick={() => setActiveTab('herramientas')} style={getTabStyle('herramientas')}>
+            </a>
+            <a href="?tab=herramientas" onClick={(e) => { e.preventDefault(); setActiveTab('herramientas'); }} style={getTabStyle('herramientas')}>
               <Wrench size={16} />
               Herramientas
-            </button>
-            <button onClick={() => setActiveTab('educacion')} style={getTabStyle('educacion')}>
+            </a>
+            <a href="?tab=educacion" onClick={(e) => { e.preventDefault(); setActiveTab('educacion'); }} style={getTabStyle('educacion')}>
               <BookOpen size={16} />
               Educación
-            </button>
-            <button onClick={() => setActiveTab('glosario')} style={getTabStyle('glosario')}>
+            </a>
+            <a href="?tab=glosario" onClick={(e) => { e.preventDefault(); setActiveTab('glosario'); }} style={getTabStyle('glosario')}>
               <Book size={16} />
               Glosario
-            </button>
-            <button onClick={() => setActiveTab('asesores')} style={getTabStyle('asesores')}>
+            </a>
+            <a href="?tab=asesores" onClick={(e) => { e.preventDefault(); setActiveTab('asesores'); }} style={getTabStyle('asesores')}>
               <Users size={16} />
               Asesores
-            </button>
-            <button onClick={() => setActiveTab('acerca')} style={getTabStyle('acerca')}>
+            </a>
+            <a href="?tab=acerca" onClick={(e) => { e.preventDefault(); setActiveTab('acerca'); }} style={getTabStyle('acerca')}>
               <Info size={16} />
               Acerca de
-            </button>
+            </a>
           </nav>
         </div>
       </header>
@@ -557,26 +682,26 @@ function App() {
                   { label: 'Simulador FIRE', tool: 'fire' },
                   { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash' }
                 ].map((item, i) => (
-                  <button
+                  <a
                     key={i}
-                    onClick={() => {
+                    href={`?tab=herramientas&tool=${item.tool}`}
+                    onClick={(e) => {
+                      e.preventDefault();
                       setActiveTab('herramientas');
                       setActiveTool(item.tool);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
                       color: activeTool === item.tool && activeTab === 'herramientas' ? 'var(--accent-primary)' : 'var(--text-secondary)',
                       fontSize: '0.875rem',
                       cursor: 'pointer',
                       textAlign: 'left',
+                      textDecoration: 'none',
                       transition: 'color var(--transition-fast)'
                     }}
                   >
                     {item.label}
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>
@@ -593,25 +718,25 @@ function App() {
                   { label: 'Acerca de Valia', tab: 'acerca' },
                   { label: 'Contacto de Soporte', tab: 'acerca' }
                 ].map((item, i) => (
-                  <button
+                  <a
                     key={i}
-                    onClick={() => {
+                    href={`?tab=${item.tab}`}
+                    onClick={(e) => {
+                      e.preventDefault();
                       setActiveTab(item.tab);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
                       color: activeTab === item.tab ? 'var(--accent-primary)' : 'var(--text-secondary)',
                       fontSize: '0.875rem',
                       cursor: 'pointer',
                       textAlign: 'left',
+                      textDecoration: 'none',
                       transition: 'color var(--transition-fast)'
                     }}
                   >
                     {item.label}
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>
@@ -627,25 +752,25 @@ function App() {
                   { label: 'Política de Privacidad', tab: 'privacidad' },
                   { label: 'Fórmulas y Metodologías', tab: 'acerca' }
                 ].map((item, i) => (
-                  <button
+                  <a
                     key={i}
-                    onClick={() => {
+                    href={`?tab=${item.tab}`}
+                    onClick={(e) => {
+                      e.preventDefault();
                       setActiveTab(item.tab);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
                       color: activeTab === item.tab ? 'var(--accent-primary)' : 'var(--text-secondary)',
                       fontSize: '0.875rem',
                       cursor: 'pointer',
                       textAlign: 'left',
+                      textDecoration: 'none',
                       transition: 'color var(--transition-fast)'
                     }}
                   >
                     {item.label}
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>

@@ -439,6 +439,36 @@ const HipotecarioUvaCalculator = () => {
         </div>
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Créditos Hipotecarios UVA: ¿Cómo funcionan y qué riesgos considerar en Argentina?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          El crédito hipotecario UVA es un instrumento financiero diseñado para facilitar el acceso a la vivienda, indexando el capital prestado al costo de vida a través de la Unidad de Valor Adquisitivo (UVA), la cual se actualiza diariamente mediante el coeficiente CER (Coeficiente de Estabilización de Referencia). A continuación, analizamos los factores clave para planificar tu hipoteca de forma segura.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Efecto de la Inflación en el Saldo</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El principal factor de riesgo en los créditos UVA es que no solo aumenta la cuota mensual en pesos, sino también el saldo total de la deuda nominal. Si la inflación es elevada, tu deuda en pesos crecerá exponencialmente, por lo que es fundamental evaluar la relación cuota-ingreso a largo plazo y la velocidad de actualización de tu salario.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Francés vs Alemán: ¿Cuál Elegir?</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El sistema Francés inicia con cuotas más bajas en UVA, ideales para maximizar la capacidad de compra inicial. Sin embargo, el sistema Alemán ofrece una amortización del capital constante, reduciendo los intereses de forma más acelerada y generando una cuota en pesos que crece a menor ritmo que la inflación a medida que pasan los años.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>La Regla de la Relación Cuota-Ingreso</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Los bancos exigen que la cuota inicial no supere el 25% o 30% de tus ingresos familiares netos probados. Mantener esta relación te protege ante desfasajes temporales entre la inflación y los incrementos salariales sectoriales, evitando el sobreendeudamiento en contextos inflacionarios.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

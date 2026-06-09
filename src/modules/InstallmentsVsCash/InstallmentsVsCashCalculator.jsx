@@ -458,6 +458,36 @@ const InstallmentsVsCashCalculator = () => {
         </div>
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Compra: ¿Cómo elegir entre Cuotas Fijas o Pago Contado en Argentina?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          En contextos económicos inflacionarios, la decisión de realizar compras en cuotas fijas o pagar al contado con un descuento requiere una evaluación matemática rigurosa del valor del dinero en el tiempo. Para tomar la mejor decisión, analizamos tres variables financieras clave.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Efecto Licuación de la Inflación</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Una cuota fija de valor nominal idéntico representa un costo real decreciente mes a mes debido a la inflación. Al descontar la inflación mensual proyectada a cada período, calculamos el Costo Financiero Total real del plan y lo comparamos de forma transparente con el desembolso único en efectivo.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Tasa Nominal Anual (TNA) de Oportunidad</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Al elegir las cuotas, retenés el capital y podés colocarlo en instrumentos financieros líquidos (plazo fijo, fondos comunes de inversión, cauciones o cuentas remuneradas). Ese dinero genera intereses mensuales que ayudan a pagar las cuotas futuras, disminuyendo el costo neto final de la compra.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>¿Cuándo Conviene Pagar al Contado?</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El pago al contado es financieramente óptimo si el comerciante ofrece un descuento directo sobre el precio de lista que resulte superior a la inflación acumulada del período de financiación o superior a los rendimientos netos de impuestos que podrías obtener invirtiendo el capital libremente.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}
