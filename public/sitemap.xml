@@ -6,77 +6,77 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=buy-vs-rent</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=comprar-o-alquilar</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=compound-interest</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=interes-compuesto</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=savings-goal</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=objetivo-de-ahorro</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=fire</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=simulador-de-retiro</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=inflation</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=inflacion-historica</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=hipotecario-uva</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=hipotecario-uva</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=comparador-historico</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=comparador-historico</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=sueldo-neto</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=sueldo-neto</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=ganancias</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=ganancias</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=broker-comparator</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=comparador-de-brokers</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=herramientas&amp;tool=installments-vs-cash</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=herramientas&amp;herramienta=cuotas-o-efectivo</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=educacion</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=educacion</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=glosario</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=glosario</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=asesores</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=asesores</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://valia-finanzas.vercel.app/?tab=acerca</loc>
+    <loc>https://valia-finanzas.vercel.app/?seccion=acerca</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

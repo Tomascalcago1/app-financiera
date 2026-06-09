@@ -602,6 +602,36 @@ const GananciasCalculator = () => {
 
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Impuesto a las Ganancias: Claves para entender la Retención de 4° Categoría
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          El Impuesto a las Ganancias sobre salarios es un tributo progresivo que grava los ingresos netos de los trabajadores bajo relación de dependencia y jubilados. Comprender cómo se determinan las deducciones y cómo funciona la escala impositiva de la AFIP/ARCA te permite optimizar tus ingresos reales.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Deducciones Personales y Cargas de Familia</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El mínimo no imponible es el umbral por debajo del cual no se tributa el impuesto. Para reducir la base imponible anual, podés deducir cargas de familia como cónyuge o conviviente y tus hijos menores de 18 años, siempre que no tengan ingresos propios superiores a los topes legales. Quienes habitan en zona patagónica acceden a deducciones incrementadas en un 20%.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>La Escala del Artículo 94 y la Alícuota Marginal</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El impuesto no se cobra de forma uniforme. Se aplica una escala progresiva con alícuotas del 5% al 35% en función del ingreso imponible excedente. La alícuota marginal indica el porcentaje de impuesto que pagarías por cada peso adicional de aumento salarial, lo cual es clave para negociar remuneraciones brutas.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Deducciones Admisibles (Siradig)</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Es factible deducir ciertos gastos personales declarándolos en el formulario SIRADIG de la AFIP/ARCA: cuotas de medicina prepaga, alquiler de casa-habitación (vivienda única) y aportes por servicio doméstico a cargo. Aprovechar estos ítems al máximo reduce de forma legal el impuesto final retenido de tu sueldo por tu empleador.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

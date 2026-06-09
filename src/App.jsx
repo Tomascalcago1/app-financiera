@@ -57,15 +57,15 @@ const LoadingState = () => (
 function App() {
   const [activeTab, setActiveTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    const tab = params.get('tab');
+    const tab = params.get('seccion') || params.get('tab');
     const validTabs = ['inicio', 'herramientas', 'educacion', 'glosario', 'asesores', 'acerca', 'privacidad', 'terminos'];
     if (tab && validTabs.includes(tab)) return tab;
-    if (params.get('tool')) return 'herramientas';
+    if (params.get('herramienta') || params.get('tool')) return 'herramientas';
     return 'herramientas';
   });
   const [activeTool, setActiveTool] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    const tool = params.get('tool');
+    const tool = params.get('herramienta') || params.get('tool');
     const validTools = [
       'buy-vs-rent', 
       'compound-interest', 
@@ -79,50 +79,86 @@ function App() {
       'broker-comparator',
       'installments-vs-cash'
     ];
-    if (tool && validTools.includes(tool)) return tool;
+    if (tool) {
+      if (validTools.includes(tool)) return tool;
+      const toolMap = {
+        'comprar-o-alquilar': 'buy-vs-rent',
+        'interes-compuesto': 'compound-interest',
+        'objetivo-de-ahorro': 'savings-goal',
+        'simulador-fire': 'fire',
+        'inflacion-historica': 'inflation',
+        'hipotecario-uva': 'hipotecario-uva',
+        'comparador-historico': 'comparador-historico',
+        'sueldo-neto': 'sueldo-neto',
+        'ganancias': 'ganancias',
+        'comparador-de-brokers': 'broker-comparator',
+        'cuotas-o-efectivo': 'installments-vs-cash'
+      };
+      if (toolMap[tool]) return toolMap[tool];
+    }
     return 'buy-vs-rent';
   });
   const scrollRef = useRef(null);
 
-  // Sincronizar URL con la pestaña y herramienta activa en tiempo real (pushState)
+  // Sincronizar URL con la pestaña y herramienta activa en tiempo real (pushState) en español
   useEffect(() => {
     const url = new URL(window.location.href);
-    const currentTab = url.searchParams.get('tab');
-    const currentTool = url.searchParams.get('tool');
+    const currentTab = url.searchParams.get('seccion') || url.searchParams.get('tab');
+    const currentTool = url.searchParams.get('herramienta') || url.searchParams.get('tool');
+
+    const toolMapReverse = {
+      'buy-vs-rent': 'comprar-o-alquilar',
+      'compound-interest': 'interes-compuesto',
+      'savings-goal': 'objetivo-de-ahorro',
+      'fire': 'simulador-fire',
+      'inflation': 'inflacion-historica',
+      'hipotecario-uva': 'hipotecario-uva',
+      'comparador-historico': 'comparador-historico',
+      'sueldo-neto': 'sueldo-neto',
+      'ganancias': 'ganancias',
+      'broker-comparator': 'comparador-de-brokers',
+      'installments-vs-cash': 'cuotas-o-efectivo'
+    };
+
+    const targetToolSpanish = toolMapReverse[activeTool] || activeTool;
 
     // Solo actualizar la historia si hay un cambio real con respecto a la URL actual
     const tabChanged = currentTab !== activeTab;
-    const toolChanged = activeTab === 'herramientas' && currentTool !== activeTool;
+    const toolChanged = activeTab === 'herramientas' && currentTool !== targetToolSpanish;
     const toolRemoved = activeTab !== 'herramientas' && currentTool !== null;
 
     if (tabChanged || toolChanged || toolRemoved) {
-      url.searchParams.set('tab', activeTab);
+      // Limpiar parámetros antiguos en inglés
+      url.searchParams.delete('tab');
+      url.searchParams.delete('tool');
+
+      url.searchParams.set('seccion', activeTab);
       if (activeTab === 'herramientas') {
-        url.searchParams.set('tool', activeTool);
+        url.searchParams.set('herramienta', targetToolSpanish);
       } else {
-        url.searchParams.delete('tool');
+        url.searchParams.delete('herramienta');
       }
       window.history.pushState({}, '', url.toString());
     }
   }, [activeTab, activeTool]);
 
-  // Escuchar el evento popstate para soportar navegación con botones Atrás/Adelante del navegador
+  // Escuchar el evento popstate para soportar navegación con botones Atrás/Adelante del navegador en español e inglés
   useEffect(() => {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
-      const tab = params.get('tab');
+      const tab = params.get('seccion') || params.get('tab');
       const validTabs = ['inicio', 'herramientas', 'educacion', 'glosario', 'asesores', 'acerca', 'privacidad', 'terminos'];
       
       let targetTab = 'herramientas';
       if (tab && validTabs.includes(tab)) {
         targetTab = tab;
-      } else if (params.get('tool')) {
+      } else if (params.get('herramienta') || params.get('tool')) {
         targetTab = 'herramientas';
       }
       
       setActiveTab(targetTab);
 
-      const tool = params.get('tool');
+      const tool = params.get('herramienta') || params.get('tool');
       const validTools = [
         'buy-vs-rent', 
         'compound-interest', 
@@ -136,8 +172,29 @@ function App() {
         'broker-comparator',
         'installments-vs-cash'
       ];
-      if (tool && validTools.includes(tool)) {
-        setActiveTool(tool);
+      if (tool) {
+        if (validTools.includes(tool)) {
+          setActiveTool(tool);
+        } else {
+          const toolMap = {
+            'comprar-o-alquilar': 'buy-vs-rent',
+            'interes-compuesto': 'compound-interest',
+            'objetivo-de-ahorro': 'savings-goal',
+            'simulador-fire': 'fire',
+            'inflacion-historica': 'inflation',
+            'hipotecario-uva': 'hipotecario-uva',
+            'comparador-historico': 'comparador-historico',
+            'sueldo-neto': 'sueldo-neto',
+            'ganancias': 'ganancias',
+            'comparador-de-brokers': 'broker-comparator',
+            'cuotas-o-efectivo': 'installments-vs-cash'
+          };
+          if (toolMap[tool]) {
+            setActiveTool(toolMap[tool]);
+          } else {
+            setActiveTool('buy-vs-rent');
+          }
+        }
       } else {
         setActiveTool('buy-vs-rent');
       }
@@ -158,7 +215,7 @@ function App() {
         'buy-vs-rent': "Simulador de Comprar o Alquilar Vivienda | Valia",
         'compound-interest': "Calculadora de Interés Compuesto y Ahorro | Valia",
         'savings-goal': "Calculadora de Objetivo de Ahorro y Metas | Valia",
-        'fire': "Simulador de Retiro Temprano (FIRE) y Backtesting | Valia",
+        'fire': "Simulador de Retiro y Jubilación | Valia",
         'inflation': "Calculadora de Inflación Histórica | Valia",
         'hipotecario-uva': "Simulador de Crédito Hipotecario UVA | Valia",
         'comparador-historico': "Comparador Dólar vs Plazo Fijo vs Merval | Valia",
@@ -309,27 +366,27 @@ function App() {
 
           {/* Navigation Tabs */}
           <nav className="nav-tabs">
-            <a href="?tab=inicio" onClick={(e) => { e.preventDefault(); setActiveTab('inicio'); }} style={getTabStyle('inicio')}>
+            <a href="?seccion=inicio" onClick={(e) => { e.preventDefault(); setActiveTab('inicio'); }} style={getTabStyle('inicio')}>
               <Home size={16} />
               Inicio
             </a>
-            <a href="?tab=herramientas" onClick={(e) => { e.preventDefault(); setActiveTab('herramientas'); }} style={getTabStyle('herramientas')}>
+            <a href="?seccion=herramientas" onClick={(e) => { e.preventDefault(); setActiveTab('herramientas'); }} style={getTabStyle('herramientas')}>
               <Wrench size={16} />
               Herramientas
             </a>
-            <a href="?tab=educacion" onClick={(e) => { e.preventDefault(); setActiveTab('educacion'); }} style={getTabStyle('educacion')}>
+            <a href="?seccion=educacion" onClick={(e) => { e.preventDefault(); setActiveTab('educacion'); }} style={getTabStyle('educacion')}>
               <BookOpen size={16} />
               Educación
             </a>
-            <a href="?tab=glosario" onClick={(e) => { e.preventDefault(); setActiveTab('glosario'); }} style={getTabStyle('glosario')}>
+            <a href="?seccion=glosario" onClick={(e) => { e.preventDefault(); setActiveTab('glosario'); }} style={getTabStyle('glosario')}>
               <Book size={16} />
               Glosario
             </a>
-            <a href="?tab=asesores" onClick={(e) => { e.preventDefault(); setActiveTab('asesores'); }} style={getTabStyle('asesores')}>
+            <a href="?seccion=asesores" onClick={(e) => { e.preventDefault(); setActiveTab('asesores'); }} style={getTabStyle('asesores')}>
               <Users size={16} />
               Asesores
             </a>
-            <a href="?tab=acerca" onClick={(e) => { e.preventDefault(); setActiveTab('acerca'); }} style={getTabStyle('acerca')}>
+            <a href="?seccion=acerca" onClick={(e) => { e.preventDefault(); setActiveTab('acerca'); }} style={getTabStyle('acerca')}>
               <Info size={16} />
               Acerca de
             </a>
@@ -415,10 +472,15 @@ function App() {
                     width: '100%'
                   }}
                 >
-                  <button
+                  <a
+                    href="?seccion=herramientas&herramienta=comprar-o-alquilar"
                     className="btn"
-                    onClick={() => setActiveTool('buy-vs-rent')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('buy-vs-rent'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'buy-vs-rent' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'buy-vs-rent' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'buy-vs-rent' ? '600' : '500',
@@ -427,11 +489,16 @@ function App() {
                     }}
                   >
                     ¿Alquilar o Comprar?
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=interes-compuesto"
                     className="btn"
-                    onClick={() => setActiveTool('compound-interest')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('compound-interest'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'compound-interest' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'compound-interest' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'compound-interest' ? '600' : '500',
@@ -440,11 +507,16 @@ function App() {
                     }}
                   >
                     Interés Compuesto
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=objetivo-de-ahorro"
                     className="btn"
-                    onClick={() => setActiveTool('savings-goal')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('savings-goal'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'savings-goal' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'savings-goal' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'savings-goal' ? '600' : '500',
@@ -453,11 +525,16 @@ function App() {
                     }}
                   >
                     Objetivo de Ahorro
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=simulador-fire"
                     className="btn"
-                    onClick={() => setActiveTool('fire')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('fire'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'fire' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'fire' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'fire' ? '600' : '500',
@@ -466,11 +543,16 @@ function App() {
                     }}
                   >
                     Simulador FIRE
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=inflacion-historica"
                     className="btn"
-                    onClick={() => setActiveTool('inflation')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('inflation'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'inflation' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'inflation' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'inflation' ? '600' : '500',
@@ -479,11 +561,16 @@ function App() {
                     }}
                   >
                     Inflación Histórica
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=hipotecario-uva"
                     className="btn"
-                    onClick={() => setActiveTool('hipotecario-uva')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('hipotecario-uva'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'hipotecario-uva' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'hipotecario-uva' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'hipotecario-uva' ? '600' : '500',
@@ -492,11 +579,16 @@ function App() {
                     }}
                   >
                     Crédito UVA
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=comparador-historico"
                     className="btn"
-                    onClick={() => setActiveTool('comparador-historico')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('comparador-historico'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'comparador-historico' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'comparador-historico' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'comparador-historico' ? '600' : '500',
@@ -505,11 +597,16 @@ function App() {
                     }}
                   >
                     Dólar vs PF vs Merval
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=sueldo-neto"
                     className="btn"
-                    onClick={() => setActiveTool('sueldo-neto')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('sueldo-neto'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'sueldo-neto' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'sueldo-neto' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'sueldo-neto' ? '600' : '500',
@@ -518,11 +615,16 @@ function App() {
                     }}
                   >
                     Sueldo Neto Freelancer
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=ganancias"
                     className="btn"
-                    onClick={() => setActiveTool('ganancias')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('ganancias'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'ganancias' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'ganancias' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'ganancias' ? '600' : '500',
@@ -531,11 +633,16 @@ function App() {
                     }}
                   >
                     Simulador Ganancias
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=comparador-de-brokers"
                     className="btn"
-                    onClick={() => setActiveTool('broker-comparator')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('broker-comparator'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'broker-comparator' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'broker-comparator' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'broker-comparator' ? '600' : '500',
@@ -544,11 +651,16 @@ function App() {
                     }}
                   >
                     Comparador de Brokers
-                  </button>
-                  <button
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=cuotas-o-efectivo"
                     className="btn"
-                    onClick={() => setActiveTool('installments-vs-cash')}
+                    onClick={(e) => { e.preventDefault(); setActiveTool('installments-vs-cash'); }}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
                       backgroundColor: activeTool === 'installments-vs-cash' ? 'var(--accent-primary)' : 'transparent',
                       color: activeTool === 'installments-vs-cash' ? '#090D16' : 'var(--text-secondary)',
                       fontWeight: activeTool === 'installments-vs-cash' ? '600' : '500',
@@ -557,7 +669,7 @@ function App() {
                     }}
                   >
                     ¿Cuotas o Efectivo?
-                  </button>
+                  </a>
                 </div>
 
                 {/* Right Slide Button */}
@@ -676,15 +788,15 @@ function App() {
               </strong>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-start' }}>
                 {[
-                  { label: '¿Comprar o Alquilar?', tool: 'buy-vs-rent' },
-                  { label: 'Interés Compuesto', tool: 'compound-interest' },
-                  { label: 'Crédito Hipotecario UVA', tool: 'hipotecario-uva' },
-                  { label: 'Simulador FIRE', tool: 'fire' },
-                  { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash' }
+                  { label: '¿Comprar o Alquilar?', tool: 'buy-vs-rent', path: 'comprar-o-alquilar' },
+                  { label: 'Interés Compuesto', tool: 'compound-interest', path: 'interes-compuesto' },
+                  { label: 'Crédito Hipotecario UVA', tool: 'hipotecario-uva', path: 'hipotecario-uva' },
+                  { label: 'Simulador de Retiro', tool: 'fire', path: 'simulador-de-retiro' },
+                  { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash', path: 'cuotas-o-efectivo' }
                 ].map((item, i) => (
                   <a
                     key={i}
-                    href={`?tab=herramientas&tool=${item.tool}`}
+                    href={`?seccion=herramientas&herramienta=${item.path}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setActiveTab('herramientas');
@@ -720,7 +832,7 @@ function App() {
                 ].map((item, i) => (
                   <a
                     key={i}
-                    href={`?tab=${item.tab}`}
+                    href={`?seccion=${item.tab}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setActiveTab(item.tab);
@@ -754,7 +866,7 @@ function App() {
                 ].map((item, i) => (
                   <a
                     key={i}
-                    href={`?tab=${item.tab}`}
+                    href={`?seccion=${item.tab}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setActiveTab(item.tab);

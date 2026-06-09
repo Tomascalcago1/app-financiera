@@ -99,8 +99,8 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
       
       {/* Print-only Report Header & Parameters */}
       <PrintReportHeader 
-        title="Reporte de Simulación: FIRE (Retiro Temprano)"
-        subtitle="Ficha de Planificación FIRE y Sustentabilidad Financiera"
+        title="Reporte de Simulación: Retiro y Jubilación"
+        subtitle="Ficha de Planificación de Retiro y Sustentabilidad Financiera"
         params={[
           { label: 'Valor del Portafolio', value: formatCurrencyFull(inputs.portfolioValue) },
           { label: 'Duración del Retiro', value: `${inputs.retirementLength} años` },

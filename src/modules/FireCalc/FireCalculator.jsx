@@ -128,7 +128,7 @@ const FireCalculator = () => {
       <header className="calculator-header">
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Flame size={32} style={{ color: '#F59E0B' }} />
-          Simulador FIRE
+          Simulador de Retiro
         </h1>
         <p>Backtesting de retiro con datos históricos del mercado desde 1926.</p>
         

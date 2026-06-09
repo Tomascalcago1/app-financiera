@@ -138,6 +138,36 @@ const SavingsGoalCalculator = () => {
 
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Planificación: ¿Cómo calcular y alcanzar tu Objetivo de Ahorro?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          Alcanzar una meta financiera (comprar un vehículo, realizar un viaje o acumular un fondo de emergencia) requiere disciplina y una estrategia clara de ahorro e inversión periódica. Esta calculadora determina el esfuerzo mensual exacto que debés hacer de acuerdo a tus metas y la tasa de interés obtenida.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>La Regla de Ahorro Sistemático</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Separar una porción fija de tus ingresos al comienzo del mes (estrategia de "pagarte a vos primero") en lugar de ahorrar lo que sobra al final es el método más efectivo para acumular capital a mediano plazo. Automatizar este ahorro mensual reduce la fricción y asegura la consistencia de tu plan.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Apalancamiento del Interés Compuesto</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Al invertir tus aportes mensuales en activos financieros (como fondos comunes, bonos o acciones), tus ahorros generan intereses que a su vez se reinvierten para generar más intereses. En plazos largos, esta acumulación exponencial hace que una gran parte de tu meta se financie con ganancias del mercado y no de tu bolsillo.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Definición de Metas SMART</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Una meta efectiva debe ser específica, medible, alcanzable, relevante y con un límite de tiempo definido (SMART). Estimar un horizonte temporal real (ej. 3 o 5 años) te permite elegir instrumentos de inversión adecuados para ese plazo, minimizando los riesgos de volatilidad del mercado.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

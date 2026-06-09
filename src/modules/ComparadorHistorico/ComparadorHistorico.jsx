@@ -388,6 +388,36 @@ const ComparadorHistorico = () => {
         </div>
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Rendimientos: ¿Dólar, Plazo Fijo o Merval para ganarle a la inflación?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          En mercados altamente volátiles e inflacionarios como el de Argentina, la preservación del valor patrimonial es un desafío constante. Para tomar decisiones financieras acertadas, nuestra herramienta compara la evolución histórica real de tres alternativas populares frente al Índice de Precios al Consumidor (IPC).
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Dólar Blue: Cobertura Cambiaria vs. Inflación</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El dólar es el activo de resguardo por excelencia en Argentina ante la devaluación del peso. Sin embargo, no está exento de pérdidas: el dólar sufre inflación propia (pérdida de valor del USD) y atraviesa ciclos de retraso cambiario local donde los precios en pesos suben a mayor velocidad que el tipo de cambio, encareciendo el costo de vida medido en moneda extranjera.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Plazo Fijo: La Trampa de la Tasa Nominal</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El plazo fijo tradicional ofrece previsibilidad y renta mensual fija. No obstante, en la gran mayoría de los años analizados, las tasas nominales del banco corren por detrás de la inflación real. Esto genera una licuación sistemática de los depósitos, lo que reduce el poder de compra real del capital inicial a mediano plazo.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Índice Merval: Activos Reales y Crecimiento</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El Merval representa el rendimiento de las principales empresas cotizantes de Argentina. Al tratarse de activos reales (empresas que venden productos, exportan y ajustan sus precios por inflación), la renta variable tiende a superar ampliamente a la devaluación y la inflación a largo plazo, asumiendo una mayor volatilidad y riesgo diario.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

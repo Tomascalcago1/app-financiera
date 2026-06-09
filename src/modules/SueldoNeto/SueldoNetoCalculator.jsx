@@ -427,6 +427,36 @@ const SueldoNetoCalculator = () => {
         </div>
       </div>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía Impositiva: Monotributo vs. Responsable Inscripto en Argentina
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          Para profesionales independientes, freelancers y prestadores de servicios, estructurar la carga impositiva en Argentina de manera eficiente es vital para cuidar los ingresos netos de bolsillo. Analizamos las diferencias críticas entre los dos regímenes principales y el impacto de los impuestos locales.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Régimen Simplificado (Monotributo)</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El Monotributo permite abonar una cuota fija mensual que unifica el IVA, Ganancias, jubilación y obra social. Las categorías se determinan por la facturación bruta de los últimos 12 meses. Es el régimen más eficiente y económico, pero tiene un límite máximo de facturación anual regulado por la AFIP/ARCA, por encima del cual quedás excluido automáticamente.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Régimen General (Responsable Inscripto)</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Al superar el tope de la categoría K, debés inscribirte en el Régimen General. Esto implica liquidar IVA (21%) sobre tus facturas, pagar Autónomos mensualmente y tributar el Impuesto a las Ganancias en base a escalas que llegan al 35% de tus ganancias netas. La carga impositiva y la necesidad de asesoramiento contable profesional aumentan exponencialmente.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Ingresos Brutos e Impuestos Provinciales</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Además de los impuestos nacionales controlados por ARCA, las provincias cobran Ingresos Brutos (IIBB) aplicando alícuotas que oscilan entre el 1% y el 5% sobre tu facturación bruta. Algunas provincias cuentan con el Monotributo Unificado (que integra IIBB en la misma cuota), mientras que en otras requiere declaraciones mensuales independientes.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

@@ -211,6 +211,36 @@ const InflationCalculator = () => {
         toYear={toYear}
         annualRate={displayedRate}
       />
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía de Inflación: ¿Cómo afecta la pérdida de poder adquisitivo a tus ahorros?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          La inflación es el aumento continuo y generalizado de los precios de los bienes y servicios en una economía. Cuando los precios suben, cada unidad de moneda compra una cantidad menor de bienes; es decir, se produce una depreciación del dinero que destruye de forma invisible la riqueza líquida acumulada.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Poder Adquisitivo y el IPC</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El Índice de Precios al Consumidor (IPC) mide la evolución del costo promedio de una canasta de consumo familiar. El análisis histórico demuestra que incluso monedas fuertes como el dólar estadounidense pierden valor constantemente: un dólar de mediados del siglo XX equivale a más de diez dólares hoy en día debido a la inflación acumulada.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Tasa Nominal vs. Tasa Real</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              La tasa de interés nominal es el rendimiento absoluto que te ofrece un depósito. La tasa real, en cambio, descuenta la inflación ocurrida en el mismo período. Si tu inversión rinde un 8% anual pero la inflación fue del 10%, tu rendimiento real es negativo en un -2%, lo que significa que tenés más billetes pero menos capacidad de compra real.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Cómo Protegerse del Deterioro del Dinero</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Mantener ahorros en efectivo o en cuentas bancarias tradicionales sin rendimiento es una pérdida garantizada a largo plazo. Para resguardar el patrimonio, es fundamental diversificar en activos de cobertura real que capturen la inflación o el crecimiento global: acciones, CEDEARs de empresas de primer nivel o instrumentos de renta fija indexados (como los bonos CER en Argentina).
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}

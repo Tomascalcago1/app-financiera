@@ -593,6 +593,36 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
         </div>
       </section>
 
+      {/* Guía SEO y Contexto Financiero */}
+      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+          Guía Comparativa: ¿Cómo elegir el mejor Broker de Bolsa (ALyC) en Argentina?
+        </h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+          Para operar en el mercado de capitales argentino (comprar acciones, CEDEARs, bonos soberanos u Obligaciones Negociables), es obligatorio abrir una cuenta de custodia en un Agente de Liquidación y Compensación (ALyC), comúnmente llamado broker. A continuación, analizamos los tres pilares esenciales para elegir la plataforma adecuada para tu perfil.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Comisiones Ocultas y Derechos de Mercado</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Al analizar comisiones, debés distinguir entre la tasa neta del broker, los derechos de mercado cobrados por BYMA (típicamente 0.08%) y el IVA sobre la comisión. Algunas plataformas promocionan comisiones bajas pero aplican mínimos por operación o aranceles fijos de mantenimiento de cuenta que licúan los portafolios pequeños.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>La Importancia de un Asesor Idóneo Matriculado</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              Invertir sin asesoramiento expone al inversor a errores de diversificación o descalce de plazos. Un asesor financiero matriculado ante la CNV te ayuda a armar carteras acordes a tu perfil de riesgo. Operar con un canal que bonifique el costo de este asesor asignado (como el beneficio de Valia con Balanz) representa una enorme ventaja económica y de seguridad.
+            </p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Rendimiento de los Saldos Líquidos</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
+              El capital que permanece inactivo entre operaciones sufre de devaluación en economías inflacionarias. Elegir un broker que integre herramientas de cuenta remunerada ágiles o colocaciones automáticas en Fondos Comunes de Inversión (Money Market) con rescate inmediato te permite generar rendimientos diarios sobre tu liquidez operativa.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* FAQs Section */}
       <section style={{ borderTop: '1px solid var(--border-color)', paddingTop: '3rem' }}>
         <h2 style={{ fontSize: '1.5rem', marginBottom: '2rem', textAlign: 'center' }}>Preguntas Frecuentes sobre Brokers y Comisiones</h2>
