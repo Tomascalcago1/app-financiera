@@ -252,7 +252,7 @@ const GananciasCalculator = () => {
       </header>
 
       {/* Grid */}
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
         
         {/* Input Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>

@@ -93,7 +93,7 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
       </header>
 
       {/* Grid: Value Prop & Form */}
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3rem', alignItems: 'start' }}>
+      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '3rem', alignItems: 'start' }}>
         
         {/* Left: Value Proposition */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
