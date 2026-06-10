@@ -89,9 +89,13 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
     svgString = svgString.replace(/var\(--bg-secondary\)/g, '#0F172A');
     svgString = svgString.replace(/var\(--bg-tertiary\)/g, '#1E293B');
 
-    // Usamos Blob y URL.createObjectURL para mayor compatibilidad y soporte de caracteres unicode
-    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-    const svgUrl = URL.createObjectURL(svgBlob);
+    // Limpiar prefijos de URL absoluta en referencias de clip-path o fill (ej. url(http://...#id) -> url(#id))
+    // Esto es crítico ya que el navegador bloquea la carga de imágenes con referencias externas en contextos aislados (como img)
+    svgString = svgString.replace(/url\([^#)]*#/g, 'url(#');
+
+    // Usamos base64 Data URL para máxima compatibilidad entre navegadores, evitando restricciones de sandboxing de Blob URLs
+    const base64Svg = window.btoa(unescape(encodeURIComponent(svgString)));
+    const svgUrl = 'data:image/svg+xml;base64,' + base64Svg;
 
     const img = new Image();
     
@@ -131,15 +135,11 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
         console.error('Error al generar DataURL desde el canvas:', toDataUrlErr);
         alert('No se pudo exportar la imagen debido a una restricción de seguridad del navegador.');
       }
-
-      // Liberamos el objeto URL para no causar fugas de memoria
-      URL.revokeObjectURL(svgUrl);
     };
 
     img.onerror = (err) => {
       console.error('Error al cargar el SVG clonado como imagen:', err);
       alert('Error al procesar el gráfico para la descarga.');
-      URL.revokeObjectURL(svgUrl);
     };
 
     img.src = svgUrl;

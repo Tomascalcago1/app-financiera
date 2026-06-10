@@ -46,53 +46,13 @@ const SueldoNetoCalculator = () => {
   };
 
   const [grossIncome, setGrossIncome] = useState(() => getNumericParam('gross', 1500000)); // 1.5 millones por defecto
-  const [currency, setCurrency] = useState(() => {
-    const sessionVal = sessionStorage.getItem('valia_global_currency');
-    if (sessionVal) return sessionVal;
-    return getStringParam('currency', 'ARS');
-  }); // 'ARS' | 'USD'
-  const [exchangeRate, setExchangeRate] = useState(() => {
-    const sessionVal = sessionStorage.getItem('valia_global_ex_rate');
-    if (sessionVal) return Number(sessionVal);
-    return getNumericParam('exRate', 1200);
-  }); // Cotización MEP por defecto
+  const [currency, setCurrency] = useState(() => getStringParam('currency', 'ARS')); // 'ARS' | 'USD'
+  const [exchangeRate, setExchangeRate] = useState(() => getNumericParam('exRate', 1200)); // Cotización MEP por defecto
   const [activity, setActivity] = useState(() => getStringParam('activity', 'services')); // 'services' | 'goods'
   const [iibbPercent, setIibbPercent] = useState(() => getNumericParam('iibb', 3.0)); // 3% Ingresos Brutos
   const [platformFee, setPlatformFee] = useState(() => getNumericParam('fee', 2.5)); // 2.5% comisiones de cobro
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
-
-  // Sincronizar configuraciones con cabecera global
-  useEffect(() => {
-    const handleGlobalSettings = (e) => {
-      if (e.detail) {
-        if (e.detail.currency && e.detail.currency !== currency) {
-          setCurrency(e.detail.currency);
-        }
-        if (e.detail.exRate && Number(e.detail.exRate) !== exchangeRate) {
-          setExchangeRate(Number(e.detail.exRate));
-        }
-      }
-    };
-    window.addEventListener('valia-global-settings-changed', handleGlobalSettings);
-    return () => window.removeEventListener('valia-global-settings-changed', handleGlobalSettings);
-  }, [currency, exchangeRate]);
-
-  // Sincronizar configuraciones locales hacia sessionStorage y cabecera (sincronización inversa)
-  useEffect(() => {
-    const sessionCurr = sessionStorage.getItem('valia_global_currency');
-    const sessionRate = Number(sessionStorage.getItem('valia_global_ex_rate'));
-
-    const hasChanged = sessionCurr !== currency || sessionRate !== exchangeRate;
-
-    if (hasChanged) {
-      sessionStorage.setItem('valia_global_currency', currency);
-      sessionStorage.setItem('valia_global_ex_rate', exchangeRate);
-      window.dispatchEvent(new CustomEvent('valia-global-settings-changed', {
-        detail: { currency, exRate: exchangeRate }
-      }));
-    }
-  }, [currency, exchangeRate]);
 
   const handleShare = () => {
     const params = new URLSearchParams();
