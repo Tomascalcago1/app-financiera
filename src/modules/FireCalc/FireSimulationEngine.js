@@ -16,6 +16,7 @@ export const runFireSimulation = (params) => {
     stockAllocation,     // e.g. 0.80
     bondAllocation,      // e.g. 0.20
     cashAllocation,      // e.g. 0.00
+    extraFlows = [],     // Optional extraordinary cash flows
   } = params;
 
   const data = historicalMarketData;
@@ -53,34 +54,54 @@ export const runFireSimulation = (params) => {
         cumulativeInflation *= (1 + prevYearData.inflation);
       }
 
-      // Calculate withdrawal first
-      let withdrawal = 0;
+      // Calculate base withdrawal first
+      let baseWithdrawal = 0;
       if (withdrawalStrategy === 'constant-dollar') {
         // Adjust for inflation using previous year's inflation
         if (i === 0) {
-          withdrawal = withdrawalAmount;
+          baseWithdrawal = withdrawalAmount;
         } else {
           currentWithdrawal = withdrawalAmount * cumulativeInflation;
-          withdrawal = currentWithdrawal;
+          baseWithdrawal = currentWithdrawal;
         }
       } else {
         // Percent of portfolio based on current balance
-        withdrawal = portfolio * withdrawalPercent;
+        baseWithdrawal = portfolio * withdrawalPercent;
 
         if (minWithdrawal > 0) {
           const adjustedFloor = minWithdrawal * cumulativeInflation;
-          if (withdrawal < adjustedFloor) {
-            withdrawal = adjustedFloor;
+          if (baseWithdrawal < adjustedFloor) {
+            baseWithdrawal = adjustedFloor;
           }
         }
 
         if (maxWithdrawal > 0) {
           const adjustedCeiling = maxWithdrawal * cumulativeInflation;
-          if (withdrawal > adjustedCeiling) {
-            withdrawal = adjustedCeiling;
+          if (baseWithdrawal > adjustedCeiling) {
+            baseWithdrawal = adjustedCeiling;
           }
         }
       }
+
+      // Process extra cash flows for year of retirement i + 1
+      let netExtraInflow = 0;
+      let netExtraOutflow = 0;
+      for (const flow of extraFlows) {
+        const start = Number(flow.startYear) || 1;
+        const end = flow.recurring ? (Number(flow.endYear) || retirementLength) : start;
+        const currentYear = i + 1;
+        if (currentYear >= start && currentYear <= end) {
+          const rawAmt = Number(flow.amount) || 0;
+          const adjustedAmt = flow.adjustForInflation ? rawAmt * cumulativeInflation : rawAmt;
+          if (flow.type === 'income') {
+            netExtraInflow += adjustedAmt;
+          } else {
+            netExtraOutflow += adjustedAmt;
+          }
+        }
+      }
+
+      const withdrawal = baseWithdrawal + netExtraOutflow - netExtraInflow;
 
       portfolio -= withdrawal;
 

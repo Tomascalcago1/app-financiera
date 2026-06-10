@@ -118,7 +118,11 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
           { label: 'Duración del Retiro', value: `${inputs.retirementLength} años` },
           { label: 'Estrategia de Retiro', value: strategyLabel },
           { label: 'Retiro Inicial', value: withdrawalVal },
-          { label: 'Distribución Portafolio', value: `Acciones ${inputs.stockAlloc}% / Bonos ${inputs.bondAlloc}% / Efectivo ${inputs.cashAlloc}%` }
+          { label: 'Distribución Portafolio', value: `Acciones ${inputs.stockAlloc}% / Bonos ${inputs.bondAlloc}% / Efectivo ${inputs.cashAlloc}%` },
+          { label: 'Flujos Extraordinarios', value: inputs.extraFlows && inputs.extraFlows.length > 0
+            ? `${inputs.extraFlows.filter(f => f.type === 'income').length} ing. / ${inputs.extraFlows.filter(f => f.type === 'expense').length} egr.`
+            : 'Ninguno'
+          }
         ]}
       />
 
@@ -134,6 +138,35 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
           {survivedCount} de {totalSimulations} simulaciones históricas sobrevivieron
         </p>
       </div>
+
+      {/* Resumen de Flujos Extraordinarios */}
+      {inputs.extraFlows && inputs.extraFlows.length > 0 && (
+        <div className="card animate-fade-in" style={{ padding: '1rem', borderLeft: '4px solid var(--accent-primary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <h4 style={{ fontSize: '0.95rem', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
+            Flujos Extraordinarios Configurados
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+            {inputs.extraFlows.map((flow, idx) => {
+              const typeLabel = flow.type === 'income' ? 'Ingreso' : 'Egreso';
+              const typeColor = flow.type === 'income' ? 'var(--accent-success)' : 'var(--accent-danger)';
+              const timingLabel = flow.recurring 
+                ? `años ${flow.startYear} al ${flow.endYear}` 
+                : `año ${flow.startYear}`;
+              const inflationLabel = flow.adjustForInflation ? ' (Ajustado por infl.)' : '';
+              return (
+                <div key={flow.id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <span>
+                    • <strong style={{ color: 'var(--text-primary)' }}>{flow.name || 'Sin nombre'}</strong> ({timingLabel}):
+                  </span>
+                  <span>
+                    <strong style={{ color: typeColor }}>{flow.type === 'income' ? '+' : '-'}{formatCurrencyFull(Number(flow.amount) || 0)}</strong>{inflationLabel}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="stats-grid">

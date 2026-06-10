@@ -3,7 +3,7 @@ import FinancialInput from '../../components/FinancialInput';
 import FireResultsDashboard from './FireResultsDashboard';
 import { runFireSimulation } from './FireSimulationEngine';
 import HelpModal from '../../components/HelpModal';
-import { Flame, Settings2, HelpCircle, Share2 } from 'lucide-react';
+import { Flame, Settings2, HelpCircle, Share2, Trash2, Plus, X } from 'lucide-react';
 
 const FireCalculator = () => {
   const queryParams = new URLSearchParams(window.location.search);
@@ -87,6 +87,55 @@ const FireCalculator = () => {
   });
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
+  const [extraFlows, setExtraFlows] = useState(() => {
+    const q = queryParams.get('extra');
+    if (q) {
+      try {
+        const parsed = JSON.parse(q);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {
+        console.error('Error parsing extraFlows from query params', e);
+      }
+    }
+    const saved = localStorage.getItem('valia_fire_extraFlows');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {
+        console.error('Error parsing extraFlows from localStorage', e);
+      }
+    }
+    return [];
+  });
+
+  const handleAddExtraFlow = () => {
+    const newFlow = {
+      id: Math.random().toString(36).substring(2, 9),
+      name: '',
+      type: 'income',
+      amount: '',
+      recurring: false,
+      startYear: '1',
+      endYear: '10',
+      adjustForInflation: true,
+    };
+    setExtraFlows([...extraFlows, newFlow]);
+  };
+
+  const handleRemoveExtraFlow = (id) => {
+    setExtraFlows(extraFlows.filter(f => f.id !== id));
+  };
+
+  const handleUpdateExtraFlow = (id, field, value) => {
+    setExtraFlows(extraFlows.map(f => {
+      if (f.id === id) {
+        return { ...f, [field]: value };
+      }
+      return f;
+    }));
+  };
+
   const handleShare = () => {
     const params = new URLSearchParams();
     params.set('seccion', 'herramientas');
@@ -101,6 +150,9 @@ const FireCalculator = () => {
     params.set('stock', stockAlloc);
     params.set('bond', bondAlloc);
     params.set('cash', cashAlloc);
+    if (extraFlows && extraFlows.length > 0) {
+      params.set('extra', JSON.stringify(extraFlows));
+    }
 
     const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
     return navigator.clipboard.writeText(shareUrl);
@@ -118,6 +170,7 @@ const FireCalculator = () => {
     localStorage.setItem('valia_fire_stockAlloc', stockAlloc);
     localStorage.setItem('valia_fire_bondAlloc', bondAlloc);
     localStorage.setItem('valia_fire_cashAlloc', cashAlloc);
+    localStorage.setItem('valia_fire_extraFlows', JSON.stringify(extraFlows));
   }, [
     portfolioValue,
     retirementLength,
@@ -128,7 +181,8 @@ const FireCalculator = () => {
     maxWithdrawal,
     stockAlloc,
     bondAlloc,
-    cashAlloc
+    cashAlloc,
+    extraFlows
   ]);
 
   const allocSum = Number(stockAlloc || 0) + Number(bondAlloc || 0) + Number(cashAlloc || 0);
@@ -154,8 +208,9 @@ const FireCalculator = () => {
       stockAllocation: (Number(stockAlloc) || 0) / 100,
       bondAllocation: (Number(bondAlloc) || 0) / 100,
       cashAllocation: (Number(cashAlloc) || 0) / 100,
+      extraFlows,
     });
-  }, [portfolioValue, retirementLength, withdrawalStrategy, withdrawalAmount, withdrawalPercent, minWithdrawal, maxWithdrawal, stockAlloc, bondAlloc, cashAlloc, allocSum]);
+  }, [portfolioValue, retirementLength, withdrawalStrategy, withdrawalAmount, withdrawalPercent, minWithdrawal, maxWithdrawal, stockAlloc, bondAlloc, cashAlloc, allocSum, extraFlows]);
 
   return (
     <div className="container" style={{ padding: '2rem 0' }}>
@@ -210,6 +265,176 @@ const FireCalculator = () => {
             </>
           )}
 
+          {/* Flujos Extraordinarios */}
+          <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <h3 style={{ fontSize: '1rem', margin: 0, color: 'var(--text-secondary)' }}>Flujos Extraordinarios</h3>
+              <button
+                type="button"
+                onClick={handleAddExtraFlow}
+                className="btn btn-outline"
+                style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+              >
+                <Plus size={12} />
+                Agregar
+              </button>
+            </div>
+
+            {extraFlows.length === 0 ? (
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', margin: '0.5rem 0' }}>
+                No hay flujos adicionales configurados. Podés agregar ingresos (ej. jubilación) o gastos extras (ej. compra de auto).
+              </p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {extraFlows.map((flow) => (
+                  <div 
+                    key={flow.id} 
+                    className="card animate-fade-in" 
+                    style={{ 
+                      padding: '0.75rem', 
+                      background: 'var(--bg-tertiary)', 
+                      border: '1px solid var(--border-color)', 
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem'
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveExtraFlow(flow.id)}
+                      style={{ 
+                        position: 'absolute', 
+                        top: '0.5rem', 
+                        right: '0.5rem', 
+                        background: 'none', 
+                        border: 'none', 
+                        color: 'var(--text-tertiary)', 
+                        cursor: 'pointer', 
+                        padding: '0.25rem' 
+                      }}
+                      title="Eliminar flujo"
+                    >
+                      <X size={14} />
+                    </button>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="Nombre (ej. Pensión)"
+                        value={flow.name}
+                        onChange={e => handleUpdateExtraFlow(flow.id, 'name', e.target.value)}
+                        style={{ flex: 2, padding: '0.375rem', fontSize: '0.85rem' }}
+                      />
+                      <select
+                        className="input-field"
+                        value={flow.type}
+                        onChange={e => handleUpdateExtraFlow(flow.id, 'type', e.target.value)}
+                        style={{ flex: 1, padding: '0.375rem', fontSize: '0.85rem', appearance: 'auto' }}
+                      >
+                        <option value="income">Ingreso</option>
+                        <option value="expense">Egreso</option>
+                      </select>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <div style={{ flex: 1, position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: '0.5rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.85rem', color: 'var(--text-tertiary)' }}>$</span>
+                        <input
+                          type="number"
+                          className="input-field"
+                          placeholder="Monto"
+                          value={flow.amount}
+                          onChange={e => handleUpdateExtraFlow(flow.id, 'amount', e.target.value)}
+                          style={{ paddingLeft: '1.25rem', paddingRight: '0.25rem', paddingY: '0.375rem', width: '100%', fontSize: '0.85rem' }}
+                        />
+                      </div>
+                      
+                      <select
+                        className="input-field"
+                        value={flow.recurring ? 'recurring' : 'single'}
+                        onChange={e => handleUpdateExtraFlow(flow.id, 'recurring', e.target.value === 'recurring')}
+                        style={{ flex: 1, padding: '0.375rem', fontSize: '0.85rem', appearance: 'auto' }}
+                      >
+                        <option value="single">Año único</option>
+                        <option value="recurring">Recurrente</option>
+                      </select>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        {!flow.recurring ? (
+                          <>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Año:</span>
+                            <input
+                              type="number"
+                              className="input-field"
+                              min={1}
+                              max={retirementLength || 80}
+                              value={flow.startYear}
+                              onChange={e => {
+                                let val = Number(e.target.value) || '';
+                                if (val > 80) val = 80;
+                                if (val < 1 && val !== '') val = 1;
+                                handleUpdateExtraFlow(flow.id, 'startYear', val.toString());
+                              }}
+                              style={{ width: '50px', padding: '0.25rem', textAlign: 'center', fontSize: '0.85rem' }}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Años:</span>
+                            <input
+                              type="number"
+                              className="input-field"
+                              min={1}
+                              max={retirementLength || 80}
+                              value={flow.startYear}
+                              onChange={e => {
+                                let val = Number(e.target.value) || '';
+                                if (val > 80) val = 80;
+                                if (val < 1 && val !== '') val = 1;
+                                handleUpdateExtraFlow(flow.id, 'startYear', val.toString());
+                              }}
+                              style={{ width: '45px', padding: '0.25rem', textAlign: 'center', fontSize: '0.85rem' }}
+                              placeholder="Desde"
+                            />
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>al</span>
+                            <input
+                              type="number"
+                              className="input-field"
+                              min={1}
+                              max={retirementLength || 80}
+                              value={flow.endYear}
+                              onChange={e => {
+                                let val = Number(e.target.value) || '';
+                                if (val > 80) val = 80;
+                                if (val < 1 && val !== '') val = 1;
+                                handleUpdateExtraFlow(flow.id, 'endYear', val.toString());
+                              }}
+                              style={{ width: '45px', padding: '0.25rem', textAlign: 'center', fontSize: '0.85rem' }}
+                              placeholder="Hasta"
+                            />
+                          </>
+                        )}
+                      </div>
+                      
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                        <input
+                          type="checkbox"
+                          checked={flow.adjustForInflation}
+                          onChange={e => handleUpdateExtraFlow(flow.id, 'adjustForInflation', e.target.checked)}
+                        />
+                        ¿Ajusta infl.?
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
             <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>Distribución del Portafolio</h3>
             <FinancialInput label="Acciones (Stocks)" value={stockAlloc} onChange={setStockAlloc} suffix="%" min={0} max={100} />
@@ -238,7 +463,8 @@ const FireCalculator = () => {
               maxWithdrawal,
               stockAlloc,
               bondAlloc,
-              cashAlloc
+              cashAlloc,
+              extraFlows
             }}
           />
         </div>
