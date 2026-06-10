@@ -55,6 +55,18 @@ const FireCalculator = () => {
     const saved = localStorage.getItem('valia_fire_withdrawalPercent');
     return saved !== null && saved !== 'undefined' ? saved : '';
   });
+  const [minWithdrawal, setMinWithdrawal] = useState(() => {
+    const q = queryParams.get('minAmt');
+    if (q !== null && !isNaN(q)) return q;
+    const saved = localStorage.getItem('valia_fire_minWithdrawal');
+    return saved !== null && saved !== 'undefined' ? saved : '';
+  });
+  const [maxWithdrawal, setMaxWithdrawal] = useState(() => {
+    const q = queryParams.get('maxAmt');
+    if (q !== null && !isNaN(q)) return q;
+    const saved = localStorage.getItem('valia_fire_maxWithdrawal');
+    return saved !== null && saved !== 'undefined' ? saved : '';
+  });
   const [stockAlloc, setStockAlloc] = useState(() => {
     const q = queryParams.get('stock');
     if (q !== null && !isNaN(q)) return Number(q);
@@ -84,6 +96,8 @@ const FireCalculator = () => {
     if (withdrawalStrategy) params.set('strat', withdrawalStrategy);
     if (withdrawalAmount) params.set('amt', withdrawalAmount);
     if (withdrawalPercent) params.set('pct', withdrawalPercent);
+    if (minWithdrawal) params.set('minAmt', minWithdrawal);
+    if (maxWithdrawal) params.set('maxAmt', maxWithdrawal);
     params.set('stock', stockAlloc);
     params.set('bond', bondAlloc);
     params.set('cash', cashAlloc);
@@ -99,6 +113,8 @@ const FireCalculator = () => {
     localStorage.setItem('valia_fire_withdrawalStrategy', withdrawalStrategy);
     localStorage.setItem('valia_fire_withdrawalAmount', withdrawalAmount);
     localStorage.setItem('valia_fire_withdrawalPercent', withdrawalPercent);
+    localStorage.setItem('valia_fire_minWithdrawal', minWithdrawal);
+    localStorage.setItem('valia_fire_maxWithdrawal', maxWithdrawal);
     localStorage.setItem('valia_fire_stockAlloc', stockAlloc);
     localStorage.setItem('valia_fire_bondAlloc', bondAlloc);
     localStorage.setItem('valia_fire_cashAlloc', cashAlloc);
@@ -108,6 +124,8 @@ const FireCalculator = () => {
     withdrawalStrategy,
     withdrawalAmount,
     withdrawalPercent,
+    minWithdrawal,
+    maxWithdrawal,
     stockAlloc,
     bondAlloc,
     cashAlloc
@@ -131,11 +149,13 @@ const FireCalculator = () => {
       withdrawalStrategy,
       withdrawalAmount: Number(withdrawalAmount) || 0,
       withdrawalPercent: (Number(withdrawalPercent) || 0) / 100,
+      minWithdrawal: Number(minWithdrawal) || 0,
+      maxWithdrawal: Number(maxWithdrawal) || 0,
       stockAllocation: (Number(stockAlloc) || 0) / 100,
       bondAllocation: (Number(bondAlloc) || 0) / 100,
       cashAllocation: (Number(cashAlloc) || 0) / 100,
     });
-  }, [portfolioValue, retirementLength, withdrawalStrategy, withdrawalAmount, withdrawalPercent, stockAlloc, bondAlloc, cashAlloc, allocSum]);
+  }, [portfolioValue, retirementLength, withdrawalStrategy, withdrawalAmount, withdrawalPercent, minWithdrawal, maxWithdrawal, stockAlloc, bondAlloc, cashAlloc, allocSum]);
 
   return (
     <div className="container" style={{ padding: '2rem 0' }}>
@@ -176,7 +196,18 @@ const FireCalculator = () => {
           {withdrawalStrategy === 'constant-dollar' ? (
             <FinancialInput label="Retiro Anual Inicial" value={withdrawalAmount} onChange={setWithdrawalAmount} prefix="$" step={1000} />
           ) : (
-            <FinancialInput label="Porcentaje de Retiro Anual" value={withdrawalPercent} onChange={setWithdrawalPercent} suffix="%" step={0.1} />
+            <>
+              <FinancialInput label="Porcentaje de Retiro Anual" value={withdrawalPercent} onChange={setWithdrawalPercent} suffix="%" step={0.1} />
+              
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                <div style={{ flex: 1 }}>
+                  <FinancialInput label="Retiro Mínimo Anual (Opcional)" value={minWithdrawal} onChange={setMinWithdrawal} prefix="$" step={1000} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <FinancialInput label="Retiro Máximo Anual (Opcional)" value={maxWithdrawal} onChange={setMaxWithdrawal} prefix="$" step={1000} />
+                </div>
+              </div>
+            </>
           )}
 
           <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
@@ -203,6 +234,8 @@ const FireCalculator = () => {
               withdrawalStrategy,
               withdrawalAmount,
               withdrawalPercent,
+              minWithdrawal,
+              maxWithdrawal,
               stockAlloc,
               bondAlloc,
               cashAlloc

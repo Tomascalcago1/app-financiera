@@ -1,4 +1,4 @@
-import { historicalMarketData } from './historicalData';
+import { historicalMarketData } from './historicalData.js';
 
 /**
  * FIRE Backtesting Simulation Engine
@@ -11,6 +11,8 @@ export const runFireSimulation = (params) => {
     withdrawalStrategy, // 'constant-dollar' | 'percent-of-portfolio'
     withdrawalAmount,    // Used for constant-dollar (annual $)
     withdrawalPercent,   // Used for percent-of-portfolio (e.g. 0.04 = 4%)
+    minWithdrawal,       // Optional floor for percent-of-portfolio (annual $)
+    maxWithdrawal,       // Optional ceiling for percent-of-portfolio (annual $)
     stockAllocation,     // e.g. 0.80
     bondAllocation,      // e.g. 0.20
     cashAllocation,      // e.g. 0.00
@@ -37,12 +39,19 @@ export const runFireSimulation = (params) => {
     const startIdx = data.indexOf(startEntry);
     let portfolio = portfolioValue;
     let currentWithdrawal = withdrawalAmount || 0;
+    let cumulativeInflation = 1.0;
     let survived = true;
     const yearlyData = [];
 
     for (let i = 0; i < retirementLength; i++) {
       const yearData = data[startIdx + i];
       if (!yearData) break;
+
+      // Update cumulative inflation starting from year 1
+      if (i > 0) {
+        const prevYearData = data[startIdx + i - 1];
+        cumulativeInflation *= (1 + prevYearData.inflation);
+      }
 
       // Calculate withdrawal first
       let withdrawal = 0;
@@ -51,13 +60,26 @@ export const runFireSimulation = (params) => {
         if (i === 0) {
           withdrawal = withdrawalAmount;
         } else {
-          const prevYearData = data[startIdx + i - 1];
-          currentWithdrawal = currentWithdrawal * (1 + prevYearData.inflation);
+          currentWithdrawal = withdrawalAmount * cumulativeInflation;
           withdrawal = currentWithdrawal;
         }
       } else {
-        // Percent of portfolio based on starting balance
+        // Percent of portfolio based on current balance
         withdrawal = portfolio * withdrawalPercent;
+
+        if (minWithdrawal > 0) {
+          const adjustedFloor = minWithdrawal * cumulativeInflation;
+          if (withdrawal < adjustedFloor) {
+            withdrawal = adjustedFloor;
+          }
+        }
+
+        if (maxWithdrawal > 0) {
+          const adjustedCeiling = maxWithdrawal * cumulativeInflation;
+          if (withdrawal > adjustedCeiling) {
+            withdrawal = adjustedCeiling;
+          }
+        }
       }
 
       portfolio -= withdrawal;

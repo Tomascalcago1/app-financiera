@@ -90,9 +90,21 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
     ? 'Dólar Constante (Ajustado por Inflación)' 
     : 'Porcentaje Variable del Portafolio';
 
+  let minMaxSuffix = '';
+  if (inputs.withdrawalStrategy === 'percent-of-portfolio') {
+    const minW = Number(inputs.minWithdrawal) || 0;
+    const maxW = Number(inputs.maxWithdrawal) || 0;
+    if (minW > 0 || maxW > 0) {
+      const parts = [];
+      if (minW > 0) parts.push(`Mín: ${formatCurrencyFull(minW)}`);
+      if (maxW > 0) parts.push(`Máx: ${formatCurrencyFull(maxW)}`);
+      minMaxSuffix = ` (${parts.join(' / ')})`;
+    }
+  }
+
   const withdrawalVal = inputs.withdrawalStrategy === 'constant-dollar'
     ? `${formatCurrencyFull(inputs.withdrawalAmount)} anual`
-    : `${inputs.withdrawalPercent}% anual`;
+    : `${inputs.withdrawalPercent}% anual${minMaxSuffix}`;
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
