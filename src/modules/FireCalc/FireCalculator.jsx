@@ -24,8 +24,17 @@ const FireCalculator = () => {
   });
   const [retirementLength, setRetirementLength] = useState(() => {
     const q = queryParams.get('len');
-    if (q !== null && !isNaN(q)) return q;
+    if (q !== null && !isNaN(q)) {
+      const num = Number(q);
+      return num > 80 ? '80' : num < 1 ? '1' : q;
+    }
     const saved = localStorage.getItem('valia_fire_retirementLength');
+    if (saved !== null && saved !== 'undefined' && saved !== '') {
+      const num = Number(saved);
+      if (!isNaN(num)) {
+        return num > 80 ? '80' : num < 1 ? '1' : saved;
+      }
+    }
     return saved !== null && saved !== 'undefined' ? saved : '';
   });
   const [withdrawalStrategy, setWithdrawalStrategy] = useState(() => {
@@ -112,9 +121,13 @@ const FireCalculator = () => {
     if (withdrawalStrategy === 'percent-of-portfolio' && withdrawalPercent === '') return null;
     if (allocSum !== 100) return null;
 
+    let length = Number(retirementLength) || 0;
+    if (length > 80) length = 80;
+    if (length < 1) length = 1;
+
     return runFireSimulation({
       portfolioValue: Number(portfolioValue) || 0,
-      retirementLength: Number(retirementLength) || 0,
+      retirementLength: length,
       withdrawalStrategy,
       withdrawalAmount: Number(withdrawalAmount) || 0,
       withdrawalPercent: (Number(withdrawalPercent) || 0) / 100,
@@ -150,7 +163,7 @@ const FireCalculator = () => {
           </h2>
 
           <FinancialInput label="Valor del Portafolio" value={portfolioValue} onChange={setPortfolioValue} prefix="$" step={10000} />
-          <FinancialInput label="Duración del Retiro" value={retirementLength} onChange={setRetirementLength} suffix="años" min={1} max={60} />
+          <FinancialInput label="Duración del Retiro" value={retirementLength} onChange={setRetirementLength} suffix="años" min={1} max={80} />
 
           <div className="input-group">
             <label className="input-label">Estrategia de Retiro</label>

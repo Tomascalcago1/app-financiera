@@ -28,6 +28,20 @@ const FinancialInput = ({
 
   const handleBlur = () => {
     setIsFocused(false);
+    
+    let finalValue = value;
+    if (value !== '' && value !== undefined && value !== null) {
+      let num = Number(value);
+      if (min !== undefined && num < min) {
+        num = min;
+      }
+      if (max !== undefined && num > max) {
+        num = max;
+      }
+      finalValue = num;
+    }
+    setLocalValue(finalValue);
+    onChange(finalValue);
   };
 
   const handleChange = (e) => {

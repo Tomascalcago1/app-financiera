@@ -20,6 +20,17 @@ export const runFireSimulation = (params) => {
   const maxStartYear = data[data.length - 1].year - retirementLength;
   const possibleStarts = data.filter(d => d.year <= maxStartYear);
 
+  if (possibleStarts.length === 0) {
+    return {
+      successRate: 0,
+      totalSimulations: 0,
+      survivedCount: 0,
+      statistics: { median: 0, best: 0, worst: 0 },
+      simulations: [],
+      chartData: [],
+    };
+  }
+
   const simulations = [];
 
   for (const startEntry of possibleStarts) {
@@ -112,11 +123,11 @@ export const runFireSimulation = (params) => {
     const sorted = [...values].sort((a, b) => a - b);
     chartData.push({
       yearIndex: i + 1,
-      median: sorted[Math.floor(sorted.length / 2)],
-      p10: sorted[Math.floor(sorted.length * 0.1)],
-      p90: sorted[Math.floor(sorted.length * 0.9)],
-      min: sorted[0],
-      max: sorted[sorted.length - 1],
+      median: sorted[Math.floor(sorted.length / 2)] || 0,
+      p10: sorted[Math.floor(sorted.length * 0.1)] || 0,
+      p90: sorted[Math.floor(sorted.length * 0.9)] || 0,
+      min: sorted[0] || 0,
+      max: sorted[sorted.length - 1] || 0,
     });
   }
 
