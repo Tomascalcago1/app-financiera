@@ -227,6 +227,109 @@ const Blog = () => {
           <p>Para calcular tu sueldo neto real en pesos estimando comisiones de plataformas (Deel, Wise, Payoneer), retención impositiva de Ingresos Brutos y cuota mensual de monotributo, consultá nuestro simulador de <strong>Sueldo Neto Freelancer</strong> o el <strong>Simulador de Ganancias</strong> en la pestaña de Herramientas.</p>
         </div>
       )
+    },
+    {
+      id: 'monotributo-escalas-2026-neto',
+      title: 'Escalas Monotributo 2026: Cuotas, topes y cómo calcular tu neto en mano',
+      summary: 'Detallamos las escalas impositivas vigentes de la AFIP/ARCA para Monotributo en 2026. Te explicamos los topes de facturación, el componente unificado y cómo proyectar tu ingreso real.',
+      date: '09 de Junio, 2026',
+      readTime: '5 min de lectura',
+      category: 'impuestos',
+      icon: <Percent size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>El **Monotributo** en Argentina es el sistema simplificado para pequeños contribuyentes. Con las actualizaciones de la AFIP/ARCA para el período fiscal 2026, los topes de facturación anual y las cuotas mensuales se ajustaron para reflejar la dinámica inflacionaria. Comprender en qué categoría ubicarte y cuánto pagarás es fundamental para planificar tu economía.</p>
+          
+          <h3>Topes de Facturación Anual 2026</h3>
+          <p>Los límites máximos de facturación bruta anual determinan tu categoría. Si prestás servicios (Categorías A a H) o vendés cosas muebles (Categorías A a K), debés vigilar no pasarte de los límites para evitar la exclusión de oficio al régimen general (Responsable Inscripto):</p>
+          <ul>
+            <li><strong>Categorías Iniciales (A a C):</strong> Diseñadas para emprendimientos y profesionales independientes en sus primeros pasos, con cuotas mensuales accesibles.</li>
+            <li><strong>Categoría H:</strong> El límite máximo de facturación anual para prestadores de servicios. Exceder este tope implica pasar automáticamente al régimen general.</li>
+            <li><strong>Categoría K:</strong> El límite máximo absoluto de facturación anual exclusivo para venta de cosas muebles (comercio de bienes).</li>
+          </ul>
+
+          <h3>¿Qué compone la cuota del Monotributo?</h3>
+          <p>La cuota mensual unificada que abonás al fisco se compone de tres partes:</p>
+          <ol>
+            <li><strong>Impuesto Integrado:</strong> Reemplaza al IVA y al Impuesto a las Ganancias.</li>
+            <li><strong>Aporte Previsional (SIPA):</strong> Tu contribución mensual al sistema jubilatorio nacional.</li>
+            <li><strong>Aporte de Obra Social:</strong> Destinado a tu cobertura de salud (si no la derivás a una prepaga corporativa).</li>
+          </ol>
+
+          <h3>Cómo estimar tu Ingreso Neto Real</h3>
+          <p>Tu sueldo neto real no es simplemente lo que facturás. Para calcular tus ingresos netos en mano exactos, debés restar del total facturado:</p>
+          <ul>
+            <li>La cuota mensual fija de tu categoría de Monotributo.</li>
+            <li>La alícuota de **Ingresos Brutos** (que varía entre 1.5% y 4% según tu provincia, o exento si aplicás al Monotributo Unificado).</li>
+            <li>Las comisiones de la plataforma de cobro (si facturás para afuera) o comisiones de facturación locales.</li>
+          </ul>
+          <p>Para proyectar de forma exacta tu categoría impositiva óptima y calcular tu sueldo líquido estimado en pesos o dólares, te sugerimos utilizar nuestro simulador **Sueldo Neto Freelancer** en la pestaña de Herramientas.</p>
+        </div>
+      )
+    },
+    {
+      id: 'como-comprar-dolar-mep-balanz',
+      title: 'Cómo comprar Dólar MEP en Argentina: Guía paso a paso sin parking',
+      summary: 'Te explicamos detalladamente qué es el dólar Bolsa o MEP, los requisitos para operar a través de un broker como Balanz y la mecánica para resguardar tus ahorros de forma legal.',
+      date: '09 de Junio, 2026',
+      readTime: '4 min de lectura',
+      category: 'inversiones',
+      icon: <TrendingUp size={20} className="text-accent-success" />,
+      content: (
+        <div>
+          <p>El **Dólar MEP (Mercado Electrónico de Pagos)**, también conocido como dólar bolsa, es una forma 100% legal, segura y sin cupo mensual de adquirir dólares en Argentina utilizando títulos públicos que cotizan tanto en pesos como en dólares.</p>
+          
+          <h3>Mecánica de Compra (Paso a Paso)</h3>
+          <ol>
+            <li><strong>Abrir Cuenta de Inversión:</strong> Necesitás una cuenta comitente en una ALyC (Broker de Bolsa) regulada por la CNV, como **Balanz**.</li>
+            <li><strong>Transferir Pesos:</strong> Transferís los pesos desde tu cuenta bancaria personal (del mismo titular) a tu cuenta del broker.</li>
+            <li><strong>Comprar Bono en Pesos (Plazo Inmediato o 48hs):</strong> Comprás un bono soberano líquido (como el AL30 o GD30) utilizando tus pesos.</li>
+            <li><strong>Cumplir el "Parking" Obligatorio:</strong> Por normativa del Banco Central y la CNV, debés mantener el bono comprado en tu cartera durante un plazo mínimo establecido (denominado "parking"), que suele ser de 1 día hábil, antes de poder venderlo. Durante este día no podés disponer del dinero.</li>
+            <li><strong>Vender Bono en Dólares (AL30D / GD30D):</strong> Una vez cumplido el parking, vendés el mismo bono pero en su versión en dólares (identificada con la letra 'D' al final). Los dólares resultantes se acreditan en tu cuenta comitente.</li>
+            <li><strong>Transferir a tu Banco:</strong> Transferís los dólares a tu caja de ahorro bancaria en dólares de forma directa.</li>
+          </ol>
+
+          <h3>¿Qué es el parking y cómo te afecta?</h3>
+          <p>El "parking" introduce un riesgo de fluctuación de precios: durante el día que debés retener el bono, el precio del bono en dólares puede variar, modificando levemente tu tipo de cambio implícito final. Para mitigar esto, muchos brokers ofrecen funciones de **"Comprar MEP Simple"** o en un solo clic, automatizando la orden de venta al cumplirse el parking.</p>
+          <p>Para analizar y comparar las comisiones operativas de Balanz frente a otros intermediarios financieros, consultá nuestro **Comparador de Brokers** en la sección de Herramientas. Si necesitás asistencia personalizada para abrir tu cuenta bonificada, podés contactar a nuestro asesor asociado en la sección de **Asesores**.</p>
+        </div>
+      )
+    },
+    {
+      id: 'credito-uva-frances-vs-aleman',
+      title: 'Simulador UVA: Diferencias entre el sistema Francés y Alemán de amortización',
+      summary: 'Explicamos detalladamente cómo impacta la inflación en las cuotas de tu crédito hipotecario UVA según elijas amortizar bajo sistema Francés o Alemán. Claves para proteger tu presupuesto familiar.',
+      date: '09 de Junio, 2026',
+      readTime: '6 min de lectura',
+      category: 'vivienda',
+      icon: <Home size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>A la hora de solicitar un crédito hipotecario UVA en Argentina, los bancos ofrecen dos alternativas de amortización de deuda: el **Sistema Francés** y el **Sistema Alemán**. Aunque ambos se ajustan diariamente por la inflación (mediante el Coeficiente de Estabilización de Referencia - CER), la forma en que se estructuran las cuotas a lo largo del tiempo es radicalmente distinta.</p>
+          
+          <h3>1. Sistema Francés: Cuotas en UVA Constantes</h3>
+          <p>En el sistema francés, la cuota medida en UVAs (capital + interés) se mantiene constante a lo largo de toda la vida del préstamo. Sin embargo, su composición cambia:</p>
+          <ul>
+            <li>Al principio del crédito, la mayor parte de la cuota se destina a pagar **intereses**, y se amortiza muy poco capital.</li>
+            <li>Conforme pasan los años, la proporción de interés disminuye y aumenta la amortización de capital.</li>
+            <li><strong>Ventaja:</strong> La cuota inicial en pesos suele ser más baja y accesible para calificar.</li>
+            <li><strong>Desventaja:</strong> La deuda se reduce muy lentamente al principio, lo que incrementa el riesgo si la inflación se dispara en los primeros años.</li>
+          </ul>
+
+          <h3>2. Sistema Alemán: Amortización de Capital Constante</h3>
+          <p>En el sistema alemán, lo que se mantiene constante a lo largo de todo el crédito es la porción de **amortización de capital** mensual. Los intereses se calculan siempre sobre el saldo deudor restante:</p>
+          <ul>
+            <li>Dado que el saldo deudor se reduce de forma constante y lineal, el interés a pagar disminuye mes a mes.</li>
+            <li>Esto hace que la cuota total medida en UVAs sea **decreciente**: las primeras cuotas son las más caras, y las últimas son las más baratas.</li>
+            <li><strong>Ventaja:</strong> Pagás menos intereses totales a lo largo del préstamo y tu deuda real se reduce más rápido.</li>
+            <li><strong>Desventaja:</strong> Requiere ingresos mínimos demostrables sustancialmente mayores para calificar debido a que las cuotas iniciales son más elevadas.</li>
+          </ul>
+
+          <h3>¿Cuál te conviene elegir?</h3>
+          <p>Si contás con holgura financiera en tus ingresos mensuales y podés afrontar las primeras cuotas, el **sistema Alemán** es financieramente más eficiente. Si tu presupuesto inicial es ajustado y necesitás maximizar el monto del préstamo para comprar la propiedad, el **sistema Francés** suele ser la única opción viable.</p>
+          <p>Para modelar ambos escenarios de amortización aplicando tasas de inflación proyectadas y visualizar la progresión de tus cuotas, te sugerimos utilizar nuestro simulador interactivo de **Crédito Hipotecario UVA** en la pestaña de Herramientas.</p>
+        </div>
+      )
     }
   ];
 

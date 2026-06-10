@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
-import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book } from 'lucide-react';
+import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book, Code } from 'lucide-react';
+import HelpModal from './components/HelpModal';
 
 const BuyVsRentCalculator = lazy(() => import('./modules/BuyVsRent/BuyVsRentCalculator'));
 const CompoundInterestCalculator = lazy(() => import('./modules/CompoundInterest/CompoundInterestCalculator'));
@@ -54,6 +55,35 @@ const LoadingState = () => (
   </div>
 );
 
+const toolMap = {
+  'comprar-o-alquilar': 'buy-vs-rent',
+  'interes-compuesto': 'compound-interest',
+  'objetivo-de-ahorro': 'savings-goal',
+  'simulador-de-retiro': 'fire',
+  'simulador-fire': 'fire',
+  'inflacion-historica': 'inflation',
+  'hipotecario-uva': 'hipotecario-uva',
+  'comparador-historico': 'comparador-historico',
+  'sueldo-neto': 'sueldo-neto',
+  'ganancias': 'ganancias',
+  'comparador-de-brokers': 'broker-comparator',
+  'cuotas-o-efectivo': 'installments-vs-cash'
+};
+
+const toolMapReverse = {
+  'buy-vs-rent': 'comprar-o-alquilar',
+  'compound-interest': 'interes-compuesto',
+  'savings-goal': 'objetivo-de-ahorro',
+  'fire': 'simulador-de-retiro',
+  'inflation': 'inflacion-historica',
+  'hipotecario-uva': 'hipotecario-uva',
+  'comparador-historico': 'comparador-historico',
+  'sueldo-neto': 'sueldo-neto',
+  'ganancias': 'ganancias',
+  'broker-comparator': 'comparador-de-brokers',
+  'installments-vs-cash': 'cuotas-o-efectivo'
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -63,6 +93,8 @@ function App() {
     if (params.get('herramienta') || params.get('tool')) return 'herramientas';
     return 'herramientas';
   });
+  const [isEmbedModalOpen, setIsEmbedModalOpen] = useState(false);
+  const isEmbedded = new URLSearchParams(window.location.search).get('embed') === 'true';
   const [activeTool, setActiveTool] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const tool = params.get('herramienta') || params.get('tool');
@@ -81,20 +113,6 @@ function App() {
     ];
     if (tool) {
       if (validTools.includes(tool)) return tool;
-      const toolMap = {
-        'comprar-o-alquilar': 'buy-vs-rent',
-        'interes-compuesto': 'compound-interest',
-        'objetivo-de-ahorro': 'savings-goal',
-        'simulador-de-retiro': 'fire',
-        'simulador-fire': 'fire',
-        'inflacion-historica': 'inflation',
-        'hipotecario-uva': 'hipotecario-uva',
-        'comparador-historico': 'comparador-historico',
-        'sueldo-neto': 'sueldo-neto',
-        'ganancias': 'ganancias',
-        'comparador-de-brokers': 'broker-comparator',
-        'cuotas-o-efectivo': 'installments-vs-cash'
-      };
       if (toolMap[tool]) return toolMap[tool];
     }
     return 'buy-vs-rent';
@@ -107,19 +125,7 @@ function App() {
     const currentTab = url.searchParams.get('seccion') || url.searchParams.get('tab');
     const currentTool = url.searchParams.get('herramienta') || url.searchParams.get('tool');
 
-    const toolMapReverse = {
-      'buy-vs-rent': 'comprar-o-alquilar',
-      'compound-interest': 'interes-compuesto',
-      'savings-goal': 'objetivo-de-ahorro',
-      'fire': 'simulador-de-retiro',
-      'inflation': 'inflacion-historica',
-      'hipotecario-uva': 'hipotecario-uva',
-      'comparador-historico': 'comparador-historico',
-      'sueldo-neto': 'sueldo-neto',
-      'ganancias': 'ganancias',
-      'broker-comparator': 'comparador-de-brokers',
-      'installments-vs-cash': 'cuotas-o-efectivo'
-    };
+    // uses global toolMapReverse constant
 
     const targetToolSpanish = toolMapReverse[activeTool] || activeTool;
 
@@ -177,20 +183,6 @@ function App() {
         if (validTools.includes(tool)) {
           setActiveTool(tool);
         } else {
-          const toolMap = {
-            'comprar-o-alquilar': 'buy-vs-rent',
-            'interes-compuesto': 'compound-interest',
-            'objetivo-de-ahorro': 'savings-goal',
-            'simulador-de-retiro': 'fire',
-            'simulador-fire': 'fire',
-            'inflacion-historica': 'inflation',
-            'hipotecario-uva': 'hipotecario-uva',
-            'comparador-historico': 'comparador-historico',
-            'sueldo-neto': 'sueldo-neto',
-            'ganancias': 'ganancias',
-            'comparador-de-brokers': 'broker-comparator',
-            'cuotas-o-efectivo': 'installments-vs-cash'
-          };
           if (toolMap[tool]) {
             setActiveTool(toolMap[tool]);
           } else {
@@ -335,8 +327,9 @@ function App() {
   return (
     <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Navigation Bar */}
-      <header style={{ 
-        backgroundColor: 'rgba(15, 23, 42, 0.85)', 
+      {!isEmbedded && (
+        <header style={{ 
+          backgroundColor: 'rgba(15, 23, 42, 0.85)', 
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(51, 65, 85, 0.4)',
@@ -395,9 +388,10 @@ function App() {
           </nav>
         </div>
       </header>
+      )}
 
       {/* Main Content Area */}
-      <main style={{ flex: 1, padding: '2rem 0' }}>
+      <main style={{ flex: 1, padding: isEmbedded ? '0.5rem 0' : '2rem 0' }}>
         <Suspense fallback={<LoadingState />}>
           <div key={activeTab} className="animate-fade-in">
           {activeTab === 'inicio' && (
@@ -413,7 +407,8 @@ function App() {
           {activeTab === 'herramientas' && (
             <div>
               {/* Tool Selector Carousel Wrapper */}
-              <div className="tool-selector-container container" style={{ position: 'relative', paddingLeft: '2.5rem', paddingRight: '2.5rem', display: 'flex', alignItems: 'center' }}>
+              {!isEmbedded && (
+                <div className="tool-selector-container container" style={{ position: 'relative', paddingLeft: '2.5rem', paddingRight: '2.5rem', display: 'flex', alignItems: 'center' }}>
                 
                 {/* Left Fade Edge */}
                 <div style={{
@@ -699,6 +694,7 @@ function App() {
                   <ChevronRight size={20} />
                 </button>
               </div>
+              )}
 
               <div key={activeTool} className="animate-fade-in">
                 {activeTool === 'buy-vs-rent' && <BuyVsRentCalculator />}
@@ -713,6 +709,28 @@ function App() {
                 {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
                 {activeTool === 'installments-vs-cash' && <InstallmentsVsCashCalculator />}
               </div>
+
+              {!isEmbedded && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem', marginBottom: '1.5rem' }}>
+                  <button 
+                    onClick={() => setIsEmbedModalOpen(true)}
+                    className="btn btn-outline"
+                    style={{ 
+                      fontSize: '0.875rem', 
+                      padding: '0.5rem 1.25rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      borderColor: 'rgba(6, 182, 212, 0.25)',
+                      color: 'var(--accent-primary)',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    <Code size={16} />
+                    Incrustar esta calculadora en tu web
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -729,12 +747,13 @@ function App() {
 
 
       {/* Footer */}
-      <footer style={{ 
-        backgroundColor: 'var(--bg-secondary)', 
-        borderTop: '1px solid var(--border-color)', 
-        padding: '3.5rem 0 2rem 0',
-        marginTop: 'auto'
-      }}>
+      {!isEmbedded && (
+        <footer style={{ 
+          backgroundColor: 'var(--bg-secondary)', 
+          borderTop: '1px solid var(--border-color)', 
+          padding: '3.5rem 0 2rem 0',
+          marginTop: 'auto'
+        }}>
         <div className="container" style={{ 
           display: 'flex', 
           flexDirection: 'column', 
@@ -925,6 +944,46 @@ function App() {
           </div>
         </div>
       </footer>
+      )}
+
+      <HelpModal
+        isOpen={isEmbedModalOpen}
+        onClose={() => setIsEmbedModalOpen(false)}
+        title="Incrustar calculadora en tu web"
+      >
+        <p style={{ fontSize: '0.9rem', marginBottom: '1.125rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+          Copia y pega este código HTML en tu blog, portal o sitio web para ofrecer esta calculadora interactiva a tus lectores de forma 100% gratuita y privada.
+        </p>
+        
+        <div style={{ 
+          position: 'relative', 
+          backgroundColor: 'rgba(0, 0, 0, 0.3)', 
+          border: '1px solid var(--border-color)', 
+          borderRadius: 'var(--border-radius-sm)',
+          padding: '1rem',
+          fontFamily: 'monospace',
+          fontSize: '0.8rem',
+          color: 'var(--accent-primary)',
+          wordBreak: 'break-all',
+          whiteSpace: 'pre-wrap',
+          marginBottom: '1.5rem'
+        }}>
+          {`<iframe src="${window.location.origin}${window.location.pathname}?seccion=herramientas&herramienta=${toolMapReverse[activeTool] || activeTool}&embed=true" width="100%" height="800" style="border:none; border-radius:12px; background:transparent;" allowtransparency="true"></iframe>`}
+        </div>
+
+        <button
+          onClick={() => {
+            const code = `<iframe src="${window.location.origin}${window.location.pathname}?seccion=herramientas&herramienta=${toolMapReverse[activeTool] || activeTool}&embed=true" width="100%" height="800" style="border:none; border-radius:12px; background:transparent;" allowtransparency="true"></iframe>`;
+            navigator.clipboard.writeText(code)
+              .then(() => alert('¡Código copiado al portapapeles!'))
+              .catch(err => console.error('Error al copiar: ', err));
+          }}
+          className="btn btn-primary"
+          style={{ width: '100%', justifyContent: 'center' }}
+        >
+          Copiar Código de Inserción
+        </button>
+      </HelpModal>
     </div>
   );
 }
