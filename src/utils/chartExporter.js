@@ -54,20 +54,86 @@ export const exportChartToPNG = (containerId, filename = 'simulacion_valia.png')
     // Buscar el resultado destacado principal (busca la tarjeta que contiene un valor monetario o porcentual grande)
     let mainResultLabel = '';
     let mainResultValue = '';
-    const cardElements = document.querySelectorAll('.card');
-    for (const card of cardElements) {
-      // Ignorar la propia guía SEO o cuadros de texto largos
-      if (card.querySelector('h2') || card.querySelector('h3') || card.style.marginTop === '3rem') continue;
-      
-      const pElements = card.querySelectorAll('p');
-      if (pElements.length >= 2) {
-        const labelText = pElements[0].textContent.trim();
-        const valueText = pElements[1].textContent.trim();
-        // Identificar si tiene formato de resultado (moneda, porcentaje o similar)
-        if (valueText.includes('$') || valueText.includes('u$s') || valueText.includes('%') || (valueText.length > 0 && !isNaN(valueText.replace(/[^0-9]/g, '')))) {
-          mainResultLabel = labelText;
-          mainResultValue = valueText;
+
+    // Raspadores especializados según la herramienta (identificada por containerId)
+    if (containerId === 'compound-chart-container') {
+      const banner = document.querySelector('.card h2')?.closest('.card');
+      if (banner) {
+        const h2 = banner.querySelector('h2');
+        const strong = banner.querySelector('p strong');
+        if (h2 && strong) {
+          mainResultLabel = h2.textContent.trim();
+          mainResultValue = strong.textContent.trim();
+        }
+      }
+    } else if (containerId === 'buy-rent-chart-container') {
+      const banner = document.querySelector('.card h2')?.closest('.card');
+      if (banner) {
+        const h2 = banner.querySelector('h2');
+        const strongs = banner.querySelectorAll('p strong');
+        if (h2 && strongs.length >= 2) {
+          mainResultLabel = `${h2.textContent.trim()} (${strongs[0].textContent.trim()})`;
+          mainResultValue = strongs[1].textContent.trim();
+        } else if (h2 && strongs.length === 1) {
+          mainResultLabel = h2.textContent.trim();
+          mainResultValue = strongs[0].textContent.trim();
+        }
+      }
+    } else if (containerId === 'savings-goal-chart-container') {
+      const banner = document.querySelector('.card h2')?.closest('.card');
+      if (banner) {
+        const h2 = banner.querySelector('h2');
+        const strongs = banner.querySelectorAll('p strong');
+        if (strongs.length >= 2) {
+          mainResultLabel = "Aporte Mensual Requerido";
+          mainResultValue = strongs[1].textContent.trim();
+        } else if (strongs.length === 1) {
+          mainResultLabel = h2 ? h2.textContent.trim() : "Resultado de tu Meta";
+          mainResultValue = strongs[0].textContent.trim();
+        }
+      }
+    } else if (containerId === 'history-chart-container') {
+      const cards = document.querySelectorAll('.card');
+      for (const card of cards) {
+        const pElements = card.querySelectorAll('p');
+        if (pElements.length >= 3 && pElements[0].textContent.includes('Mayor Retorno')) {
+          mainResultLabel = `${pElements[0].textContent.trim()} (${pElements[1].textContent.trim()})`;
+          mainResultValue = pElements[2].textContent.trim();
           break;
+        }
+      }
+    } else if (containerId === 'inflation-chart-container') {
+      const cards = document.querySelectorAll('.card');
+      for (const card of cards) {
+        const h2 = card.querySelector('h2');
+        if (h2 && h2.textContent.includes('Resultado')) {
+          const strongs = card.querySelectorAll('p strong');
+          if (strongs.length >= 3) {
+            mainResultLabel = "Valor Equivalente Proyectado";
+            mainResultValue = strongs[2].textContent.trim();
+            break;
+          }
+        }
+      }
+    }
+
+    // Raspador general (fallback) si no se encontró resultado destacado en los específicos
+    if (!mainResultValue) {
+      const cardElements = document.querySelectorAll('.card');
+      for (const card of cardElements) {
+        // Ignorar la propia guía SEO o cuadros de texto largos
+        if (card.querySelector('h2') || card.querySelector('h3') || card.style.marginTop === '3rem') continue;
+        
+        const pElements = card.querySelectorAll('p');
+        if (pElements.length >= 2) {
+          const labelText = pElements[0].textContent.trim();
+          const valueText = pElements[1].textContent.trim();
+          // Identificar si tiene formato de resultado (moneda, porcentaje o similar)
+          if (valueText.includes('$') || valueText.includes('u$s') || valueText.includes('%') || (valueText.length > 0 && !isNaN(valueText.replace(/[^0-9]/g, '')))) {
+            mainResultLabel = labelText;
+            mainResultValue = valueText;
+            break;
+          }
         }
       }
     }
@@ -252,26 +318,44 @@ export const exportChartToPNG = (containerId, filename = 'simulacion_valia.png')
       ctx.stroke();
       ctx.setLineDash([]); // Reset line dash
 
-      ctx.font = '500 13px system-ui, -apple-system, sans-serif';
-      params.slice(0, 7).forEach((p, idx) => {
-        const itemY = paramStartY + 28 + (idx * 30);
-        
+      let currentItemY = paramStartY + 28;
+      params.slice(0, 7).forEach((p) => {
         // Círculo viñeta cyan
         ctx.fillStyle = 'rgba(6, 182, 212, 0.6)';
         ctx.beginPath();
-        ctx.arc(45, itemY - 4, 3, 0, 2 * Math.PI);
+        ctx.arc(45, currentItemY - 4, 3, 0, 2 * Math.PI);
         ctx.fill();
 
-        // Nombre del parámetro
-        ctx.fillStyle = '#94A3B8';
-        ctx.fillText(p.label, 58, itemY);
+        // Nombre del parámetro (medir ancho temporalmente)
+        ctx.font = '500 13px system-ui, -apple-system, sans-serif';
+        const lblWidth = ctx.measureText(p.label).width;
 
-        // Valor del parámetro (Alineado a la derecha en el panel)
-        ctx.fillStyle = '#F8FAFC';
+        // Valor del parámetro (medir ancho temporalmente)
         ctx.font = 'bold 13px system-ui, -apple-system, sans-serif';
         const valWidth = ctx.measureText(p.value).width;
-        ctx.fillText(p.value, leftPanelWidth - 40 - valWidth, itemY);
-        ctx.font = '500 13px system-ui, -apple-system, sans-serif'; // Restaurar font weight
+
+        const maxAvailableWidth = leftPanelWidth - 40 - 58; // 322px de espacio horizontal neto
+        if (lblWidth + valWidth + 15 > maxAvailableWidth) {
+          // Si el texto completo excede el ancho, dibujamos en dos líneas apiladas
+          ctx.fillStyle = '#94A3B8';
+          ctx.font = '500 12px system-ui, -apple-system, sans-serif';
+          ctx.fillText(p.label, 58, currentItemY);
+
+          ctx.fillStyle = '#F8FAFC';
+          ctx.font = 'bold 13px system-ui, -apple-system, sans-serif';
+          ctx.fillText(p.value, 58, currentItemY + 18);
+          currentItemY += 42; // Mayor incremento vertical para doble línea
+        } else {
+          // Si entra bien, se dibuja en la misma línea
+          ctx.fillStyle = '#94A3B8';
+          ctx.font = '500 13px system-ui, -apple-system, sans-serif';
+          ctx.fillText(p.label, 58, currentItemY);
+
+          ctx.fillStyle = '#F8FAFC';
+          ctx.font = 'bold 13px system-ui, -apple-system, sans-serif';
+          ctx.fillText(p.value, leftPanelWidth - 40 - valWidth, currentItemY);
+          currentItemY += 28; // Incremento estándar
+        }
       });
 
       // --- PANEL DERECHO (DIBUJAR EL GRÁFICO RENDERIZADO) ---
