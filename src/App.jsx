@@ -95,6 +95,14 @@ function App() {
   });
   const [isEmbedModalOpen, setIsEmbedModalOpen] = useState(false);
   const isEmbedded = new URLSearchParams(window.location.search).get('embed') === 'true';
+
+  // Global settings for currency and exchange rate (TC MEP)
+  const [globalCurrency, setGlobalCurrency] = useState(() => {
+    return sessionStorage.getItem('valia_global_currency') || 'ARS';
+  });
+  const [globalExRate, setGlobalExRate] = useState(() => {
+    return Number(sessionStorage.getItem('valia_global_ex_rate')) || 1200;
+  });
   const [activeTool, setActiveTool] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const tool = params.get('herramienta') || params.get('tool');
@@ -148,6 +156,31 @@ function App() {
       window.history.pushState({}, '', url.toString());
     }
   }, [activeTab, activeTool]);
+
+  // Sincronizar configuraciones globales en sessionStorage y notificar a los componentes
+  useEffect(() => {
+    sessionStorage.setItem('valia_global_currency', globalCurrency);
+    sessionStorage.setItem('valia_global_ex_rate', globalExRate);
+    window.dispatchEvent(new CustomEvent('valia-global-settings-changed', {
+      detail: { currency: globalCurrency, exRate: globalExRate }
+    }));
+  }, [globalCurrency, globalExRate]);
+
+  // Escuchar cambios provenientes de los simuladores individuales para mantener la cabecera sincronizada
+  useEffect(() => {
+    const handleGlobalSettings = (e) => {
+      if (e.detail) {
+        if (e.detail.currency && e.detail.currency !== globalCurrency) {
+          setGlobalCurrency(e.detail.currency);
+        }
+        if (e.detail.exRate && Number(e.detail.exRate) !== globalExRate) {
+          setGlobalExRate(Number(e.detail.exRate));
+        }
+      }
+    };
+    window.addEventListener('valia-global-settings-changed', handleGlobalSettings);
+    return () => window.removeEventListener('valia-global-settings-changed', handleGlobalSettings);
+  }, [globalCurrency, globalExRate]);
 
   // Escuchar el evento popstate para soportar navegación con botones Atrás/Adelante del navegador en español e inglés
   useEffect(() => {
@@ -277,23 +310,7 @@ function App() {
     return () => window.removeEventListener('change-tab', handleChangeTab);
   }, []);
 
-  // MutationObserver temporal para ocultar todos los botones de "Descargar Gráfico"
-  useEffect(() => {
-    const hideDownloadButtons = () => {
-      document.querySelectorAll('button').forEach(btn => {
-        if (btn.textContent.includes('Descargar Gráfico')) {
-          btn.style.setProperty('display', 'none', 'important');
-        }
-      });
-    };
-
-    hideDownloadButtons();
-
-    const observer = new MutationObserver(hideDownloadButtons);
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, []);
+  // El MutationObserver temporal para ocultar los botones de descarga ha sido removido para reactivar la descarga de gráficos.
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -386,6 +403,84 @@ function App() {
               Acerca de
             </a>
           </nav>
+
+          {/* Global currency and exchange rate ticker */}
+          <div 
+            className="global-settings-widget"
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '1rem',
+              backgroundColor: 'rgba(30, 41, 59, 0.4)',
+              border: '1px solid rgba(51, 65, 85, 0.5)',
+              borderRadius: '20px',
+              padding: '0.25rem 0.5rem 0.25rem 0.75rem',
+              fontSize: '0.8rem',
+              color: 'var(--text-secondary)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Moneda:</span>
+              <div style={{ display: 'flex', borderRadius: '15px', overflow: 'hidden', border: '1px solid rgba(51, 65, 85, 0.5)' }}>
+                <button
+                  onClick={() => setGlobalCurrency('ARS')}
+                  style={{
+                    background: globalCurrency === 'ARS' ? 'var(--accent-primary)' : 'transparent',
+                    color: globalCurrency === 'ARS' ? '#090D16' : 'var(--text-secondary)',
+                    border: 'none',
+                    padding: '0.2rem 0.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  ARS
+                </button>
+                <button
+                  onClick={() => setGlobalCurrency('USD')}
+                  style={{
+                    background: globalCurrency === 'USD' ? 'var(--accent-primary)' : 'transparent',
+                    color: globalCurrency === 'USD' ? '#090D16' : 'var(--text-secondary)',
+                    border: 'none',
+                    padding: '0.2rem 0.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  USD
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', borderLeft: '1px solid rgba(51, 65, 85, 0.5)', paddingLeft: '0.75rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>TC MEP:</span>
+              <span style={{ color: 'var(--accent-primary)', fontWeight: 700, fontSize: '0.75rem' }}>$</span>
+              <input
+                type="number"
+                value={globalExRate || ''}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setGlobalExRate(val);
+                }}
+                style={{
+                  width: '55px',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: '1px dotted var(--accent-primary)',
+                  color: 'var(--text-primary)',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  padding: '0 0.1rem',
+                  margin: 0,
+                  outline: 'none',
+                  textAlign: 'left'
+                }}
+              />
+            </div>
+          </div>
         </div>
       </header>
       )}

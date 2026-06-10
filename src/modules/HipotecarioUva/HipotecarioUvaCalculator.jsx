@@ -28,6 +28,7 @@ import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
+import FAQSection from '../../components/FAQSection';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -468,6 +469,27 @@ const HipotecarioUvaCalculator = () => {
           </div>
         </div>
       </section>
+
+      <FAQSection 
+        faqs={[
+          {
+            question: "¿Qué es el coeficiente UVA y cómo se ajusta?",
+            answer: "La Unidad de Valor Adquisitivo (UVA) es una unidad de medida que se ajusta diariamente mediante el Coeficiente de Estabilización de Referencia (CER), el cual sigue directamente la variación mensual del Índice de Precios al Consumidor (IPC) del INDEC. Esto significa que la deuda de capital y el valor de la cuota aumentan al mismo ritmo que la inflación."
+          },
+          {
+            question: "¿Qué diferencias hay entre el sistema de amortización Francés y el Alemán?",
+            answer: "En el Sistema Francés, la cuota mensual en UVAs es constante (al principio pagás más intereses y amortizás menos capital). En el Sistema Alemán, la amortización de capital en UVAs es constante en cada mes (hace que las primeras cuotas en UVAs sean las más caras pero decrezcan con el tiempo, pagando menos intereses totales al final del crédito)."
+          },
+          {
+            question: "¿Qué es la cláusula de tope de cuota por CVS (Coeficiente de Variación Salarial)?",
+            answer: "Algunos bancos ofrecen una opción de tope en la cuota mediante el pago de una prima de seguro. Si la cuota mensual calculada en base a la inflación supera la cuota ajustada por el Coeficiente de Variación Salarial por más de un 10%, el usuario puede pedir la extensión del plazo de pago para mantener la cuota dentro del límite del presupuesto de ingresos familiar."
+          },
+          {
+            question: "¿Cuando conviene optar por un crédito UVA frente a uno de tasa fija?",
+            answer: "El crédito UVA suele tener tasas de interés iniciales muy bajas (típicamente entre 3.5% y 6.5% + UVA), lo que permite calificar con ingresos menores y acceder a montos más altos de préstamo. Sin embargo, traslada todo el riesgo inflacionario al deudor. Un crédito de tasa fija ofrece certeza absoluta de cuota en pesos, pero sus tasas iniciales son altísimas y los montos otorgados suelen ser muy bajos."
+          }
+        ]}
+      />
 
       <HelpModal 
         isOpen={isHelpOpen} 

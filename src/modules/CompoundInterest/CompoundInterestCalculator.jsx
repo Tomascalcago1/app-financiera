@@ -4,6 +4,7 @@ import CompoundResultsDashboard from './CompoundResultsDashboard';
 import { simulateCompoundInterest } from './CompoundSimulationEngine';
 import HelpModal from '../../components/HelpModal';
 import { TrendingUp, Settings2, HelpCircle } from 'lucide-react';
+import FAQSection from '../../components/FAQSection';
 
 const CompoundInterestCalculator = () => {
   const queryParams = new URLSearchParams(window.location.search);
@@ -299,6 +300,27 @@ const CompoundInterestCalculator = () => {
           </div>
         </div>
       </section>
+
+      <FAQSection 
+        faqs={[
+          {
+            question: "¿Qué es el interés compuesto y cómo funciona?",
+            answer: "El interés compuesto es la acumulación de intereses sobre el capital inicial y sobre los intereses previamente generados período a período. De esta forma, el dinero crece de manera exponencial a lo largo del tiempo, ya que los rendimientos se reinvierten continuamente para generar nuevos rendimientos."
+          },
+          {
+            question: "¿Cómo influye la frecuencia de capitalización en el saldo final?",
+            answer: "La frecuencia de capitalización es la cantidad de veces que se liquidan y reinvierten los intereses en un año (ej. mensual, trimestral, anual). A mayor frecuencia de capitalización, mayor es el crecimiento del saldo final, ya que los intereses acumulados comienzan a generar rendimientos mucho antes."
+          },
+          {
+            question: "¿Qué diferencia hay entre la Tasa Nominal Anual (TNA) y la Tasa Efectiva Anual (TEA)?",
+            answer: "La TNA es la tasa de referencia anual que no contempla la reinversión de los intereses dentro del año. La TEA es la tasa de rendimiento real obtenida al final del año si se reinvierten todos los intereses con la frecuencia de capitalización correspondiente (la TEA siempre es mayor que la TNA si la capitalización es sub-anual)."
+          },
+          {
+            question: "¿Por qué es fundamental la constancia y el factor tiempo en la inversión?",
+            answer: "Debido a la naturaleza exponencial del interés compuesto, la variable más poderosa es el tiempo. Empezar a ahorrar e invertir unos años antes o mantener aportes constantes (por pequeños que sean) genera un saldo final acumulado drásticamente mayor en el largo plazo que intentar ingresar una suma grande de dinero de golpe al final."
+          }
+        ]}
+      />
 
       <HelpModal 
         isOpen={isHelpOpen} 

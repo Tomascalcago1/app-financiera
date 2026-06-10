@@ -50,7 +50,11 @@ export const exportChartToPNG = (containerId, filename = 'grafico_valia.png') =>
       ];
       
       propertiesToCopy.forEach(prop => {
-        const val = computed.getPropertyValue(prop);
+        let val = computed.getPropertyValue(prop);
+        if (prop === 'font-family') {
+          // Force local system font to avoid cross-origin font fetching errors in canvas (CORS Canvas Tainting)
+          val = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        }
         if (val) {
           dest.style.setProperty(prop, val);
         }

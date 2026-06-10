@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Percent, 
   HelpCircle, 
@@ -25,6 +25,7 @@ import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
+import FAQSection from '../../components/FAQSection';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -53,8 +54,16 @@ const GananciasCalculator = () => {
 
   // Inputs
   const [grossIncome, setGrossIncome] = useState(() => getNumericParam('gross', 3500000)); // 3.5 millones por defecto
-  const [currency, setCurrency] = useState(() => getStringParam('currency', 'ARS')); // 'ARS' | 'USD'
-  const [exchangeRate, setExchangeRate] = useState(() => getNumericParam('exRate', 1200)); // MEP
+  const [currency, setCurrency] = useState(() => {
+    const sessionVal = sessionStorage.getItem('valia_global_currency');
+    if (sessionVal) return sessionVal;
+    return getStringParam('currency', 'ARS');
+  }); // 'ARS' | 'USD'
+  const [exchangeRate, setExchangeRate] = useState(() => {
+    const sessionVal = sessionStorage.getItem('valia_global_ex_rate');
+    if (sessionVal) return Number(sessionVal);
+    return getNumericParam('exRate', 1200);
+  }); // MEP
   const [hasSpouse, setHasSpouse] = useState(() => getBoolParam('spouse', false));
   const [childrenCount, setChildrenCount] = useState(() => getNumericParam('children', 0));
   const [disabledChildrenCount, setDisabledChildrenCount] = useState(() => getNumericParam('disabledChildren', 0));
@@ -64,6 +73,38 @@ const GananciasCalculator = () => {
   const [monthlyDomesticService, setMonthlyDomesticService] = useState(() => getStringParam('domestic', ''));
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+
+  // Sincronizar configuraciones con cabecera global
+  useEffect(() => {
+    const handleGlobalSettings = (e) => {
+      if (e.detail) {
+        if (e.detail.currency && e.detail.currency !== currency) {
+          setCurrency(e.detail.currency);
+        }
+        if (e.detail.exRate && Number(e.detail.exRate) !== exchangeRate) {
+          setExchangeRate(Number(e.detail.exRate));
+        }
+      }
+    };
+    window.addEventListener('valia-global-settings-changed', handleGlobalSettings);
+    return () => window.removeEventListener('valia-global-settings-changed', handleGlobalSettings);
+  }, [currency, exchangeRate]);
+
+  // Sincronizar configuraciones locales hacia sessionStorage y cabecera (sincronización inversa)
+  useEffect(() => {
+    const sessionCurr = sessionStorage.getItem('valia_global_currency');
+    const sessionRate = Number(sessionStorage.getItem('valia_global_ex_rate'));
+
+    const hasChanged = sessionCurr !== currency || sessionRate !== exchangeRate;
+
+    if (hasChanged) {
+      sessionStorage.setItem('valia_global_currency', currency);
+      sessionStorage.setItem('valia_global_ex_rate', exchangeRate);
+      window.dispatchEvent(new CustomEvent('valia-global-settings-changed', {
+        detail: { currency, exRate: exchangeRate }
+      }));
+    }
+  }, [currency, exchangeRate]);
 
   const handleShare = () => {
     const params = new URLSearchParams();
@@ -631,6 +672,27 @@ const GananciasCalculator = () => {
           </div>
         </div>
       </section>
+
+      <FAQSection 
+        faqs={[
+          {
+            question: "¿Qué ingresos están alcanzados por el Impuesto a las Ganancias en 2026?",
+            answer: "Están alcanzados los ingresos del trabajo personal en relación de dependencia (4° categoría), jubilaciones, pensiones y cargos públicos. El cálculo se realiza sobre la ganancia neta imponible acumulada mes a mes, restando los aportes de jubilación y obra social, y las deducciones permitidas."
+          },
+          {
+            question: "¿Cuáles son las deducciones personales y permitidas para el período 2026?",
+            answer: "Se pueden deducir cargas de familia (cónyuge, hijos menores de 18 años o con discapacidad), el alquiler de vivienda permanente, medicina prepaga, personal de casas particulares (empleadas domésticas), gastos de educación en colegios privados, e intereses de créditos hipotecarios, entre otros, respetando los topes oficiales anuales."
+          },
+          {
+            question: "¿Cómo se realiza el ajuste por inflación de los mínimos y escalas de Ganancias?",
+            answer: "Por ley, el Mínimo No Imponible (MNI), la Deducción Especial y los tramos de la escala progresiva se actualizan semestralmente (en enero y julio) en base a la variación acumulada del Índice de Precios al Consumidor (IPC) informado por el INDEC."
+          },
+          {
+            question: "¿Cuál es la fecha límite para cargar las deducciones en el SIRADIG?",
+            answer: "El formulario 572 (SIRADIG) para el período fiscal del año anterior puede presentarse y modificarse hasta el 31 de marzo de cada año. Se aconseja realizar la carga de forma mensual o durante febrero para dar tiempo al empleador a procesar los ajustes correspondientes en la liquidación anual."
+          }
+        ]}
+      />
 
       <HelpModal 
         isOpen={isHelpOpen} 

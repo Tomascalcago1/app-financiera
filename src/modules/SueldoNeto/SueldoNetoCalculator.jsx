@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Percent, 
   HelpCircle, 
@@ -24,6 +24,7 @@ import AdvisorCTA from '../../components/AdvisorCTA';
 import HelpModal from '../../components/HelpModal';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
+import FAQSection from '../../components/FAQSection';
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('es-AR', {
@@ -45,13 +46,53 @@ const SueldoNetoCalculator = () => {
   };
 
   const [grossIncome, setGrossIncome] = useState(() => getNumericParam('gross', 1500000)); // 1.5 millones por defecto
-  const [currency, setCurrency] = useState(() => getStringParam('currency', 'ARS')); // 'ARS' | 'USD'
-  const [exchangeRate, setExchangeRate] = useState(() => getNumericParam('exRate', 1200)); // Cotización MEP por defecto
+  const [currency, setCurrency] = useState(() => {
+    const sessionVal = sessionStorage.getItem('valia_global_currency');
+    if (sessionVal) return sessionVal;
+    return getStringParam('currency', 'ARS');
+  }); // 'ARS' | 'USD'
+  const [exchangeRate, setExchangeRate] = useState(() => {
+    const sessionVal = sessionStorage.getItem('valia_global_ex_rate');
+    if (sessionVal) return Number(sessionVal);
+    return getNumericParam('exRate', 1200);
+  }); // Cotización MEP por defecto
   const [activity, setActivity] = useState(() => getStringParam('activity', 'services')); // 'services' | 'goods'
   const [iibbPercent, setIibbPercent] = useState(() => getNumericParam('iibb', 3.0)); // 3% Ingresos Brutos
   const [platformFee, setPlatformFee] = useState(() => getNumericParam('fee', 2.5)); // 2.5% comisiones de cobro
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+
+  // Sincronizar configuraciones con cabecera global
+  useEffect(() => {
+    const handleGlobalSettings = (e) => {
+      if (e.detail) {
+        if (e.detail.currency && e.detail.currency !== currency) {
+          setCurrency(e.detail.currency);
+        }
+        if (e.detail.exRate && Number(e.detail.exRate) !== exchangeRate) {
+          setExchangeRate(Number(e.detail.exRate));
+        }
+      }
+    };
+    window.addEventListener('valia-global-settings-changed', handleGlobalSettings);
+    return () => window.removeEventListener('valia-global-settings-changed', handleGlobalSettings);
+  }, [currency, exchangeRate]);
+
+  // Sincronizar configuraciones locales hacia sessionStorage y cabecera (sincronización inversa)
+  useEffect(() => {
+    const sessionCurr = sessionStorage.getItem('valia_global_currency');
+    const sessionRate = Number(sessionStorage.getItem('valia_global_ex_rate'));
+
+    const hasChanged = sessionCurr !== currency || sessionRate !== exchangeRate;
+
+    if (hasChanged) {
+      sessionStorage.setItem('valia_global_currency', currency);
+      sessionStorage.setItem('valia_global_ex_rate', exchangeRate);
+      window.dispatchEvent(new CustomEvent('valia-global-settings-changed', {
+        detail: { currency, exRate: exchangeRate }
+      }));
+    }
+  }, [currency, exchangeRate]);
 
   const handleShare = () => {
     const params = new URLSearchParams();
@@ -456,6 +497,27 @@ const SueldoNetoCalculator = () => {
           </div>
         </div>
       </section>
+
+      <FAQSection 
+        faqs={[
+          {
+            question: "¿Cómo se calculan las categorías y topes de facturación del Monotributo en 2026?",
+            answer: "Las escalas de facturación máxima anual y las cuotas mensuales del Monotributo se actualizan semestralmente según el IPC. El cálculo de tu categoría debe basarse en la facturación bruta devengada (emitida) de los últimos 12 meses, independientemente de cuándo se haya cobrado efectivamente."
+          },
+          {
+            question: "¿Qué deducciones y gastos debo considerar para saber mi sueldo neto real?",
+            answer: "Para conocer tus ingresos limpios en mano debes restar de tu facturación bruta: (1) la cuota mensual unificada del Monotributo, (2) la alícuota de Ingresos Brutos (que suele rondar entre el 1.5% y 4% según la jurisdicción, salvo que apliques al Monotributo Unificado exento), y (3) los costos de las plataformas de cobro internacionales o locales."
+          },
+          {
+            question: "¿Qué es la exportación de servicios y el cupo de USD 24.000 anuales?",
+            answer: "Los freelancers argentinos que exporten servicios pueden ingresar hasta USD 24.000 anuales a su cuenta bancaria local en dólares sin la obligación de pesificarlos al tipo de cambio oficial del BCRA, siempre que emitan factura 'E' y liquiden la orden dentro de los 5 días hábiles del cobro."
+          },
+          {
+            question: "¿Cómo impactan las comisiones de retiro en el sueldo neto?",
+            answer: "Si cobras a través de plataformas del exterior (como Wise, Payoneer o Deel), cada paso de intermediación de fondos suele cobrar comisiones de retiro (entre el 1% y 3%) o costos fijos de transferencia ACH/Wire. Modelar correctamente estas pérdidas es vital antes de calcular tus honorarios por hora."
+          }
+        ]}
+      />
 
       <HelpModal 
         isOpen={isHelpOpen} 
