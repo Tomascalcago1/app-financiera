@@ -57,39 +57,50 @@ export const exportChartToPNG = (containerId, filename = 'simulacion_valia.png')
 
     // Raspadores especializados según la herramienta (identificada por containerId)
     if (containerId === 'compound-chart-container') {
-      const banner = document.querySelector('.card h2')?.closest('.card');
-      if (banner) {
-        const h2 = banner.querySelector('h2');
-        const strong = banner.querySelector('p strong');
-        if (h2 && strong) {
-          mainResultLabel = h2.textContent.trim();
-          mainResultValue = strong.textContent.trim();
+      const cards = document.querySelectorAll('.card');
+      for (const card of cards) {
+        const h2 = card.querySelector('h2');
+        if (h2 && h2.textContent.includes('Proyección')) {
+          const strong = card.querySelector('p strong');
+          if (strong) {
+            mainResultLabel = h2.textContent.trim();
+            mainResultValue = strong.textContent.trim();
+            break;
+          }
         }
       }
     } else if (containerId === 'buy-rent-chart-container') {
-      const banner = document.querySelector('.card h2')?.closest('.card');
-      if (banner) {
-        const h2 = banner.querySelector('h2');
-        const strongs = banner.querySelectorAll('p strong');
-        if (h2 && strongs.length >= 2) {
-          mainResultLabel = `${h2.textContent.trim()} (${strongs[0].textContent.trim()})`;
-          mainResultValue = strongs[1].textContent.trim();
-        } else if (h2 && strongs.length === 1) {
-          mainResultLabel = h2.textContent.trim();
-          mainResultValue = strongs[0].textContent.trim();
+      const cards = document.querySelectorAll('.card');
+      for (const card of cards) {
+        const h2 = card.querySelector('h2');
+        if (h2 && h2.textContent.includes('Resultado')) {
+          const strongs = card.querySelectorAll('p strong');
+          if (strongs.length >= 2) {
+            mainResultLabel = `${h2.textContent.trim()} (${strongs[0].textContent.trim()})`;
+            mainResultValue = strongs[1].textContent.trim();
+            break;
+          } else if (strongs.length === 1) {
+            mainResultLabel = h2.textContent.trim();
+            mainResultValue = strongs[0].textContent.trim();
+            break;
+          }
         }
       }
     } else if (containerId === 'savings-goal-chart-container') {
-      const banner = document.querySelector('.card h2')?.closest('.card');
-      if (banner) {
-        const h2 = banner.querySelector('h2');
-        const strongs = banner.querySelectorAll('p strong');
-        if (strongs.length >= 2) {
-          mainResultLabel = "Aporte Mensual Requerido";
-          mainResultValue = strongs[1].textContent.trim();
-        } else if (strongs.length === 1) {
-          mainResultLabel = h2 ? h2.textContent.trim() : "Resultado de tu Meta";
-          mainResultValue = strongs[0].textContent.trim();
+      const cards = document.querySelectorAll('.card');
+      for (const card of cards) {
+        const h2 = card.querySelector('h2');
+        if (h2 && h2.textContent.includes('Resultado')) {
+          const strongs = card.querySelectorAll('p strong');
+          if (strongs.length >= 2) {
+            mainResultLabel = "Aporte Mensual Requerido";
+            mainResultValue = strongs[1].textContent.trim();
+            break;
+          } else if (strongs.length === 1) {
+            mainResultLabel = h2.textContent.trim();
+            mainResultValue = strongs[0].textContent.trim();
+            break;
+          }
         }
       }
     } else if (containerId === 'history-chart-container') {
