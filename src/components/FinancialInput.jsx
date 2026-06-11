@@ -92,8 +92,8 @@ const FinancialInput = ({
           type={isFocused ? 'number' : 'text'}
           className="input-field"
           style={{
-            paddingLeft: prefix ? '2rem' : '1rem',
-            paddingRight: suffix ? '2rem' : '1rem'
+            paddingLeft: prefix ? (prefix.length > 1 ? `${1.2 + prefix.length * 0.6}rem` : '2rem') : '1rem',
+            paddingRight: suffix ? (suffix.length > 1 ? `${1.2 + suffix.length * 0.55}rem` : '2rem') : '1rem'
           }}
           value={displayValue}
           onFocus={handleFocus}
