@@ -13,6 +13,7 @@ const SueldoNetoCalculator = lazy(() => import('./modules/SueldoNeto/SueldoNetoC
 const BrokerComparator = lazy(() => import('./modules/BrokerComparator/BrokerComparator'));
 const GananciasCalculator = lazy(() => import('./modules/Ganancias/GananciasCalculator'));
 const InstallmentsVsCashCalculator = lazy(() => import('./modules/InstallmentsVsCash/InstallmentsVsCashCalculator'));
+const SavingsComparisonCalculator = lazy(() => import('./modules/SavingsComparison/SavingsComparisonCalculator'));
 
 const AcercaDe = lazy(() => import('./pages/AcercaDe'));
 const Privacidad = lazy(() => import('./pages/Privacidad'));
@@ -67,7 +68,8 @@ const toolMap = {
   'sueldo-neto': 'sueldo-neto',
   'ganancias': 'ganancias',
   'comparador-de-brokers': 'broker-comparator',
-  'cuotas-o-efectivo': 'installments-vs-cash'
+  'cuotas-o-efectivo': 'installments-vs-cash',
+  'comparador-de-ahorro': 'savings-comparison'
 };
 
 const toolMapReverse = {
@@ -81,7 +83,8 @@ const toolMapReverse = {
   'sueldo-neto': 'sueldo-neto',
   'ganancias': 'ganancias',
   'broker-comparator': 'comparador-de-brokers',
-  'installments-vs-cash': 'cuotas-o-efectivo'
+  'installments-vs-cash': 'cuotas-o-efectivo',
+  'savings-comparison': 'comparador-de-ahorro'
 };
 
 function App() {
@@ -111,7 +114,8 @@ function App() {
       'sueldo-neto', 
       'ganancias', 
       'broker-comparator',
-      'installments-vs-cash'
+      'installments-vs-cash',
+      'savings-comparison'
     ];
     if (tool) {
       if (validTools.includes(tool)) return tool;
@@ -181,7 +185,8 @@ function App() {
         'sueldo-neto', 
         'ganancias', 
         'broker-comparator',
-        'installments-vs-cash'
+        'installments-vs-cash',
+        'savings-comparison'
       ];
       if (tool) {
         if (validTools.includes(tool)) {
@@ -220,7 +225,8 @@ function App() {
         'sueldo-neto': "Calculadora de Sueldo Neto Freelancer | Valia",
         'ganancias': "Simulador de Impuesto a las Ganancias | Valia",
         'broker-comparator': "Comparador de Brokers de Inversión | Valia",
-        'installments-vs-cash': "Calculadora de Compras en Cuotas vs Efectivo | Valia"
+        'installments-vs-cash': "Calculadora de Compras en Cuotas vs Efectivo | Valia",
+        'savings-comparison': "Comparador de Tasas: Plazo Fijo UVA vs Tradicional vs Cauciones | Valia"
       };
 
       const toolDescs = {
@@ -234,7 +240,8 @@ function App() {
         'sueldo-neto': "Calcula tus ingresos netos en mano estimando la cuota del Monotributo, comisiones de cobro e Ingresos Brutos.",
         'ganancias': "Calcula la retención del Impuesto a las Ganancias sobre tu sueldo (4° categoría) con las deducciones y escalas oficiales.",
         'broker-comparator': "Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.",
-        'installments-vs-cash': "Simula si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones."
+        'installments-vs-cash': "Simula si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones.",
+        'savings-comparison': "Compara el rendimiento y la ganancia real de tus pesos entre Plazo Fijo UVA, Plazo Fijo Tradicional y Cauciones Bursátiles en base a proyecciones de inflación."
       };
 
       title = toolTitles[activeTool] || title;
@@ -655,6 +662,24 @@ function App() {
                   >
                     ¿Cuotas o Efectivo?
                   </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=comparador-de-ahorro"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('savings-comparison'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'savings-comparison' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'savings-comparison' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'savings-comparison' ? '600' : '500',
+                      boxShadow: activeTool === 'savings-comparison' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    ¿UVA, Plazo Fijo o Caución?
+                  </a>
                 </div>
 
                 {/* Right Slide Button */}
@@ -696,6 +721,7 @@ function App() {
                 {activeTool === 'ganancias' && <GananciasCalculator />}
                 {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
                 {activeTool === 'installments-vs-cash' && <InstallmentsVsCashCalculator />}
+                {activeTool === 'savings-comparison' && <SavingsComparisonCalculator />}
               </div>
 
               {!isEmbedded && (
@@ -801,7 +827,8 @@ function App() {
                   { label: 'Interés Compuesto', tool: 'compound-interest', path: 'interes-compuesto' },
                   { label: 'Crédito Hipotecario UVA', tool: 'hipotecario-uva', path: 'hipotecario-uva' },
                   { label: 'Simulador de Retiro', tool: 'fire', path: 'simulador-de-retiro' },
-                  { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash', path: 'cuotas-o-efectivo' }
+                  { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash', path: 'cuotas-o-efectivo' },
+                  { label: '¿UVA, Plazo Fijo o Caución?', tool: 'savings-comparison', path: 'comparador-de-ahorro' }
                 ].map((item, i) => (
                   <a
                     key={i}

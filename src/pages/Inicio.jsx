@@ -16,7 +16,8 @@ import {
   Scale,
   ChevronDown,
   ChevronUp,
-  HelpCircle
+  HelpCircle,
+  Landmark
 } from 'lucide-react';
 import AdvisorCTA from '../components/AdvisorCTA';
 
@@ -129,6 +130,14 @@ const Inicio = ({ onSelectTool }) => {
       name: '¿Cuotas o Efectivo?',
       icon: <Scale size={24} className="text-accent-primary" />,
       desc: 'Simulá si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones.',
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
+    },
+    {
+      id: 'savings-comparison',
+      name: '¿UVA, Plazo Fijo o Caución?',
+      icon: <Landmark size={24} className="text-accent-primary" />,
+      desc: 'Compará la rentabilidad y ganancia real de tus pesos entre Plazo Fijo UVA, Plazo Fijo Tradicional y Cauciones bursátiles.',
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     }
