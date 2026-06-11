@@ -54,6 +54,20 @@ const SueldoNetoCalculator = () => {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.get('exRate')) {
+      fetch('https://dolarapi.com/v1/dolares/mep')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.venta) {
+            setExchangeRate(Math.round(data.venta));
+          }
+        })
+        .catch(err => console.error('Error fetching exchange rate:', err));
+    }
+  }, []);
+
   const handleShare = () => {
     const params = new URLSearchParams();
     params.set('tool', 'sueldo-neto');
