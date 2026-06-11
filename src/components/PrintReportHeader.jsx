@@ -17,7 +17,7 @@ const PrintReportHeader = ({ title, subtitle = 'Ficha de Planificación Financie
         </div>
         <div className="print-header-right">
           <div>Emisión: {currentDate}</div>
-          <div><a href="https://valia-finanzas.vercel.app" target="_blank" rel="noopener noreferrer">valia-finanzas.vercel.app</a></div>
+          <div><a href="https://valiafinanzas.com" target="_blank" rel="noopener noreferrer">valiafinanzas.com</a></div>
         </div>
       </div>
 
