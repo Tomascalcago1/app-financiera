@@ -129,7 +129,7 @@ function App() {
       if (validTools.includes(tool)) return tool;
       if (toolMap[tool]) return toolMap[tool];
     }
-    return 'buy-vs-rent';
+    return 'sueldo-neto';
   });
   const scrollRef = useRef(null);
 
@@ -205,11 +205,11 @@ function App() {
           if (toolMap[tool]) {
             setActiveTool(toolMap[tool]);
           } else {
-            setActiveTool('buy-vs-rent');
+            setActiveTool('sueldo-neto');
           }
         }
       } else {
-        setActiveTool('buy-vs-rent');
+        setActiveTool('sueldo-neto');
       }
     };
 
@@ -479,132 +479,6 @@ function App() {
                   }}
                 >
                   <a
-                    href="?seccion=herramientas&herramienta=comprar-o-alquilar"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('buy-vs-rent'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'buy-vs-rent' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'buy-vs-rent' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'buy-vs-rent' ? '600' : '500',
-                      boxShadow: activeTool === 'buy-vs-rent' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    ¿Alquilar o Comprar?
-                  </a>
-                  <a
-                    href="?seccion=herramientas&herramienta=interes-compuesto"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('compound-interest'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'compound-interest' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'compound-interest' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'compound-interest' ? '600' : '500',
-                      boxShadow: activeTool === 'compound-interest' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    Interés Compuesto
-                  </a>
-                  <a
-                    href="?seccion=herramientas&herramienta=objetivo-de-ahorro"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('savings-goal'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'savings-goal' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'savings-goal' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'savings-goal' ? '600' : '500',
-                      boxShadow: activeTool === 'savings-goal' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    Objetivo de Ahorro
-                  </a>
-                  <a
-                    href="?seccion=herramientas&herramienta=simulador-de-retiro"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('fire'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'fire' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'fire' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'fire' ? '600' : '500',
-                      boxShadow: activeTool === 'fire' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    Simulador de Retiro
-                  </a>
-                  <a
-                    href="?seccion=herramientas&herramienta=inflacion-historica"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('inflation'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'inflation' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'inflation' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'inflation' ? '600' : '500',
-                      boxShadow: activeTool === 'inflation' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    Inflación Histórica
-                  </a>
-                  <a
-                    href="?seccion=herramientas&herramienta=hipotecario-uva"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('hipotecario-uva'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'hipotecario-uva' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'hipotecario-uva' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'hipotecario-uva' ? '600' : '500',
-                      boxShadow: activeTool === 'hipotecario-uva' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    Crédito UVA
-                  </a>
-                  <a
-                    href="?seccion=herramientas&herramienta=comparador-historico"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('comparador-historico'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'comparador-historico' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'comparador-historico' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'comparador-historico' ? '600' : '500',
-                      boxShadow: activeTool === 'comparador-historico' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    Dólar vs PF vs Merval
-                  </a>
-                  <a
                     href="?seccion=herramientas&herramienta=sueldo-neto"
                     className="btn"
                     onClick={(e) => { e.preventDefault(); setActiveTool('sueldo-neto'); }}
@@ -641,24 +515,6 @@ function App() {
                     Simulador Ganancias
                   </a>
                   <a
-                    href="?seccion=herramientas&herramienta=comparador-de-brokers"
-                    className="btn"
-                    onClick={(e) => { e.preventDefault(); setActiveTool('broker-comparator'); }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      textDecoration: 'none',
-                      backgroundColor: activeTool === 'broker-comparator' ? 'var(--accent-primary)' : 'transparent',
-                      color: activeTool === 'broker-comparator' ? '#090D16' : 'var(--text-secondary)',
-                      fontWeight: activeTool === 'broker-comparator' ? '600' : '500',
-                      boxShadow: activeTool === 'broker-comparator' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    Comparador de Brokers
-                  </a>
-                  <a
                     href="?seccion=herramientas&herramienta=cuotas-o-efectivo"
                     className="btn"
                     onClick={(e) => { e.preventDefault(); setActiveTool('installments-vs-cash'); }}
@@ -677,6 +533,24 @@ function App() {
                     ¿Cuotas o Efectivo?
                   </a>
                   <a
+                    href="?seccion=herramientas&herramienta=interes-compuesto"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('compound-interest'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'compound-interest' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'compound-interest' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'compound-interest' ? '600' : '500',
+                      boxShadow: activeTool === 'compound-interest' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Interés Compuesto
+                  </a>
+                  <a
                     href="?seccion=herramientas&herramienta=comparador-de-ahorro"
                     className="btn"
                     onClick={(e) => { e.preventDefault(); setActiveTool('savings-comparison'); }}
@@ -693,6 +567,24 @@ function App() {
                     }}
                   >
                     ¿UVA, Plazo Fijo o Caución?
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=hipotecario-uva"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('hipotecario-uva'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'hipotecario-uva' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'hipotecario-uva' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'hipotecario-uva' ? '600' : '500',
+                      boxShadow: activeTool === 'hipotecario-uva' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Crédito UVA
                   </a>
                   <a
                     href="?seccion=herramientas&herramienta=conversor-tasa"
@@ -729,6 +621,114 @@ function App() {
                     }}
                   >
                     Actualizador IPC (INDEC)
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=comprar-o-alquilar"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('buy-vs-rent'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'buy-vs-rent' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'buy-vs-rent' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'buy-vs-rent' ? '600' : '500',
+                      boxShadow: activeTool === 'buy-vs-rent' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    ¿Alquilar o Comprar?
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=comparador-historico"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('comparador-historico'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'comparador-historico' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'comparador-historico' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'comparador-historico' ? '600' : '500',
+                      boxShadow: activeTool === 'comparador-historico' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Dólar vs PF vs Merval
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=objetivo-de-ahorro"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('savings-goal'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'savings-goal' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'savings-goal' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'savings-goal' ? '600' : '500',
+                      boxShadow: activeTool === 'savings-goal' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Objetivo de Ahorro
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=inflacion-historica"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('inflation'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'inflation' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'inflation' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'inflation' ? '600' : '500',
+                      boxShadow: activeTool === 'inflation' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Inflación Histórica
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=simulador-de-retiro"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('fire'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'fire' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'fire' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'fire' ? '600' : '500',
+                      boxShadow: activeTool === 'fire' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Simulador de Retiro
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=comparador-de-brokers"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('broker-comparator'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'broker-comparator' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'broker-comparator' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'broker-comparator' ? '600' : '500',
+                      boxShadow: activeTool === 'broker-comparator' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Comparador de Brokers
                   </a>
                 </div>
 
@@ -875,14 +875,20 @@ function App() {
               </strong>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-start' }}>
                 {[
-                  { label: '¿Comprar o Alquilar?', tool: 'buy-vs-rent', path: 'comprar-o-alquilar' },
-                  { label: 'Interés Compuesto', tool: 'compound-interest', path: 'interes-compuesto' },
-                  { label: 'Crédito Hipotecario UVA', tool: 'hipotecario-uva', path: 'hipotecario-uva' },
-                  { label: 'Simulador de Retiro', tool: 'fire', path: 'simulador-de-retiro' },
+                  { label: 'Sueldo Neto Freelancer', tool: 'sueldo-neto', path: 'sueldo-neto' },
+                  { label: 'Simulador de Ganancias', tool: 'ganancias', path: 'ganancias' },
                   { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash', path: 'cuotas-o-efectivo' },
+                  { label: 'Interés Compuesto', tool: 'compound-interest', path: 'interes-compuesto' },
                   { label: '¿UVA, Plazo Fijo o Caución?', tool: 'savings-comparison', path: 'comparador-de-ahorro' },
+                  { label: 'Crédito Hipotecario UVA', tool: 'hipotecario-uva', path: 'hipotecario-uva' },
                   { label: 'Conversor TNA a TEA', tool: 'tna-to-tea', path: 'conversor-tasa' },
-                  { label: 'Actualizador IPC (INDEC)', tool: 'ipc-actualizer', path: 'actualizador-ipc' }
+                  { label: 'Actualizador IPC (INDEC)', tool: 'ipc-actualizer', path: 'actualizador-ipc' },
+                  { label: '¿Comprar o Alquilar?', tool: 'buy-vs-rent', path: 'comprar-o-alquilar' },
+                  { label: 'Dólar vs PF vs Merval', tool: 'comparador-historico', path: 'comparador-historico' },
+                  { label: 'Objetivo de Ahorro', tool: 'savings-goal', path: 'objetivo-de-ahorro' },
+                  { label: 'Inflación Histórica', tool: 'inflation', path: 'inflacion-historica' },
+                  { label: 'Simulador de Retiro', tool: 'fire', path: 'simulador-de-retiro' },
+                  { label: 'Comparador de Brokers', tool: 'broker-comparator', path: 'comparador-de-brokers' }
                 ].map((item, i) => (
                   <a
                     key={i}

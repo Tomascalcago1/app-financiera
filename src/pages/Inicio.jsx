@@ -46,62 +46,6 @@ const Inicio = ({ onSelectTool }) => {
 
   const tools = [
     {
-      id: 'buy-vs-rent',
-      name: '¿Alquilar o Comprar?',
-      icon: <Calculator size={24} className="text-accent-primary" />,
-      desc: 'Compara financieramente si te conviene alquilar una propiedad e invertir la diferencia, o comprarla con un crédito hipotecario.',
-      color: 'var(--accent-primary)',
-      category: 'ahorro-credito'
-    },
-    {
-      id: 'compound-interest',
-      name: 'Interés Compuesto',
-      icon: <TrendingUp size={24} className="text-accent-primary" />,
-      desc: 'Simula el crecimiento a largo plazo de tus inversiones mensuales con escenarios optimistas, realistas y conservadores.',
-      color: 'var(--accent-primary)',
-      category: 'inversiones'
-    },
-    {
-      id: 'savings-goal',
-      name: 'Objetivo de Ahorro',
-      icon: <Target size={24} className="text-accent-primary" />,
-      desc: 'Calcula exactamente cuánto debés ahorrar e invertir por mes para alcanzar una meta financiera (comprar un auto, viajar, etc.) en un plazo determinado.',
-      color: 'var(--accent-primary)',
-      category: 'ahorro-credito'
-    },
-    {
-      id: 'fire',
-      name: 'Simulador de Retiro Temprano',
-      icon: <Flame size={24} style={{ color: 'var(--accent-warning)' }} />,
-      desc: 'Poné a prueba tu estrategia de retiro haciendo un "backtesting" contra 99 años de datos históricos reales del mercado financiero.',
-      color: 'var(--accent-warning)',
-      category: 'inversiones'
-    },
-    {
-      id: 'inflation',
-      name: 'Inflación Histórica',
-      icon: <DollarSign size={24} style={{ color: 'var(--accent-success)' }} />,
-      desc: 'Visualiza la pérdida de poder adquisitivo del dinero a lo largo del tiempo con registros oficiales e históricos desde 1635.',
-      color: 'var(--accent-success)',
-      category: 'ahorro-credito'
-    },
-    {
-      id: 'hipotecario-uva',
-      name: 'Crédito Hipotecario UVA',
-      icon: <Home size={24} className="text-accent-primary" />,
-      desc: 'Simulá créditos hipotecarios UVA vs tasa fija, comparando el sistema Francés y Alemán con la inflación de Argentina.',
-      color: 'var(--accent-primary)',
-      category: 'ahorro-credito'
-    },
-    {
-      id: 'comparador-historico',
-      name: 'Dólar vs Plazo Fijo vs Merval',
-      icon: <TrendingUp size={24} style={{ color: 'var(--accent-success)' }} />,
-      desc: 'Compará el rendimiento histórico real en pesos de ahorrar en dólares blue, plazo fijo tradicional, plazo fijo UVA y el Merval desde 2015.',
-      color: 'var(--accent-success)',
-      category: 'inversiones'
-    },
-    {
       id: 'sueldo-neto',
       name: 'Sueldo Neto Freelancer',
       icon: <Percent size={24} className="text-accent-primary" />,
@@ -118,14 +62,6 @@ const Inicio = ({ onSelectTool }) => {
       category: 'impuestos'
     },
     {
-      id: 'broker-comparator',
-      name: 'Comparador de Brokers',
-      icon: <TrendingUp size={24} className="text-accent-primary" />,
-      desc: 'Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.',
-      color: 'var(--accent-primary)',
-      category: 'inversiones'
-    },
-    {
       id: 'installments-vs-cash',
       name: '¿Cuotas o Efectivo?',
       icon: <Scale size={24} className="text-accent-primary" />,
@@ -134,10 +70,26 @@ const Inicio = ({ onSelectTool }) => {
       category: 'ahorro-credito'
     },
     {
+      id: 'compound-interest',
+      name: 'Interés Compuesto',
+      icon: <TrendingUp size={24} className="text-accent-primary" />,
+      desc: 'Simula el crecimiento a largo plazo de tus inversiones mensuales con escenarios optimistas, realistas y conservadores.',
+      color: 'var(--accent-primary)',
+      category: 'inversiones'
+    },
+    {
       id: 'savings-comparison',
       name: '¿UVA, Plazo Fijo o Caución?',
       icon: <Landmark size={24} className="text-accent-primary" />,
       desc: 'Compará la rentabilidad y ganancia real de tus pesos entre Plazo Fijo UVA, Plazo Fijo Tradicional y Cauciones bursátiles.',
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
+    },
+    {
+      id: 'hipotecario-uva',
+      name: 'Crédito Hipotecario UVA',
+      icon: <Home size={24} className="text-accent-primary" />,
+      desc: 'Simulá créditos hipotecarios UVA vs tasa fija, comparando el sistema Francés y Alemán con la inflación de Argentina.',
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     },
@@ -156,6 +108,54 @@ const Inicio = ({ onSelectTool }) => {
       desc: 'Ajustá montos de dinero del pasado según la inflación oficial del INDEC (IPC) en Argentina para calcular la pérdida de poder de compra.',
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
+    },
+    {
+      id: 'buy-vs-rent',
+      name: '¿Alquilar o Comprar?',
+      icon: <Calculator size={24} className="text-accent-primary" />,
+      desc: 'Compara financieramente si te conviene alquilar una propiedad e invertir la diferencia, o comprarla con un crédito hipotecario.',
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
+    },
+    {
+      id: 'comparador-historico',
+      name: 'Dólar vs Plazo Fijo vs Merval',
+      icon: <TrendingUp size={24} style={{ color: 'var(--accent-success)' }} />,
+      desc: 'Compará el rendimiento histórico real en pesos de ahorrar en dólares blue, plazo fijo tradicional, plazo fijo UVA y el Merval desde 2015.',
+      color: 'var(--accent-success)',
+      category: 'inversiones'
+    },
+    {
+      id: 'savings-goal',
+      name: 'Objetivo de Ahorro',
+      icon: <Target size={24} className="text-accent-primary" />,
+      desc: 'Calcula exactamente cuánto debés ahorrar e invertir por mes para alcanzar una meta financiera (comprar un auto, viajar, etc.) en un plazo determinado.',
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
+    },
+    {
+      id: 'inflation',
+      name: 'Inflación Histórica',
+      icon: <DollarSign size={24} style={{ color: 'var(--accent-success)' }} />,
+      desc: 'Visualiza la pérdida de poder adquisitivo del dinero a lo largo del tiempo con registros oficiales e históricos desde 1635.',
+      color: 'var(--accent-success)',
+      category: 'ahorro-credito'
+    },
+    {
+      id: 'fire',
+      name: 'Simulador de Retiro Temprano',
+      icon: <Flame size={24} style={{ color: 'var(--accent-warning)' }} />,
+      desc: 'Poné a prueba tu estrategia de retiro haciendo un "backtesting" contra 99 años de datos históricos reales del mercado financiero.',
+      color: 'var(--accent-warning)',
+      category: 'inversiones'
+    },
+    {
+      id: 'broker-comparator',
+      name: 'Comparador de Brokers',
+      icon: <TrendingUp size={24} className="text-accent-primary" />,
+      desc: 'Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.',
+      color: 'var(--accent-primary)',
+      category: 'inversiones'
     }
   ];
 
