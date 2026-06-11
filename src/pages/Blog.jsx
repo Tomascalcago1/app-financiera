@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, 
   Calendar, 
@@ -11,13 +11,40 @@ import {
   Home,
   MessageSquare,
   Scale,
-  Percent
+  Percent,
+  Share2
 } from 'lucide-react';
 
 const Blog = () => {
-  const [selectedArticleId, setSelectedArticleId] = useState(null);
+  const [selectedArticleId, setSelectedArticleId] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('articulo') || null;
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('todos');
+  const [copiedArticle, setCopiedArticle] = useState(false);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const currentArt = url.searchParams.get('articulo');
+    if (selectedArticleId !== currentArt) {
+      if (selectedArticleId) {
+        url.searchParams.set('articulo', selectedArticleId);
+      } else {
+        url.searchParams.delete('articulo');
+      }
+      window.history.pushState({}, '', url.toString());
+    }
+  }, [selectedArticleId]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setSelectedArticleId(params.get('articulo') || null);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const articles = [
     {
@@ -330,8 +357,156 @@ const Blog = () => {
           <p>Para modelar ambos escenarios de amortización aplicando tasas de inflación proyectadas y visualizar la progresión de tus cuotas, te sugerimos utilizar nuestro simulador interactivo de **Crédito Hipotecario UVA** en la pestaña de Herramientas.</p>
         </div>
       )
+    },
+    {
+      id: 'tna-vs-tea-capitalizacion',
+      title: 'TNA vs TEA: La guía definitiva de capitalización de tasas en Argentina',
+      summary: 'Descubrí qué es la capitalización de tasas de interés, por qué la TNA es un valor engañoso y cómo calcular la Tasa Efectiva Anual (TEA) para cauciones, plazos fijos y deudas.',
+      date: '11 de Junio, 2026',
+      readTime: '5 min de lectura',
+      category: 'inversiones',
+      icon: <Percent size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>Cuando analizás colocar tus ahorros en un plazo fijo, una billetera digital remunerada o una caución bursátil en Argentina, te encontrás siempre con dos siglas fundamentales: <strong>TNA (Tasa Nominal Anual)</strong> y <strong>TEA (Tasa Efectiva Anual)</strong>. Confundirlas es uno de los errores más comunes de las finanzas personales.</p>
+          
+          <h3>¿Qué es la TNA y por qué es engañosa?</h3>
+          <p>La Tasa Nominal Anual es una tasa puramente de referencia teórica que no tiene en cuenta la reinversión periódica de los intereses. Si un banco te ofrece una TNA del 60% con capitalización mensual, no significa que ganarás un 60% al año si mantenés tu depósito acumulado. La TNA solo sirve para calcular los intereses de un único período.</p>
+          
+          <h3>El Poder de la TEA (Capitalización Compuesta)</h3>
+          <p>La Tasa Efectiva Anual mide el rendimiento real neto de tu inversión a lo largo de un año, asumiendo que al final de cada mes retirás los intereses generados y los volvés a invertir junto con tu capital original (es decir, los capitalizás).</p>
+          <p>La fórmula matemática para obtener la TEA a partir de la TNA y la frecuencia de capitalización es:</p>
+          <blockquote style={{ 
+            borderLeft: '4px solid var(--accent-primary)', 
+            padding: '0.75rem 1rem', 
+            margin: '1.5rem 0',
+            backgroundColor: 'var(--bg-tertiary)',
+            borderRadius: '0 var(--border-radius-sm) var(--border-radius-sm) 0'
+          }}>
+            <strong>TEA = [ 1 + (TNA / n) ]^n - 1</strong><br />
+            Donde <em>n</em> es la cantidad de capitalizaciones al año (por ejemplo, para capitalización mensual <em>n = 12</em>, diaria <em>n = 365</em>).
+          </blockquote>
+          <p>Si la TNA es de 60% con capitalización mensual:</p>
+          <ul>
+            <li>Tasa mensual (TEM) = 60% / 12 = 5%.</li>
+            <li>TEA = (1 + 0.05)^12 - 1 = 1.05^12 - 1 ≈ <strong>79.58%</strong>.</li>
+          </ul>
+          <p>¡La diferencia es de casi 20 puntos porcentuales debido a la capitalización de intereses!</p>
+          
+          <h3>Cauciones vs. Plazo Fijo: ¿Qué frecuencia conviene?</h3>
+          <p>Las cauciones bursátiles se colocan habitualmente a 7 días. Esto significa que capitalizás intereses 52 veces al año. Aunque la TNA de una caución sea ligeramente menor que la de un Plazo Fijo tradicional (que inmoviliza el dinero por un mínimo de 30 días), la frecuencia de reinversión más corta puede elevar la TEA final y brindarte liquidez para aprovechar oportunidades de mercado.</p>
+          <p>Para convertir cualquier TNA en TEA según la frecuencia de capitalización y estimar tu rendimiento real neto descontando la inflación esperada, utilizá nuestra herramienta <strong>Conversor TNA a TEA</strong> en la sección Herramientas.</p>
+        </div>
+      )
+    },
+    {
+      id: 'interes-compuesto-retiro-temprano',
+      title: 'Interés Compuesto y Retiro Temprano: Cómo planificar tu libertad financiera',
+      summary: 'Te enseñamos cómo combinar el ahorro recurrente, la tasa de rentabilidad y el factor tiempo para construir un portafolio de retiro auto-sustentable usando interés compuesto.',
+      date: '11 de Junio, 2026',
+      readTime: '6 min de lectura',
+      category: 'inversiones',
+      icon: <TrendingUp size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>La jubilación tradicional nos propone trabajar durante 30 o 40 años para luego vivir de una pensión estatal. El **Retiro Temprano** o Movimiento de Independencia Financiera propone un camino alternativo: acumular un capital propio que genere rendimientos suficientes para cubrir nuestros gastos de por vida. El secreto que hace esto posible no es un salario millonario, sino el **interés compuesto**.</p>
+          
+          <h3>El Factor Tiempo y la Curva Exponencial</h3>
+          <p>El interés compuesto tiene un comportamiento no lineal: crece muy despacio durante los primeros años y se dispara de forma vertical en las décadas siguientes. Si invertís $500 mensuales a una tasa de rendimiento del 8% anual (rendimiento promedio histórico ajustado por inflación del S&P 500):</p>
+          <ul>
+            <li><strong>En 10 años:</strong> Habrás aportado $60.000 y acumulado un total de <strong>$92.000</strong> (intereses ganados: $32.000).</li>
+            <li><strong>En 20 años:</strong> Habrás aportado $120.000 y acumulado <strong>$294.000</strong> (intereses ganados: $174.000).</li>
+            <li><strong>En 30 años:</strong> Habrás aportado $180.000 y acumulado <strong>$750.000</strong> (intereses ganados: $570.000).</li>
+          </ul>
+          <p>¡El 76% de tu fortuna final a los 30 años provendrá enteramente del interés compuesto y no de tus bolsillos! Por eso comenzar lo antes posible es la regla de oro.</p>
+          
+          <h3>El Portafolio de Retiro Auto-sustentable</h3>
+          <p>Una vez que tu portafolio alcanza el tamaño necesario (siguiendo la regla del 4%, por ejemplo), podés dejar de hacer aportes mensuales y pasar a la fase de retiro. Tus inversiones seguirán creciendo a la par de la inflación mientras extraés una porción controlada para vivir, manteniendo el saldo principal intacto indefinidamente.</p>
+          <p>Para que la estrategia funcione:</p>
+          <ol>
+            <li><strong>Minimizá los costos:</strong> Evitá comisiones excesivas que erosionen tu interés compuesto acumulado. Podés comparar brokers de bolsa locales utilizando nuestro <strong>Comparador de Brokers</strong>.</li>
+            <li><strong>Diversificá de forma global:</strong> No dependas del riesgo país de una sola jurisdicción. Invertí en ETFs indexados globales a través de CEDEARs o cuentas en el exterior.</li>
+          </ol>
+          <p>Si querés proyectar el impacto del interés compuesto con tus ahorros mensuales actuales o poner a prueba tu plan de retiro haciendo backtesting contra crisis reales de mercado, utilizá nuestro <strong>Simulador de Retiro</strong> y la <strong>Calculadora de Interés Compuesto</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 'actualizacion-ipc-contratos-deudas',
+      title: 'Actualización por IPC: Guía para indexar deudas, alquileres y contratos por inflación',
+      summary: 'Explicamos cómo funciona la indexación monetaria en Argentina utilizando el IPC oficial del INDEC y cómo aplicar el actualizador para evitar la licuación de tus contratos.',
+      date: '11 de Junio, 2026',
+      readTime: '5 min de lectura',
+      category: 'ahorro',
+      icon: <Scale size={20} className="text-accent-primary" />,
+      content: (
+        <div>
+          <p>En Argentina, la inflación acumulada a lo largo de los años hace inviable fijar montos estáticos en pesos para obligaciones de mediano y largo plazo. Firmar un contrato de servicios, convenir una cuota alimentaria o establecer un plan de pagos sin una cláusula de ajuste adecuada destruye el poder de compra del acreedor. La métrica por excelencia para contrarrestar esto es la **indexación por IPC (Índice de Precios al Consumidor)**.</p>
+          
+          <h3>¿Qué es el IPC y cómo mide la inflación?</h3>
+          <p>El IPC es un indicador calculado mensualmente por el INDEC que mide la variación de los precios de una canasta de consumo representativa de los hogares. Cuando se publica el dato mensual (habitualmente a mediados del mes siguiente), se establece el porcentaje oficial de inflación del período anterior.</p>
+          
+          <h3>La Matemática de la Actualización Impositiva y Comercial</h3>
+          <p>Para actualizar un valor monetario del pasado según la inflación minorista acumulada se utiliza el método de cociente de índices de precios. La fórmula es:</p>
+          <blockquote style={{ 
+            borderLeft: '4px solid var(--accent-primary)', 
+            padding: '0.75rem 1rem', 
+            margin: '1.5rem 0',
+            backgroundColor: 'var(--bg-tertiary)',
+            borderRadius: '0 var(--border-radius-sm) var(--border-radius-sm) 0'
+          }}>
+            <strong>Monto Actualizado = Monto Original × ( ÍNDEC Fin / ÍNDEC Inicio )</strong>
+          </blockquote>
+          <p>Por ejemplo, si querés ajustar un contrato que vencía en Enero 2024 a valores de Diciembre 2024:</p>
+          <ol>
+            <li>Buscás el índice acumulado de IPC para Enero 2024 y para Diciembre 2024.</li>
+            <li>Dividís el índice de Diciembre por el de Enero para obtener el factor de inflación acumulada (supongamos que da 3.11).</li>
+            <li>Multiplicás tu monto original por 3.11 para obtener el monto nominal actualizado a pesos de fin de año.</li>
+          </ol>
+          
+          <h3>¿Cuándo aplicar el IPC en lugar de otras tasas?</h3>
+          <ul>
+            <li><strong>Contratos de Servicios y Alquileres Comerciales:</strong> El ajuste directo por IPC es la cláusula estándar preferida por su transparencia y facilidad de consulta pública.</li>
+            <li><strong>Deudas Judiciales y Retroactivos:</strong> Los juzgados suelen aplicar tasas del Banco Nación o tasas específicas activas/pasivas, pero el ajuste por IPC es la métrica preferida por peritos contables para demostrar la pérdida real de valor patrimonial frente al fisco.</li>
+          </ul>
+          <p>Para realizar cálculos instantáneos de actualización de montos en pesos desde Enero de 2003 hasta la actualidad utilizando el set de datos del INDEC oficial consolidado, te invitamos a usar nuestra herramienta **Actualizador IPC (INDEC)** en la pestaña Herramientas.</p>
+        </div>
+      )
     }
   ];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [selectedArticleId]);
+
+  useEffect(() => {
+    const updateMeta = (title, desc) => {
+      document.title = title;
+      const selectors = {
+        'meta[name="description"]': desc,
+        'meta[property="og:title"]': title,
+        'meta[property="og:description"]': desc,
+        'meta[property="twitter:title"]': title,
+        'meta[property="twitter:description"]': desc
+      };
+      Object.entries(selectors).forEach(([selector, val]) => {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute('content', val);
+      });
+    };
+
+    if (selectedArticleId) {
+      const article = articles.find(a => a.id === selectedArticleId);
+      if (article) {
+        updateMeta(`${article.title} | Valia`, article.summary);
+      }
+    } else {
+      updateMeta(
+        "Educación Financiera y Guías de Inversión | Valia",
+        "Artículos prácticos sobre inversiones, interés compuesto, la regla del 4%, créditos UVA y optimización fiscal en Argentina."
+      );
+    }
+  }, [selectedArticleId]);
 
   const filteredArticles = articles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -349,7 +524,7 @@ const Blog = () => {
           const article = articles.find(a => a.id === selectedArticleId);
           return (
             <article style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                 <button 
                   onClick={() => setSelectedArticleId(null)} 
                   className="btn btn-outline"
@@ -357,6 +532,27 @@ const Blog = () => {
                 >
                   <ArrowLeft size={16} />
                   Volver al Centro de Educación
+                </button>
+
+                <button 
+                  onClick={() => {
+                    const shareUrl = `${window.location.origin}/?seccion=educacion&articulo=${article.id}`;
+                    navigator.clipboard.writeText(shareUrl);
+                    setCopiedArticle(true);
+                    setTimeout(() => setCopiedArticle(false), 2000);
+                  }} 
+                  className="btn btn-outline"
+                  style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    padding: '0.5rem 1rem', 
+                    borderColor: copiedArticle ? 'var(--accent-success, #10b981)' : 'var(--border-color)',
+                    transition: 'all var(--transition-fast)'
+                  }}
+                >
+                  <Share2 size={16} className={copiedArticle ? "text-accent-success" : "text-accent-primary"} />
+                  {copiedArticle ? '¡Enlace copiado!' : 'Compartir artículo'}
                 </button>
               </div>
 

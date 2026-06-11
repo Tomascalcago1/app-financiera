@@ -1,10 +1,39 @@
-import React, { useState } from 'react';
-import { Book, Search, ChevronDown, ChevronUp, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Book, Search, ChevronDown, ChevronUp, Star, Share2 } from 'lucide-react';
+
+
 
 const Glosario = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('todos');
-  const [openTermId, setOpenTermId] = useState(null);
+  const [copiedTermId, setCopiedTermId] = useState(null);
+  const [openTermId, setOpenTermId] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('termino') || null;
+  });
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const currentTerm = url.searchParams.get('termino');
+    if (openTermId !== currentTerm) {
+      if (openTermId) {
+        url.searchParams.set('termino', openTermId);
+      } else {
+        url.searchParams.delete('termino');
+      }
+      window.history.pushState({}, '', url.toString());
+    }
+  }, [openTermId]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setOpenTermId(params.get('termino') || null);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
 
   const terms = [
     {
@@ -101,8 +130,79 @@ const Glosario = () => {
       term: 'Dólar CCL (Contado con Liquidación)',
       definition: 'Es un tipo de cambio bursátil similar al Dólar MEP, con la diferencia de que se utiliza para transferir y liquidar los dólares fuera de Argentina (en una cuenta bancaria del exterior). Se realiza comprando bonos o acciones locales en pesos y vendiéndolos en el mercado internacional (ej. Nueva York) a cambio de dólares extranjeros.',
       category: 'inversiones'
+    },
+    {
+      id: 'tem',
+      term: 'TEM (Tasa Efectiva Mensual)',
+      definition: 'Es la tasa de interés real que se aplica por el período de un mes sobre un capital determinado, teniendo en cuenta la reinversión de intereses. Se deduce a partir de la TEA mediante la fórmula de equivalencia de tasas y es el valor clave para calcular el rendimiento mensual de colocaciones de liquidez.',
+      category: 'conceptos'
+    },
+    {
+      id: 'icl',
+      term: 'ICL (Índice de Contratos de Locación)',
+      definition: 'Es un indicador oficial elaborado diariamente por el Banco Central de la República Argentina (BCRA) que se utiliza para indexar y actualizar el precio de los contratos de alquiler de vivienda. Se calcula promediando en partes iguales la evolución de la inflación mensual (IPC) y la variación de los salarios promedio de los trabajadores estables (RIPTE).',
+      category: 'creditos'
+    },
+    {
+      id: 'interes-compuesto',
+      term: 'Interés Compuesto',
+      definition: 'Es el proceso financiero en el cual los rendimientos o intereses que genera una inversión se suman periódicamente al capital original, de modo que en el siguiente ciclo los nuevos intereses se calculan sobre esa cifra incrementada. Produce un efecto acumulativo y exponencial, a menudo denominado "efecto bola de nieve", crucial para la planificación a largo plazo y el retiro.',
+      category: 'conceptos',
+      highlight: true
+    },
+    {
+      id: 'capitalizacion',
+      term: 'Capitalización de Intereses',
+      definition: 'Es la frecuencia o el proceso en el cual los intereses acumulados se liquidan y se suman formalmente al capital inicial (diario, semanal, mensual, trimestral, anual, etc.). Cuanto más frecuente sea la capitalización (por ejemplo, mensual frente a anual), mayor será la Tasa Efectiva Anual (TEA) obtenida a partir de una misma TNA.',
+      category: 'conceptos'
+    },
+    {
+      id: 'valor-presente',
+      term: 'Valor Presente (VP)',
+      definition: 'Es el valor actual que tiene un flujo de dinero que se recibirá o pagará en el futuro, descontando el efecto de una tasa de interés, inflación o costo de oportunidad. Permite evaluar si conviene pagar una compra de contado hoy con descuento o en cuotas fijas a lo largo de varios meses, trayendo los desembolsos futuros a valor de hoy.',
+      category: 'conceptos'
     }
   ];
+
+  useEffect(() => {
+    if (openTermId) {
+      const el = document.getElementById(`term-card-${openTermId}`);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      }
+    }
+  }, [openTermId]);
+
+  useEffect(() => {
+    const updateMeta = (title, desc) => {
+      document.title = title;
+      const selectors = {
+        'meta[name="description"]': desc,
+        'meta[property="og:title"]': title,
+        'meta[property="og:description"]': desc,
+        'meta[property="twitter:title"]': title,
+        'meta[property="twitter:description"]': desc
+      };
+      Object.entries(selectors).forEach(([selector, val]) => {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute('content', val);
+      });
+    };
+
+    if (openTermId) {
+      const term = terms.find(t => t.id === openTermId);
+      if (term) {
+        updateMeta(`${term.term} - Glosario | Valia`, term.definition);
+      }
+    } else {
+      updateMeta(
+        "Glosario de Términos Financieros | Valia",
+        "Diccionario financiero: CEDEAR, Obligaciones Negociables, Cauciones, TNA, TEA, UVA, CER y otros conceptos clave explicados de forma sencilla."
+      );
+    }
+  }, [openTermId]);
 
   const categories = [
     { id: 'todos', label: 'Todos los Términos' },
@@ -186,6 +286,7 @@ const Glosario = () => {
             return (
               <div 
                 key={item.id} 
+                id={`term-card-${item.id}`}
                 className="card"
                 style={{ 
                   padding: '1.25rem 1.5rem',
@@ -231,8 +332,33 @@ const Glosario = () => {
                   >
                     <p style={{ margin: 0 }}>{item.definition}</p>
                     
-                    {/* Small category tag indicator */}
-                    <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                    {/* Share button and Category tag */}
+                    <div style={{ marginTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent collapsing the accordion
+                          const shareUrl = `${window.location.origin}/?seccion=glosario&termino=${item.id}`;
+                          navigator.clipboard.writeText(shareUrl);
+                          setCopiedTermId(item.id);
+                          setTimeout(() => setCopiedTermId(null), 2000);
+                        }}
+                        className="btn btn-outline"
+                        style={{ 
+                          padding: '0.25rem 0.75rem', 
+                          fontSize: '0.75rem', 
+                          height: 'auto',
+                          borderRadius: '4px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          borderColor: copiedTermId === item.id ? 'var(--accent-success, #10b981)' : 'var(--border-color)',
+                          transition: 'all var(--transition-fast)'
+                        }}
+                      >
+                        <Share2 size={12} className={copiedTermId === item.id ? "text-accent-success" : "text-accent-primary"} />
+                        {copiedTermId === item.id ? '¡Copiado!' : 'Compartir'}
+                      </button>
+
                       <span style={{ 
                         fontSize: '0.65rem', 
                         fontWeight: 600, 

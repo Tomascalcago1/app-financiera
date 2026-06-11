@@ -129,7 +129,7 @@ function App() {
       if (validTools.includes(tool)) return tool;
       if (toolMap[tool]) return toolMap[tool];
     }
-    return 'sueldo-neto';
+    return 'compound-interest';
   });
   const scrollRef = useRef(null);
 
@@ -205,11 +205,11 @@ function App() {
           if (toolMap[tool]) {
             setActiveTool(toolMap[tool]);
           } else {
-            setActiveTool('sueldo-neto');
+            setActiveTool('compound-interest');
           }
         }
       } else {
-        setActiveTool('sueldo-neto');
+        setActiveTool('compound-interest');
       }
     };
 
@@ -281,8 +281,15 @@ function App() {
     }
 
     document.title = title;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute('content', desc);
+    const updateTag = (selector, val) => {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute('content', val);
+    };
+    updateTag('meta[name="description"]', desc);
+    updateTag('meta[property="og:title"]', title);
+    updateTag('meta[property="og:description"]', desc);
+    updateTag('meta[property="twitter:title"]', title);
+    updateTag('meta[property="twitter:description"]', desc);
   }, [activeTab, activeTool]);
 
   useEffect(() => {
