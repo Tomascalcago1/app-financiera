@@ -14,6 +14,8 @@ const BrokerComparator = lazy(() => import('./modules/BrokerComparator/BrokerCom
 const GananciasCalculator = lazy(() => import('./modules/Ganancias/GananciasCalculator'));
 const InstallmentsVsCashCalculator = lazy(() => import('./modules/InstallmentsVsCash/InstallmentsVsCashCalculator'));
 const SavingsComparisonCalculator = lazy(() => import('./modules/SavingsComparison/SavingsComparisonCalculator'));
+const TnaToTeaCalculator = lazy(() => import('./modules/TnaToTea/TnaToTeaCalculator'));
+const IpcActualizerCalculator = lazy(() => import('./modules/IpcActualizer/IpcActualizerCalculator'));
 
 const AcercaDe = lazy(() => import('./pages/AcercaDe'));
 const Privacidad = lazy(() => import('./pages/Privacidad'));
@@ -69,7 +71,9 @@ const toolMap = {
   'ganancias': 'ganancias',
   'comparador-de-brokers': 'broker-comparator',
   'cuotas-o-efectivo': 'installments-vs-cash',
-  'comparador-de-ahorro': 'savings-comparison'
+  'comparador-de-ahorro': 'savings-comparison',
+  'conversor-tasa': 'tna-to-tea',
+  'actualizador-ipc': 'ipc-actualizer'
 };
 
 const toolMapReverse = {
@@ -84,7 +88,9 @@ const toolMapReverse = {
   'ganancias': 'ganancias',
   'broker-comparator': 'comparador-de-brokers',
   'installments-vs-cash': 'cuotas-o-efectivo',
-  'savings-comparison': 'comparador-de-ahorro'
+  'savings-comparison': 'comparador-de-ahorro',
+  'tna-to-tea': 'conversor-tasa',
+  'ipc-actualizer': 'actualizador-ipc'
 };
 
 function App() {
@@ -115,7 +121,9 @@ function App() {
       'ganancias', 
       'broker-comparator',
       'installments-vs-cash',
-      'savings-comparison'
+      'savings-comparison',
+      'tna-to-tea',
+      'ipc-actualizer'
     ];
     if (tool) {
       if (validTools.includes(tool)) return tool;
@@ -186,7 +194,9 @@ function App() {
         'ganancias', 
         'broker-comparator',
         'installments-vs-cash',
-        'savings-comparison'
+        'savings-comparison',
+        'tna-to-tea',
+        'ipc-actualizer'
       ];
       if (tool) {
         if (validTools.includes(tool)) {
@@ -226,7 +236,9 @@ function App() {
         'ganancias': "Simulador de Impuesto a las Ganancias | Valia",
         'broker-comparator': "Comparador de Brokers de Inversión | Valia",
         'installments-vs-cash': "Calculadora de Compras en Cuotas vs Efectivo | Valia",
-        'savings-comparison': "Comparador de Tasas: Plazo Fijo UVA vs Tradicional vs Cauciones | Valia"
+        'savings-comparison': "Comparador de Tasas: Plazo Fijo UVA vs Tradicional vs Cauciones | Valia",
+        'tna-to-tea': "Convertidor de Tasas: TNA a TEA y TEM | Valia",
+        'ipc-actualizer': "Actualizador de Pesos por IPC INDEC | Valia"
       };
 
       const toolDescs = {
@@ -241,7 +253,9 @@ function App() {
         'ganancias': "Calcula la retención del Impuesto a las Ganancias sobre tu sueldo (4° categoría) con las deducciones y escalas oficiales.",
         'broker-comparator': "Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.",
         'installments-vs-cash': "Simula si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones.",
-        'savings-comparison': "Compara el rendimiento y la ganancia real de tus pesos entre Plazo Fijo UVA, Plazo Fijo Tradicional y Cauciones Bursátiles en base a proyecciones de inflación."
+        'savings-comparison': "Compara el rendimiento y la ganancia real de tus pesos entre Plazo Fijo UVA, Plazo Fijo Tradicional y Cauciones Bursátiles en base a proyecciones de inflación.",
+        'tna-to-tea': "Calculá la tasa de interés efectiva anual (TEA) y mensual (TEM) a partir de una TNA según la capitalización de intereses.",
+        'ipc-actualizer': "Ajustá montos de dinero del pasado según la inflación oficial del INDEC (IPC) en Argentina para calcular la pérdida de poder de compra."
       };
 
       title = toolTitles[activeTool] || title;
@@ -680,6 +694,42 @@ function App() {
                   >
                     ¿UVA, Plazo Fijo o Caución?
                   </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=conversor-tasa"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('tna-to-tea'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'tna-to-tea' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'tna-to-tea' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'tna-to-tea' ? '600' : '500',
+                      boxShadow: activeTool === 'tna-to-tea' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Conversor TNA a TEA
+                  </a>
+                  <a
+                    href="?seccion=herramientas&herramienta=actualizador-ipc"
+                    className="btn"
+                    onClick={(e) => { e.preventDefault(); setActiveTool('ipc-actualizer'); }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textDecoration: 'none',
+                      backgroundColor: activeTool === 'ipc-actualizer' ? 'var(--accent-primary)' : 'transparent',
+                      color: activeTool === 'ipc-actualizer' ? '#090D16' : 'var(--text-secondary)',
+                      fontWeight: activeTool === 'ipc-actualizer' ? '600' : '500',
+                      boxShadow: activeTool === 'ipc-actualizer' ? 'var(--shadow-glow), var(--shadow-sm)' : 'none',
+                      transition: 'all var(--transition-fast)'
+                    }}
+                  >
+                    Actualizador IPC (INDEC)
+                  </a>
                 </div>
 
                 {/* Right Slide Button */}
@@ -722,6 +772,8 @@ function App() {
                 {activeTool === 'broker-comparator' && <BrokerComparator onNavigateToAsesores={() => setActiveTab('asesores')} />}
                 {activeTool === 'installments-vs-cash' && <InstallmentsVsCashCalculator />}
                 {activeTool === 'savings-comparison' && <SavingsComparisonCalculator />}
+                {activeTool === 'tna-to-tea' && <TnaToTeaCalculator />}
+                {activeTool === 'ipc-actualizer' && <IpcActualizerCalculator />}
               </div>
 
               {!isEmbedded && (
@@ -828,7 +880,9 @@ function App() {
                   { label: 'Crédito Hipotecario UVA', tool: 'hipotecario-uva', path: 'hipotecario-uva' },
                   { label: 'Simulador de Retiro', tool: 'fire', path: 'simulador-de-retiro' },
                   { label: '¿Cuotas o Efectivo?', tool: 'installments-vs-cash', path: 'cuotas-o-efectivo' },
-                  { label: '¿UVA, Plazo Fijo o Caución?', tool: 'savings-comparison', path: 'comparador-de-ahorro' }
+                  { label: '¿UVA, Plazo Fijo o Caución?', tool: 'savings-comparison', path: 'comparador-de-ahorro' },
+                  { label: 'Conversor TNA a TEA', tool: 'tna-to-tea', path: 'conversor-tasa' },
+                  { label: 'Actualizador IPC (INDEC)', tool: 'ipc-actualizer', path: 'actualizador-ipc' }
                 ].map((item, i) => (
                   <a
                     key={i}

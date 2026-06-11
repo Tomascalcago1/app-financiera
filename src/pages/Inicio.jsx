@@ -140,6 +140,22 @@ const Inicio = ({ onSelectTool }) => {
       desc: 'Compará la rentabilidad y ganancia real de tus pesos entre Plazo Fijo UVA, Plazo Fijo Tradicional y Cauciones bursátiles.',
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
+    },
+    {
+      id: 'tna-to-tea',
+      name: 'Conversor TNA a TEA',
+      icon: <Percent size={24} className="text-accent-primary" />,
+      desc: 'Calculá la tasa de interés efectiva anual (TEA) y mensual (TEM) a partir de una TNA según la capitalización de intereses.',
+      color: 'var(--accent-primary)',
+      category: 'inversiones'
+    },
+    {
+      id: 'ipc-actualizer',
+      name: 'Actualizador IPC (INDEC)',
+      icon: <Calculator size={24} className="text-accent-primary" />,
+      desc: 'Ajustá montos de dinero del pasado según la inflación oficial del INDEC (IPC) en Argentina para calcular la pérdida de poder de compra.',
+      color: 'var(--accent-primary)',
+      category: 'ahorro-credito'
     }
   ];
 
