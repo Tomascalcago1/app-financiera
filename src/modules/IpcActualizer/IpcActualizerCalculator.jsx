@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, Legend, BarChart, Bar, Cell, LineChart, Line, ReferenceLine
 } from 'recharts';
 import { 
-  TrendingDown, HelpCircle, Download, Printer, Share2, 
+  HelpCircle, Download, Printer, Share2, 
   TrendingUp, TableProperties, Scale, Calendar, BookOpen,
-  BarChart3, PieChart
+  BarChart3
 } from 'lucide-react';
 import FinancialInput from '../../components/FinancialInput';
 import HelpModal from '../../components/HelpModal';
@@ -562,12 +562,10 @@ const IpcActualizerCalculator = () => {
     });
 
     let generalCompounded = 1.0;
-    const generalLevels = {
-      2023: 211.4,
-      2024: 117.8,
-      2025: 31.5,
-      2026: 14.7
-    };
+    const generalLevels = {};
+    annualInflationRates.forEach(item => {
+      generalLevels[item.year] = item.rate;
+    });
 
     for (let y = start; y <= end; y++) {
       const yearData = sectorInflationData[y];
@@ -603,14 +601,7 @@ const IpcActualizerCalculator = () => {
       start,
       end
     };
-  }, [sectorStartYear, sectorEndYear]);
-
-  // Clamp values if start is after end
-  useEffect(() => {
-    if (startIndex > endIndex) {
-      setEndIndex(startIndex);
-    }
-  }, [startIndex, endIndex]);
+  }, [sectorStartYear, sectorEndYear, annualInflationRates]);
 
   // Persistence
   useEffect(() => {
@@ -642,7 +633,6 @@ const IpcActualizerCalculator = () => {
     const chartData = [];
     const monthlyBreakdown = [];
 
-    let tempCumulativeFactor = 1.0;
     const baseVal = compoundedIpcList[startIndex].indexValue;
 
     for (let i = startIndex; i <= endIndex; i++) {
@@ -807,7 +797,13 @@ const IpcActualizerCalculator = () => {
                 </label>
                 <select 
                   value={startIndex} 
-                  onChange={e => setStartIndex(Number(e.target.value))}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    setStartIndex(val);
+                    if (val > endIndex) {
+                      setEndIndex(val);
+                    }
+                  }}
                   className="input-field"
                   style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.9rem' }}
                 >
@@ -1141,7 +1137,13 @@ const IpcActualizerCalculator = () => {
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Desde el Año</label>
                 <select 
                   value={sectorStartYear}
-                  onChange={e => setSectorStartYear(Number(e.target.value))}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    setSectorStartYear(val);
+                    if (val > sectorEndYear) {
+                      setSectorEndYear(val);
+                    }
+                  }}
                   className="input-field"
                   style={{ background: 'var(--bg-tertiary)', border: 'none', padding: '0.35rem 1.5rem 0.35rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem' }}
                 >
