@@ -948,7 +948,7 @@ const IpcActualizerCalculator = () => {
                     Cómo disminuye el poder adquisitivo real de un monto fijo nominal de {formatCurrencyFull(Number(amount) || 0)}
                   </p>
                   <ResponsiveContainer width="100%" height="75%">
-                    <AreaChart data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                    <AreaChart key={`${startIndex}-${endIndex}`} data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                       <defs>
                         <linearGradient id="colorPower" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#EF4444" stopOpacity={0.2}/>
@@ -961,7 +961,7 @@ const IpcActualizerCalculator = () => {
                       <Tooltip content={<CustomTooltip />} />
                       <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '15px', fontSize: 12 }} />
                       
-                      <Area type="monotone" dataKey="Poder Adquisitivo Real" stroke="#EF4444" fillOpacity={1} fill="url(#colorPower)" strokeWidth={2.5} />
+                      <Area type="monotone" dataKey="Poder Adquisitivo Real" stroke="#EF4444" fillOpacity={1} fill="url(#colorPower)" strokeWidth={2.5} isAnimationActive={false} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -1095,7 +1095,7 @@ const IpcActualizerCalculator = () => {
             </div>
             <div style={{ height: '300px', width: '100%' }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={filteredMonthlyRates} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                <LineChart key={monthlyFilter} data={filteredMonthlyRates} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                   <XAxis dataKey="fullName" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
                   <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={(val) => `${val}%`} />
@@ -1114,6 +1114,7 @@ const IpcActualizerCalculator = () => {
                     dot={filteredMonthlyRates.length < 40} 
                     activeDot={{ r: 6 }} 
                     connectNulls={true}
+                    isAnimationActive={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -1224,6 +1225,7 @@ const IpcActualizerCalculator = () => {
             <div style={{ height: '420px', width: '100%' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
+                  key={`${sectorStartYear}-${sectorEndYear}`}
                   layout="vertical"
                   data={dynamicSectorData.list} 
                   margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
@@ -1255,7 +1257,7 @@ const IpcActualizerCalculator = () => {
                       offset: 10
                     }} 
                   />
-                  <Bar dataKey="rate" radius={[0, 4, 4, 0]}>
+                  <Bar dataKey="rate" radius={[0, 4, 4, 0]} isAnimationActive={false}>
                     {dynamicSectorData.list.map((entry, index) => {
                       return <Cell 
                         key={`cell-${index}`} 
