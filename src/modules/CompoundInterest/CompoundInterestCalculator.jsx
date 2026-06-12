@@ -3,10 +3,18 @@ import FinancialInput from '../../components/FinancialInput';
 import CompoundResultsDashboard from './CompoundResultsDashboard';
 import { simulateCompoundInterest } from './CompoundSimulationEngine';
 import HelpModal from '../../components/HelpModal';
-import { TrendingUp, Settings2, HelpCircle } from 'lucide-react';
+import { TrendingUp, Settings2, HelpCircle, BookOpen } from 'lucide-react';
 import FAQSection from '../../components/FAQSection';
 
 const CompoundInterestCalculator = () => {
+  const navigateToArticle = (articleId) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('seccion', 'educacion');
+    url.searchParams.set('articulo', articleId);
+    window.history.pushState({}, '', url.toString());
+    window.dispatchEvent(new CustomEvent('change-tab', { detail: 'educacion' }));
+  };
+
   const queryParams = new URLSearchParams(window.location.search);
   const getNumericParam = (key, fallback) => {
     const val = queryParams.get(key);
@@ -250,6 +258,29 @@ const CompoundInterestCalculator = () => {
 
             </div>
           )}
+
+          <div 
+            onClick={() => navigateToArticle('interes-compuesto-retiro-temprano')}
+            className="card no-print"
+            style={{ 
+              marginTop: '1.5rem', 
+              cursor: 'pointer',
+              background: 'var(--bg-tertiary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '1rem',
+              borderRadius: 'var(--border-radius-md)',
+              border: 'none',
+              boxShadow: 'none'
+            }}
+          >
+            <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
+            <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
+              <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>Guía Recomendada</span>
+              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Jubilación Temprana con Interés Compuesto y aportes</span>
+            </div>
+          </div>
         </div>
 
         {/* Results Panel */}

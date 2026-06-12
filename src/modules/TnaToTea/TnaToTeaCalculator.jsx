@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { 
   Percent, HelpCircle, Download, Printer, Share2, 
-  TrendingUp, TableProperties, Coins, Scale 
+  TrendingUp, TableProperties, Coins, Scale, BookOpen
 } from 'lucide-react';
 import FinancialInput from '../../components/FinancialInput';
 import HelpModal from '../../components/HelpModal';
@@ -41,6 +41,14 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const TnaToTeaCalculator = () => {
+  const navigateToArticle = (articleId) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('seccion', 'educacion');
+    url.searchParams.set('articulo', articleId);
+    window.history.pushState({}, '', url.toString());
+    window.dispatchEvent(new CustomEvent('change-tab', { detail: 'educacion' }));
+  };
+
   const queryParams = new URLSearchParams(window.location.search);
 
   // States
@@ -247,7 +255,7 @@ const TnaToTeaCalculator = () => {
               value={frequency} 
               onChange={e => setFrequency(e.target.value)}
               className="input-field"
-              style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+              style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: 'none' }}
             >
               {Object.entries(compoundingMap).map(([key, val]) => (
                 <option key={key} value={key}>{val.label}</option>
@@ -256,6 +264,29 @@ const TnaToTeaCalculator = () => {
           </div>
 
           <FinancialInput label="Inflación Anual Estimada (%)" value={inflation} onChange={setInflation} suffix="%" step={1} />
+
+          <div 
+            onClick={() => navigateToArticle('tna-vs-tea-capitalizacion')}
+            className="card no-print"
+            style={{ 
+              marginTop: '1.5rem', 
+              cursor: 'pointer',
+              background: 'var(--bg-tertiary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '1rem',
+              borderRadius: 'var(--border-radius-md)',
+              border: 'none',
+              boxShadow: 'none'
+            }}
+          >
+            <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
+            <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
+              <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>Guía Recomendada</span>
+              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>TNA vs TEA: Capitalización de intereses explicada</span>
+            </div>
+          </div>
         </div>
 
         {/* Results Panel */}
