@@ -1097,7 +1097,7 @@ const IpcActualizerCalculator = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={filteredMonthlyRates} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                  <XAxis dataKey="label" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
+                  <XAxis dataKey="fullName" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
                   <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={(val) => `${val}%`} />
                   <Tooltip 
                     contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px' }}
@@ -1106,13 +1106,14 @@ const IpcActualizerCalculator = () => {
                     formatter={(value) => [`${value}%`, 'Inflación Mensual']}
                   />
                   <Line 
-                    type="monotone" 
+                    type="linear" 
                     dataKey="rate" 
                     name="Inflación Mensual (%)"
                     stroke="#F59E0B" 
                     strokeWidth={2} 
                     dot={filteredMonthlyRates.length < 40} 
                     activeDot={{ r: 6 }} 
+                    connectNulls={true}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -1157,7 +1158,13 @@ const IpcActualizerCalculator = () => {
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Hasta el Año</label>
                 <select 
                   value={sectorEndYear}
-                  onChange={e => setSectorEndYear(Number(e.target.value))}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    setSectorEndYear(val);
+                    if (val < sectorStartYear) {
+                      setSectorStartYear(val);
+                    }
+                  }}
                   className="input-field"
                   style={{ background: 'var(--bg-tertiary)', border: 'none', padding: '0.35rem 1.5rem 0.35rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem' }}
                 >
