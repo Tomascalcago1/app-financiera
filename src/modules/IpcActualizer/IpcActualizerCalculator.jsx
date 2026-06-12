@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, Legend 
+  ResponsiveContainer, Legend, BarChart, Bar, Cell, LineChart, Line, ReferenceLine
 } from 'recharts';
 import { 
   TrendingDown, HelpCircle, Download, Printer, Share2, 
-  TrendingUp, TableProperties, Scale, Calendar, BookOpen
+  TrendingUp, TableProperties, Scale, Calendar, BookOpen,
+  BarChart3, PieChart
 } from 'lucide-react';
 import FinancialInput from '../../components/FinancialInput';
 import HelpModal from '../../components/HelpModal';
@@ -17,6 +18,51 @@ const formatCurrencyFull = (value) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 
 const formatPercent = (val) => `${val.toFixed(1)}%`;
+
+const sectorInflationData = {
+  2023: [
+    { name: 'Alimentos y Bebidas', rate: 251.3 },
+    { name: 'Bebidas Alc. y Tabaco', rate: 204.5 },
+    { name: 'Prendas de Vestir y Calzado', rate: 169.0 },
+    { name: 'Vivienda y Servicios', rate: 149.0 },
+    { name: 'Equipamiento del Hogar', rate: 210.3 },
+    { name: 'Salud', rate: 227.7 },
+    { name: 'Transporte', rate: 187.7 },
+    { name: 'Comunicación', rate: 184.8 },
+    { name: 'Recreación y Cultura', rate: 190.2 },
+    { name: 'Educación', rate: 141.6 },
+    { name: 'Restaurantes y Hoteles', rate: 220.1 },
+    { name: 'Otros Bienes y Servicios', rate: 230.5 },
+  ],
+  2024: [
+    { name: 'Alimentos y Bebidas', rate: 95.8 },
+    { name: 'Bebidas Alc. y Tabaco', rate: 125.4 },
+    { name: 'Prendas de Vestir y Calzado', rate: 84.5 },
+    { name: 'Vivienda y Servicios', rate: 248.2 },
+    { name: 'Equipamiento del Hogar', rate: 98.2 },
+    { name: 'Salud', rate: 119.0 },
+    { name: 'Transporte', rate: 137.8 },
+    { name: 'Comunicación', rate: 186.4 },
+    { name: 'Recreación y Cultura', rate: 102.5 },
+    { name: 'Educación', rate: 169.4 },
+    { name: 'Restaurantes y Hoteles', rate: 126.3 },
+    { name: 'Otros Bienes y Servicios', rate: 145.3 },
+  ],
+  2025: [
+    { name: 'Alimentos y Bebidas', rate: 29.5 },
+    { name: 'Bebidas Alc. y Tabaco', rate: 28.0 },
+    { name: 'Prendas de Vestir y Calzado', rate: 22.0 },
+    { name: 'Vivienda y Servicios', rate: 42.0 },
+    { name: 'Equipamiento del Hogar', rate: 26.0 },
+    { name: 'Salud', rate: 33.0 },
+    { name: 'Transporte', rate: 38.0 },
+    { name: 'Comunicación', rate: 35.0 },
+    { name: 'Recreación y Cultura', rate: 25.0 },
+    { name: 'Educación', rate: 27.0 },
+    { name: 'Restaurantes y Hoteles', rate: 32.0 },
+    { name: 'Otros Bienes y Servicios', rate: 30.0 },
+  ]
+};
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -413,6 +459,47 @@ const IpcActualizerCalculator = () => {
   const [showTable, setShowTable] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [activeTab, setActiveTab] = useState('actualizer');
+  const [selectedSectorYear, setSelectedSectorYear] = useState(2024);
+  const [monthlyFilter, setMonthlyFilter] = useState('3years');
+
+  // Calculate annual inflation dynamically
+  const annualInflationRates = useMemo(() => {
+    const years = {};
+    monthlyRates.forEach(item => {
+      if (!years[item.year]) {
+        years[item.year] = 1.0;
+      }
+      years[item.year] *= (1 + item.rate / 100);
+    });
+    
+    return Object.keys(years)
+      .map(year => {
+        const rate = (years[year] - 1) * 100;
+        return {
+          year: Number(year),
+          rate: Math.round(rate * 10) / 10
+        };
+      })
+      .filter(item => item.year < 2026); // Exclude ongoing year
+  }, [monthlyRates]);
+
+  // Monthly inflation chart data with filter
+  const filteredMonthlyRates = useMemo(() => {
+    const rawData = monthlyRates.map(item => ({
+      label: `${item.monthName} ${item.year % 100}`,
+      fullName: `${item.monthName} ${item.year}`,
+      'Inflación Mensual (%)': item.rate,
+      year: item.year
+    }));
+
+    if (monthlyFilter === '12months') {
+      return rawData.slice(-12);
+    } else if (monthlyFilter === '3years') {
+      return rawData.slice(-36);
+    }
+    return rawData;
+  }, [monthlyRates, monthlyFilter]);
 
   // Clamp values if start is after end
   useEffect(() => {
@@ -563,222 +650,483 @@ const IpcActualizerCalculator = () => {
         </button>
       </header>
 
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
-        {/* Inputs Panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
-            Parámetros de Ajuste
-          </h2>
-
-          <FinancialInput label="Monto Original ($)" value={amount} onChange={setAmount} prefix="$" step={10000} />
-
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                Mes de Inicio
-              </label>
-              <select 
-                value={startIndex} 
-                onChange={e => setStartIndex(Number(e.target.value))}
-                className="input-field"
-                style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.9rem' }}
-              >
-                {compoundedIpcList.map((item, idx) => (
-                  <option key={idx} value={idx}>{item.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                Mes de Fin
-              </label>
-              <select 
-                value={endIndex} 
-                onChange={e => setEndIndex(Number(e.target.value))}
-                className="input-field"
-                style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.9rem' }}
-              >
-                {compoundedIpcList.map((item, idx) => (
-                  <option key={idx} value={idx} disabled={idx < startIndex}>{item.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div 
-            onClick={() => navigateToArticle('actualizacion-ipc-contratos-deudas')}
-            className="card no-print"
-            style={{ 
-              marginTop: '1.5rem', 
-              cursor: 'pointer',
-              background: 'var(--bg-tertiary)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              padding: '1rem',
-              borderRadius: 'var(--border-radius-md)',
-              border: 'none',
-              boxShadow: 'none'
-            }}
-          >
-            <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
-            <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
-              <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>Guía Recomendada</span>
-              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Actualización por IPC: Guía para indexar deudas y contratos</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Results Panel */}
-        <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          {results && (
-            <>
-              {/* Print-only Header */}
-              <PrintReportHeader 
-                title="Reporte de Actualización por IPC INDEC"
-                subtitle="Ficha de Ajuste por Coeficientes de Inflación Acumulada"
-                params={[
-                  { label: 'Monto Original', value: formatCurrencyFull(Number(amount) || 0) },
-                  { label: 'Período Inicial', value: results.startLabel },
-                  { label: 'Período Final', value: results.endLabel },
-                  { label: 'Inflación del Periodo', value: formatPercent(results.accumulatedInflation) }
-                ]}
-              />
-
-              {/* Updated Amount Highlight Card */}
-              <div className="card" style={{
-                textAlign: 'center',
-                borderTop: '4px solid var(--accent-primary)',
-                background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), transparent)'
-              }}>
-                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
-                  Monto Equivalente Actualizado (Poder de Compra)
-                </p>
-                <h3 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1, margin: '0.25rem 0' }}>
-                  {formatCurrencyFull(results.updatedValue)}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
-                  Para comprar hoy lo mismo que comprabas con <strong>{formatCurrencyFull(Number(amount) || 0)}</strong> en {results.startLabel}, necesitás ese monto.
-                </p>
-              </div>
-
-              {/* Stats Grid */}
-              <div className="stats-grid">
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #F59E0B' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Inflación Acumulada</span>
-                  <strong style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>{formatPercent(results.accumulatedInflation)}</strong>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Aumento general de precios</span>
-                </div>
-
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #EF4444' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pérdida Poder Adquisitivo</span>
-                  <strong style={{ fontSize: '1.25rem', color: '#EF4444' }}>-{formatPercent(results.powerLoss)}</strong>
-                  <span style={{ fontSize: '0.7rem', color: '#EF4444' }}>Depreciación real de la moneda</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-0.5rem' }}>
-                <button 
-                  onClick={() => {
-                    handleShare()
-                      .then(() => {
-                        setShareCopied(true);
-                        setTimeout(() => setShareCopied(false), 2000);
-                      })
-                      .catch(err => console.error(err));
-                  }}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Share2 size={16} />
-                  {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
-                </button>
-                
-                <button 
-                  onClick={exportToCSV}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Download size={16} />
-                  Exportar CSV (Excel)
-                </button>
-
-                <button 
-                  onClick={() => window.print()}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Printer size={16} />
-                  Imprimir Reporte PDF
-                </button>
-              </div>
-
-              {/* Chart */}
-              <div className="card chart-container" id="ipc-chart" style={{ height: '360px' }}>
-                <h3 style={{ marginBottom: '0.25rem', fontSize: '1rem', fontWeight: 600 }}>
-                  Erosión del Valor de la Moneda
-                </h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                  Cómo disminuye el poder adquisitivo real de un monto fijo nominal de {formatCurrencyFull(Number(amount) || 0)}
-                </p>
-                <ResponsiveContainer width="100%" height="75%">
-                  <AreaChart data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                    <defs>
-                      <linearGradient id="colorPower" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#EF4444" stopOpacity={0.2}/>
-                        <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                    <XAxis dataKey="label" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
-                    <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={formatCurrencyFull} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '15px', fontSize: 12 }} />
-                    
-                    <Area type="monotone" dataKey="Poder Adquisitivo Real" stroke="#EF4444" fillOpacity={1} fill="url(#colorPower)" strokeWidth={2.5} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Table Toggle */}
-              <button className="btn btn-outline" onClick={() => setShowTable(!showTable)} style={{ alignSelf: 'flex-start' }}>
-                <TableProperties size={18} />
-                {showTable ? 'Ocultar Tabla' : 'Mostrar Desglose Mensual'}
-              </button>
-
-              {showTable && (
-                <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
-                    <thead>
-                      <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                        <th style={{ padding: '1rem', textAlign: 'center' }}>Periodo</th>
-                        <th style={{ padding: '1rem', textAlign: 'center' }}>Inflación Mes</th>
-                        <th style={{ padding: '1rem', textAlign: 'center' }}>Inflación Acum.</th>
-                        <th style={{ padding: '1rem' }}>Monto Reexpresado</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {results.monthlyBreakdown.map((row, idx) => (
-                        <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                          <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>{row.label}</td>
-                          <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 'bold' }}>{row.monthlyRate.toFixed(2)}%</td>
-                          <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>{row.cumInflation.toFixed(1)}%</td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#06B6D4', fontWeight: 600 }}>{formatCurrencyFull(row.adjustedValue)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              <AdvisorCTA goalContext="ahorro" />
-              <PrintAdvisorCTA />
-            </>
-          )}
-        </div>
+      {/* Selector de Pestañas Interno */}
+      <div className="no-print" style={{ 
+        display: 'flex', 
+        gap: '0.5rem', 
+        marginBottom: '2rem', 
+        borderBottom: '1px solid var(--border-color)', 
+        paddingBottom: '0.75rem', 
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch'
+      }}>
+        <button 
+          onClick={() => setActiveTab('actualizer')}
+          className={`btn ${activeTab === 'actualizer' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          <Scale size={16} />
+          Ajustar Monto
+        </button>
+        <button 
+          onClick={() => setActiveTab('history')}
+          className={`btn ${activeTab === 'history' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          <TrendingUp size={16} />
+          Histórico y Tendencias
+        </button>
+        <button 
+          onClick={() => setActiveTab('sectors')}
+          className={`btn ${activeTab === 'sectors' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          <BarChart3 size={16} />
+          Inflación por Sector
+        </button>
       </div>
+
+      {activeTab === 'actualizer' && (
+        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
+          {/* Inputs Panel */}
+          <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
+              Parámetros de Ajuste
+            </h2>
+
+            <FinancialInput label="Monto Original ($)" value={amount} onChange={setAmount} prefix="$" step={10000} />
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                  Mes de Inicio
+                </label>
+                <select 
+                  value={startIndex} 
+                  onChange={e => setStartIndex(Number(e.target.value))}
+                  className="input-field"
+                  style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.9rem' }}
+                >
+                  {compoundedIpcList.map((item, idx) => (
+                    <option key={idx} value={idx}>{item.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                  Mes de Fin
+                </label>
+                <select 
+                  value={endIndex} 
+                  onChange={e => setEndIndex(Number(e.target.value))}
+                  className="input-field"
+                  style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.9rem' }}
+                >
+                  {compoundedIpcList.map((item, idx) => (
+                    <option key={idx} value={idx} disabled={idx < startIndex}>{item.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigateToArticle('actualizacion-ipc-contratos-deudas')}
+              className="card no-print"
+              style={{ 
+                marginTop: '1.5rem', 
+                cursor: 'pointer',
+                background: 'var(--bg-tertiary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '1rem',
+                borderRadius: 'var(--border-radius-md)',
+                border: 'none',
+                boxShadow: 'none'
+              }}
+            >
+              <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
+              <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
+                <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>Guía Recomendada</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Actualización por IPC: Guía para indexar deudas y contratos</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Results Panel */}
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {results && (
+              <>
+                {/* Print-only Header */}
+                <PrintReportHeader 
+                  title="Reporte de Actualización por IPC INDEC"
+                  subtitle="Ficha de Ajuste por Coeficientes de Inflación Acumulada"
+                  params={[
+                    { label: 'Monto Original', value: formatCurrencyFull(Number(amount) || 0) },
+                    { label: 'Período Inicial', value: results.startLabel },
+                    { label: 'Período Final', value: results.endLabel },
+                    { label: 'Inflación del Periodo', value: formatPercent(results.accumulatedInflation) }
+                  ]}
+                />
+
+                {/* Updated Amount Highlight Card */}
+                <div className="card" style={{
+                  textAlign: 'center',
+                  borderTop: '4px solid var(--accent-primary)',
+                  background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), transparent)'
+                }}>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    Monto Equivalente Actualizado (Poder de Compra)
+                  </p>
+                  <h3 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1, margin: '0.25rem 0' }}>
+                    {formatCurrencyFull(results.updatedValue)}
+                  </h3>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+                    Para comprar hoy lo mismo que comprabas con <strong>{formatCurrencyFull(Number(amount) || 0)}</strong> en {results.startLabel}, necesitás ese monto.
+                  </p>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="stats-grid">
+                  <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #F59E0B' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Inflación Acumulada</span>
+                    <strong style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>{formatPercent(results.accumulatedInflation)}</strong>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Aumento general de precios</span>
+                  </div>
+
+                  <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #EF4444' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pérdida Poder Adquisitivo</span>
+                    <strong style={{ fontSize: '1.25rem', color: '#EF4444' }}>-{formatPercent(results.powerLoss)}</strong>
+                    <span style={{ fontSize: '0.7rem', color: '#EF4444' }}>Depreciación real de la moneda</span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-0.5rem' }}>
+                  <button 
+                    onClick={() => {
+                      handleShare()
+                        .then(() => {
+                          setShareCopied(true);
+                          setTimeout(() => setShareCopied(false), 2000);
+                        })
+                        .catch(err => console.error(err));
+                    }}
+                    className="btn btn-outline" 
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                  >
+                    <Share2 size={16} />
+                    {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
+                  </button>
+                  
+                  <button 
+                    onClick={exportToCSV}
+                    className="btn btn-outline" 
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                  >
+                    <Download size={16} />
+                    Exportar CSV (Excel)
+                  </button>
+
+                  <button 
+                    onClick={() => window.print()}
+                    className="btn btn-outline" 
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                  >
+                    <Printer size={16} />
+                    Imprimir Reporte PDF
+                  </button>
+                </div>
+
+                {/* Chart */}
+                <div className="card chart-container" id="ipc-chart" style={{ height: '360px' }}>
+                  <h3 style={{ marginBottom: '0.25rem', fontSize: '1rem', fontWeight: 600 }}>
+                    Erosión del Valor de la Moneda
+                  </h3>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                    Cómo disminuye el poder adquisitivo real de un monto fijo nominal de {formatCurrencyFull(Number(amount) || 0)}
+                  </p>
+                  <ResponsiveContainer width="100%" height="75%">
+                    <AreaChart data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="colorPower" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#EF4444" stopOpacity={0.2}/>
+                          <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                      <XAxis dataKey="label" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
+                      <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={formatCurrencyFull} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '15px', fontSize: 12 }} />
+                      
+                      <Area type="monotone" dataKey="Poder Adquisitivo Real" stroke="#EF4444" fillOpacity={1} fill="url(#colorPower)" strokeWidth={2.5} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Table Toggle */}
+                <button className="btn btn-outline" onClick={() => setShowTable(!showTable)} style={{ alignSelf: 'flex-start' }}>
+                  <TableProperties size={18} />
+                  {showTable ? 'Ocultar Tabla' : 'Mostrar Desglose Mensual'}
+                </button>
+
+                {showTable && (
+                  <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
+                      <thead>
+                        <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
+                          <th style={{ padding: '1rem', textAlign: 'center' }}>Periodo</th>
+                          <th style={{ padding: '1rem', textAlign: 'center' }}>Inflación Mes</th>
+                          <th style={{ padding: '1rem', textAlign: 'center' }}>Inflación Acum.</th>
+                          <th style={{ padding: '1rem' }}>Monto Reexpresado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {results.monthlyBreakdown.map((row, idx) => (
+                          <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                            <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>{row.label}</td>
+                            <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 'bold' }}>{row.monthlyRate.toFixed(2)}%</td>
+                            <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>{row.cumInflation.toFixed(1)}%</td>
+                            <td style={{ padding: '0.75rem 1rem', color: '#06B6D4', fontWeight: 600 }}>{formatCurrencyFull(row.adjustedValue)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                <AdvisorCTA goalContext="ahorro" />
+                <PrintAdvisorCTA />
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'history' && (
+        <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* Gráfico Anual */}
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+              Inflación Anual Oficial en Argentina (2003 - 2025)
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              Tasas de inflación anuales acumuladas calculadas mediante la capitalización de los índices mensuales oficiales.
+            </p>
+            <div style={{ height: '320px', width: '100%' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={annualInflationRates} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                  <XAxis dataKey="year" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
+                  <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={(val) => `${val}%`} />
+                  <Tooltip 
+                    contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                    itemStyle={{ color: 'var(--accent-primary)' }}
+                    formatter={(value) => [`${value}%`, 'Inflación Anual']}
+                  />
+                  <Bar dataKey="rate" radius={[4, 4, 0, 0]}>
+                    {annualInflationRates.map((entry, index) => {
+                      const isHigh = entry.rate > 100;
+                      return <Cell key={`cell-${index}`} fill={isHigh ? '#EF4444' : '#06B6D4'} fillOpacity={0.8} />;
+                    })}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Gráfico Mensual */}
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                  Evolución Mensual del IPC
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  Porcentaje de inflación mensual reportado período a período por el INDEC.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.25rem', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '4px' }}>
+                <button 
+                  onClick={() => setMonthlyFilter('12months')}
+                  className="btn"
+                  style={{ 
+                    padding: '0.25rem 0.75rem', 
+                    fontSize: '0.75rem', 
+                    background: monthlyFilter === '12months' ? 'var(--bg-secondary)' : 'transparent',
+                    color: monthlyFilter === '12months' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    boxShadow: monthlyFilter === '12months' ? 'var(--box-shadow-sm)' : 'none'
+                  }}
+                >
+                  12 Meses
+                </button>
+                <button 
+                  onClick={() => setMonthlyFilter('3years')}
+                  className="btn"
+                  style={{ 
+                    padding: '0.25rem 0.75rem', 
+                    fontSize: '0.75rem', 
+                    background: monthlyFilter === '3years' ? 'var(--bg-secondary)' : 'transparent',
+                    color: monthlyFilter === '3years' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    boxShadow: monthlyFilter === '3years' ? 'var(--box-shadow-sm)' : 'none'
+                  }}
+                >
+                  3 Años
+                </button>
+                <button 
+                  onClick={() => setMonthlyFilter('all')}
+                  className="btn"
+                  style={{ 
+                    padding: '0.25rem 0.75rem', 
+                    fontSize: '0.75rem', 
+                    background: monthlyFilter === 'all' ? 'var(--bg-secondary)' : 'transparent',
+                    color: monthlyFilter === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    boxShadow: monthlyFilter === 'all' ? 'var(--box-shadow-sm)' : 'none'
+                  }}
+                >
+                  Todo
+                </button>
+              </div>
+            </div>
+            <div style={{ height: '300px', width: '100%' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={filteredMonthlyRates} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                  <XAxis dataKey="label" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
+                  <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={(val) => `${val}%`} />
+                  <Tooltip 
+                    contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                    itemStyle={{ color: '#F59E0B' }}
+                    formatter={(value) => [`${value}%`, 'Tasa Mensual']}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="Inflación Mensual (%)" 
+                    stroke="#F59E0B" 
+                    strokeWidth={2} 
+                    dot={filteredMonthlyRates.length < 40} 
+                    activeDot={{ r: 6 }} 
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'sectors' && (
+        <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* Selector de Año y Resumen */}
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                  Canasta de Consumo: Inflación por Rubro (INDEC)
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  Compará cómo aumentaron las distintas divisiones del IPC respecto al promedio general de precios.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.25rem', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '4px' }}>
+                {[2023, 2024, 2025].map(year => (
+                  <button 
+                    key={year}
+                    onClick={() => setSelectedSectorYear(year)}
+                    className="btn"
+                    style={{ 
+                      padding: '0.25rem 0.75rem', 
+                      fontSize: '0.75rem', 
+                      background: selectedSectorYear === year ? 'var(--bg-secondary)' : 'transparent',
+                      color: selectedSectorYear === year ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      boxShadow: selectedSectorYear === year ? 'var(--box-shadow-sm)' : 'none'
+                    }}
+                  >
+                    {year}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Resumen del año seleccionado */}
+            <div className="stats-grid" style={{ marginBottom: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+              <div className="card" style={{ background: 'var(--bg-tertiary)', borderLeft: '4px solid var(--accent-primary)', borderTop: 'none', boxShadow: 'none' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Nivel General del IPC ({selectedSectorYear})</span>
+                <strong style={{ fontSize: '1.5rem', color: 'var(--text-primary)', display: 'block', marginTop: '0.25rem' }}>
+                  {selectedSectorYear === 2023 ? '211,4%' : selectedSectorYear === 2024 ? '117,8%' : '31,5%'}
+                </strong>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Promedio general de la canasta</span>
+              </div>
+              <div className="card" style={{ background: 'var(--bg-tertiary)', borderLeft: '4px solid #EF4444', borderTop: 'none', boxShadow: 'none' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Rubro con Mayor Alza</span>
+                <strong style={{ fontSize: '1.25rem', color: '#EF4444', display: 'block', marginTop: '0.25rem' }}>
+                  {selectedSectorYear === 2023 ? 'Alimentos y Bebidas (251,3%)' : selectedSectorYear === 2024 ? 'Vivienda y Servicios (248,2%)' : 'Vivienda y Servicios (42,0%)'}
+                </strong>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Máximo aumento registrado</span>
+              </div>
+            </div>
+
+            {/* Gráfico Horizontal de Rubros */}
+            <div style={{ height: '420px', width: '100%' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart 
+                  layout="vertical"
+                  data={sectorInflationData[selectedSectorYear]} 
+                  margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} vertical={true} />
+                  <XAxis type="number" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={(val) => `${val}%`} />
+                  <YAxis 
+                    type="category" 
+                    dataKey="name" 
+                    stroke="var(--text-secondary)" 
+                    tick={{ fill: 'var(--text-primary)', fontSize: 10 }} 
+                    width={150} 
+                  />
+                  <Tooltip 
+                    contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                    itemStyle={{ color: 'var(--text-primary)' }}
+                    formatter={(value) => [`${value}%`, 'Aumento anual']}
+                  />
+                  <ReferenceLine 
+                    x={selectedSectorYear === 2023 ? 211.4 : selectedSectorYear === 2024 ? 117.8 : 31.5} 
+                    stroke="#EF4444" 
+                    strokeDasharray="4 4" 
+                    label={{ 
+                      value: 'Promedio General', 
+                      position: 'top', 
+                      fill: '#EF4444', 
+                      fontSize: 10,
+                      fontWeight: 600,
+                      offset: 10
+                    }} 
+                  />
+                  <Bar dataKey="rate" radius={[0, 4, 4, 0]}>
+                    {sectorInflationData[selectedSectorYear].map((entry, index) => {
+                      const generalAvg = selectedSectorYear === 2023 ? 211.4 : selectedSectorYear === 2024 ? 117.8 : 31.5;
+                      const isHigher = entry.rate > generalAvg;
+                      return <Cell key={`cell-${index}`} fill={isHigher ? '#EF4444' : '#10B981'} fillOpacity={0.8} />;
+                    })}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ marginTop: '1rem', display: 'flex', gap: '1.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#EF4444', opacity: 0.8 }}></div>
+                <span>Por encima del promedio general</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#10B981', opacity: 0.8 }}></div>
+                <span>Por debajo del promedio general</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FAQs Section */}
       <section className="card animate-fade-in" style={{ marginTop: '3rem' }}>
