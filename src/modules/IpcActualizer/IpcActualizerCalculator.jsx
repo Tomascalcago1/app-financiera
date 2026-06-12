@@ -61,7 +61,39 @@ const sectorInflationData = {
     { name: 'Educación', rate: 27.0 },
     { name: 'Restaurantes y Hoteles', rate: 32.0 },
     { name: 'Otros Bienes y Servicios', rate: 30.0 },
+  ],
+  2026: [
+    { name: 'Alimentos y Bebidas', rate: 13.9 },
+    { name: 'Bebidas Alc. y Tabaco', rate: 9.8 },
+    { name: 'Prendas de Vestir y Calzado', rate: 7.2 },
+    { name: 'Vivienda y Servicios', rate: 17.5 },
+    { name: 'Equipamiento del Hogar', rate: 11.2 },
+    { name: 'Salud', rate: 14.8 },
+    { name: 'Transporte', rate: 13.2 },
+    { name: 'Comunicación', rate: 19.5 },
+    { name: 'Recreación y Cultura', rate: 12.8 },
+    { name: 'Educación', rate: 15.6 },
+    { name: 'Restaurantes y Hoteles', rate: 12.0 },
+    { name: 'Otros Bienes y Servicios', rate: 13.0 },
   ]
+};
+
+const getBlueShadeAnnual = (rate) => {
+  const clamped = Math.max(0, Math.min(220, rate));
+  const lightness = 74 - (clamped / 220) * 46;
+  return `hsl(210, 85%, ${Math.round(lightness)}%)`;
+};
+
+const getBlueShadeSector = (rate, list) => {
+  if (!list || list.length === 0) return 'hsl(210, 80%, 50%)';
+  const rates = list.map(item => item.rate);
+  const max = Math.max(...rates);
+  const min = Math.min(...rates);
+  
+  if (max === min) return 'hsl(210, 80%, 50%)';
+  const percent = (rate - min) / (max - min);
+  const lightness = 74 - percent * 44;
+  return `hsl(210, 80%, ${Math.round(lightness)}%)`;
 };
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -460,7 +492,8 @@ const IpcActualizerCalculator = () => {
   const [shareCopied, setShareCopied] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeTab, setActiveTab] = useState('actualizer');
-  const [selectedSectorYear, setSelectedSectorYear] = useState(2024);
+  const [sectorStartYear, setSectorStartYear] = useState(2024);
+  const [sectorEndYear, setSectorEndYear] = useState(2024);
   const [monthlyFilter, setMonthlyFilter] = useState('3years');
 
   // Calculate annual inflation dynamically
@@ -476,12 +509,14 @@ const IpcActualizerCalculator = () => {
     return Object.keys(years)
       .map(year => {
         const rate = (years[year] - 1) * 100;
+        const yrNum = Number(year);
         return {
-          year: Number(year),
+          year: yrNum,
+          label: yrNum === 2026 ? '2026*' : String(yrNum),
+          isPartial: yrNum === 2026,
           rate: Math.round(rate * 10) / 10
         };
-      })
-      .filter(item => item.year < 2026); // Exclude ongoing year
+      });
   }, [monthlyRates]);
 
   // Monthly inflation chart data with filter
@@ -489,7 +524,7 @@ const IpcActualizerCalculator = () => {
     const rawData = monthlyRates.map(item => ({
       label: `${item.monthName} ${item.year % 100}`,
       fullName: `${item.monthName} ${item.year}`,
-      'Inflación Mensual (%)': item.rate,
+      rate: item.rate,
       year: item.year
     }));
 
@@ -500,6 +535,75 @@ const IpcActualizerCalculator = () => {
     }
     return rawData;
   }, [monthlyRates, monthlyFilter]);
+
+  // Compute cumulative sector inflation for range
+  const dynamicSectorData = useMemo(() => {
+    const start = Math.min(sectorStartYear, sectorEndYear);
+    const end = Math.max(sectorStartYear, sectorEndYear);
+    
+    const categories = [
+      'Alimentos y Bebidas',
+      'Bebidas Alc. y Tabaco',
+      'Prendas de Vestir y Calzado',
+      'Vivienda y Servicios',
+      'Equipamiento del Hogar',
+      'Salud',
+      'Transporte',
+      'Comunicación',
+      'Recreación y Cultura',
+      'Educación',
+      'Restaurantes y Hoteles',
+      'Otros Bienes y Servicios'
+    ];
+
+    const compounded = {};
+    categories.forEach(cat => {
+      compounded[cat] = 1.0;
+    });
+
+    let generalCompounded = 1.0;
+    const generalLevels = {
+      2023: 211.4,
+      2024: 117.8,
+      2025: 31.5,
+      2026: 14.7
+    };
+
+    for (let y = start; y <= end; y++) {
+      const yearData = sectorInflationData[y];
+      if (yearData) {
+        yearData.forEach(item => {
+          if (compounded[item.name] !== undefined) {
+            compounded[item.name] *= (1 + item.rate / 100);
+          }
+        });
+      }
+      if (generalLevels[y] !== undefined) {
+        generalCompounded *= (1 + generalLevels[y] / 100);
+      }
+    }
+
+    const resultList = categories.map(name => {
+      const rate = (compounded[name] - 1) * 100;
+      return {
+        name,
+        rate: Math.round(rate * 10) / 10
+      };
+    });
+
+    // Sort descending by rate so it looks premium and clean
+    resultList.sort((a, b) => b.rate - a.rate);
+
+    const generalRate = (generalCompounded - 1) * 100;
+
+    return {
+      list: resultList,
+      generalRate: Math.round(generalRate * 10) / 10,
+      maxCategory: resultList[0],
+      start,
+      end
+    };
+  }, [sectorStartYear, sectorEndYear]);
 
   // Clamp values if start is after end
   useEffect(() => {
@@ -910,32 +1014,34 @@ const IpcActualizerCalculator = () => {
           {/* Gráfico Anual */}
           <div className="card" style={{ padding: '1.5rem' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-              Inflación Anual Oficial en Argentina (2003 - 2025)
+              Inflación Anual Oficial en Argentina (2003 - 2026)
             </h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-              Tasas de inflación anuales acumuladas calculadas mediante la capitalización de los índices mensuales oficiales.
+              Tasas de inflación acumuladas calculadas mediante la capitalización de los índices mensuales oficiales.
             </p>
             <div style={{ height: '320px', width: '100%' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={annualInflationRates} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                  <XAxis dataKey="year" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
+                  <XAxis dataKey="label" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
                   <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} tickFormatter={(val) => `${val}%`} />
                   <Tooltip 
                     contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px' }}
                     labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
-                    itemStyle={{ color: 'var(--accent-primary)' }}
-                    formatter={(value) => [`${value}%`, 'Inflación Anual']}
+                    itemStyle={{ color: 'var(--text-primary)' }}
+                    formatter={(value, name, props) => [`${value}%`, props.payload.isPartial ? 'Inflación Acum. Parcial' : 'Inflación Anual']}
                   />
                   <Bar dataKey="rate" radius={[4, 4, 0, 0]}>
                     {annualInflationRates.map((entry, index) => {
-                      const isHigh = entry.rate > 100;
-                      return <Cell key={`cell-${index}`} fill={isHigh ? '#EF4444' : '#06B6D4'} fillOpacity={0.8} />;
+                      return <Cell key={`cell-${index}`} fill={getBlueShadeAnnual(entry.rate)} fillOpacity={0.85} />;
                     })}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            <p style={{ fontSize: '0.725rem', color: 'var(--text-tertiary)', marginTop: '0.75rem', fontStyle: 'italic', textAlign: 'center' }}>
+              * El año 2026 representa el acumulado parcial disponible (Enero a Mayo). Los tonos de azul más oscuros indican mayor nivel de inflación.
+            </p>
           </div>
 
           {/* Gráfico Mensual */}
@@ -1001,11 +1107,12 @@ const IpcActualizerCalculator = () => {
                     contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px' }}
                     labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
                     itemStyle={{ color: '#F59E0B' }}
-                    formatter={(value) => [`${value}%`, 'Tasa Mensual']}
+                    formatter={(value) => [`${value}%`, 'Inflación Mensual']}
                   />
                   <Line 
                     type="monotone" 
-                    dataKey="Inflación Mensual (%)" 
+                    dataKey="rate" 
+                    name="Inflación Mensual (%)"
                     stroke="#F59E0B" 
                     strokeWidth={2} 
                     dot={filteredMonthlyRates.length < 40} 
@@ -1020,50 +1127,85 @@ const IpcActualizerCalculator = () => {
 
       {activeTab === 'sectors' && (
         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          {/* Selector de Año y Resumen */}
+          {/* Panel de Control de Rangos */}
           <div className="card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-                  Canasta de Consumo: Inflación por Rubro (INDEC)
-                </h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Compará cómo aumentaron las distintas divisiones del IPC respecto al promedio general de precios.
-                </p>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+              Canasta de Consumo: Inflación por Rubro (INDEC)
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+              Compará cómo aumentaron las distintas divisiones del IPC de forma individual o acumulada multianual.
+            </p>
+
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Desde el Año</label>
+                <select 
+                  value={sectorStartYear}
+                  onChange={e => setSectorStartYear(Number(e.target.value))}
+                  className="input-field"
+                  style={{ background: 'var(--bg-tertiary)', border: 'none', padding: '0.35rem 1.5rem 0.35rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem' }}
+                >
+                  <option value={2023}>2023</option>
+                  <option value={2024}>2024</option>
+                  <option value={2025}>2025</option>
+                  <option value={2026}>2026 (Parcial)</option>
+                </select>
               </div>
-              <div style={{ display: 'flex', gap: '0.25rem', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '4px' }}>
-                {[2023, 2024, 2025].map(year => (
-                  <button 
-                    key={year}
-                    onClick={() => setSelectedSectorYear(year)}
-                    className="btn"
-                    style={{ 
-                      padding: '0.25rem 0.75rem', 
-                      fontSize: '0.75rem', 
-                      background: selectedSectorYear === year ? 'var(--bg-secondary)' : 'transparent',
-                      color: selectedSectorYear === year ? 'var(--text-primary)' : 'var(--text-secondary)',
-                      boxShadow: selectedSectorYear === year ? 'var(--box-shadow-sm)' : 'none'
-                    }}
-                  >
-                    {year}
-                  </button>
-                ))}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Hasta el Año</label>
+                <select 
+                  value={sectorEndYear}
+                  onChange={e => setSectorEndYear(Number(e.target.value))}
+                  className="input-field"
+                  style={{ background: 'var(--bg-tertiary)', border: 'none', padding: '0.35rem 1.5rem 0.35rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem' }}
+                >
+                  <option value={2023} disabled={2023 < sectorStartYear}>2023</option>
+                  <option value={2024} disabled={2024 < sectorStartYear}>2024</option>
+                  <option value={2025} disabled={2025 < sectorStartYear}>2025</option>
+                  <option value={2026} disabled={2026 < sectorStartYear}>2026 (Parcial)</option>
+                </select>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '0.35rem', marginTop: '1.2rem' }}>
+                <button 
+                  onClick={() => { setSectorStartYear(2023); setSectorEndYear(2026); }}
+                  className="btn btn-outline"
+                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', height: '32px' }}
+                >
+                  2023 a Hoy
+                </button>
+                <button 
+                  onClick={() => { setSectorStartYear(2024); setSectorEndYear(2025); }}
+                  className="btn btn-outline"
+                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', height: '32px' }}
+                >
+                  2024 a 2025
+                </button>
+                <button 
+                  onClick={() => { setSectorStartYear(2026); setSectorEndYear(2026); }}
+                  className="btn btn-outline"
+                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', height: '32px' }}
+                >
+                  2026 Parcial
+                </button>
               </div>
             </div>
 
-            {/* Resumen del año seleccionado */}
+            {/* Resumen del rango seleccionado */}
             <div className="stats-grid" style={{ marginBottom: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
               <div className="card" style={{ background: 'var(--bg-tertiary)', borderLeft: '4px solid var(--accent-primary)', borderTop: 'none', boxShadow: 'none' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Nivel General del IPC ({selectedSectorYear})</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                  Inflación Acumulada Nivel General ({dynamicSectorData.start === dynamicSectorData.end ? dynamicSectorData.start : `${dynamicSectorData.start} - ${dynamicSectorData.end}`})
+                </span>
                 <strong style={{ fontSize: '1.5rem', color: 'var(--text-primary)', display: 'block', marginTop: '0.25rem' }}>
-                  {selectedSectorYear === 2023 ? '211,4%' : selectedSectorYear === 2024 ? '117,8%' : '31,5%'}
+                  {formatPercent(dynamicSectorData.generalRate)}
                 </strong>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Promedio general de la canasta</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Promedio general capitalizado</span>
               </div>
-              <div className="card" style={{ background: 'var(--bg-tertiary)', borderLeft: '4px solid #EF4444', borderTop: 'none', boxShadow: 'none' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Rubro con Mayor Alza</span>
-                <strong style={{ fontSize: '1.25rem', color: '#EF4444', display: 'block', marginTop: '0.25rem' }}>
-                  {selectedSectorYear === 2023 ? 'Alimentos y Bebidas (251,3%)' : selectedSectorYear === 2024 ? 'Vivienda y Servicios (248,2%)' : 'Vivienda y Servicios (42,0%)'}
+              <div className="card" style={{ background: 'var(--bg-tertiary)', borderLeft: '4px solid #0369a1', borderTop: 'none', boxShadow: 'none' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Rubro con Mayor Alza Acumulada</span>
+                <strong style={{ fontSize: '1.2rem', color: 'var(--text-primary)', display: 'block', marginTop: '0.25rem' }}>
+                  {dynamicSectorData.maxCategory ? `${dynamicSectorData.maxCategory.name} (${formatPercent(dynamicSectorData.maxCategory.rate)})` : '-'}
                 </strong>
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Máximo aumento registrado</span>
               </div>
@@ -1074,7 +1216,7 @@ const IpcActualizerCalculator = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
                   layout="vertical"
-                  data={sectorInflationData[selectedSectorYear]} 
+                  data={dynamicSectorData.list} 
                   margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} vertical={true} />
@@ -1089,10 +1231,10 @@ const IpcActualizerCalculator = () => {
                   <Tooltip 
                     contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px' }}
                     itemStyle={{ color: 'var(--text-primary)' }}
-                    formatter={(value) => [`${value}%`, 'Aumento anual']}
+                    formatter={(value) => [`${value}%`, 'Aumento acumulado']}
                   />
                   <ReferenceLine 
-                    x={selectedSectorYear === 2023 ? 211.4 : selectedSectorYear === 2024 ? 117.8 : 31.5} 
+                    x={dynamicSectorData.generalRate} 
                     stroke="#EF4444" 
                     strokeDasharray="4 4" 
                     label={{ 
@@ -1105,23 +1247,29 @@ const IpcActualizerCalculator = () => {
                     }} 
                   />
                   <Bar dataKey="rate" radius={[0, 4, 4, 0]}>
-                    {sectorInflationData[selectedSectorYear].map((entry, index) => {
-                      const generalAvg = selectedSectorYear === 2023 ? 211.4 : selectedSectorYear === 2024 ? 117.8 : 31.5;
-                      const isHigher = entry.rate > generalAvg;
-                      return <Cell key={`cell-${index}`} fill={isHigher ? '#EF4444' : '#10B981'} fillOpacity={0.8} />;
+                    {dynamicSectorData.list.map((entry, index) => {
+                      return <Cell 
+                        key={`cell-${index}`} 
+                        fill={getBlueShadeSector(entry.rate, dynamicSectorData.list)} 
+                        fillOpacity={0.85} 
+                      />;
                     })}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ marginTop: '1rem', display: 'flex', gap: '1.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', justifyContent: 'center' }}>
+            <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', justifyContent: 'center', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#EF4444', opacity: 0.8 }}></div>
-                <span>Por encima del promedio general</span>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: 'hsl(210, 80%, 75%)', opacity: 0.85 }}></div>
+                <span>Menor Inflación</span>
+              </div>
+              <div style={{ display: 'flex', gap: '0.15rem' }}>
+                <div style={{ width: '16px', height: '12px', background: 'hsl(210, 80%, 60%)', opacity: 0.85 }}></div>
+                <div style={{ width: '16px', height: '12px', background: 'hsl(210, 80%, 45%)', opacity: 0.85 }}></div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#10B981', opacity: 0.8 }}></div>
-                <span>Por debajo del promedio general</span>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: 'hsl(210, 80%, 30%)', opacity: 0.85 }}></div>
+                <span>Mayor Inflación (Tono Azul Oscuro)</span>
               </div>
             </div>
           </div>
