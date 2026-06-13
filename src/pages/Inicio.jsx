@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import AdvisorCTA from '../components/AdvisorCTA';
 
-const Inicio = ({ onSelectTool }) => {
+const Inicio = ({ onSelectTool, preloadTool }) => {
   const [monthlySavings, setMonthlySavings] = useState(200);
   const [openFaq, setOpenFaq] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
@@ -217,6 +217,8 @@ const Inicio = ({ onSelectTool }) => {
             className="btn btn-primary"
             onClick={() => onSelectTool('buy-vs-rent')}
             style={{ padding: '0.875rem 2rem' }}
+            onMouseEnter={() => preloadTool && preloadTool('buy-vs-rent')}
+            onFocus={() => preloadTool && preloadTool('buy-vs-rent')}
           >
             Comenzar a Simular
             <ArrowRight size={18} />
@@ -451,6 +453,10 @@ const Inicio = ({ onSelectTool }) => {
               onClick={() => onSelectTool(tool.id)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+                if (preloadTool) preloadTool(tool.id);
+              }}
+              onFocus={() => {
+                if (preloadTool) preloadTool(tool.id);
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = 'var(--border-color)';

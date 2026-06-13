@@ -2,28 +2,68 @@ import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
 import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book, Code } from 'lucide-react';
 import HelpModal from './components/HelpModal';
 
-const BuyVsRentCalculator = lazy(() => import('./modules/BuyVsRent/BuyVsRentCalculator'));
-const CompoundInterestCalculator = lazy(() => import('./modules/CompoundInterest/CompoundInterestCalculator'));
-const SavingsGoalCalculator = lazy(() => import('./modules/SavingsGoal/SavingsGoalCalculator'));
-const FireCalculator = lazy(() => import('./modules/FireCalc/FireCalculator'));
-const InflationCalculator = lazy(() => import('./modules/Inflation/InflationCalculator'));
-const HipotecarioUvaCalculator = lazy(() => import('./modules/HipotecarioUva/HipotecarioUvaCalculator'));
-const ComparadorHistorico = lazy(() => import('./modules/ComparadorHistorico/ComparadorHistorico'));
-const SueldoNetoCalculator = lazy(() => import('./modules/SueldoNeto/SueldoNetoCalculator'));
-const BrokerComparator = lazy(() => import('./modules/BrokerComparator/BrokerComparator'));
-const GananciasCalculator = lazy(() => import('./modules/Ganancias/GananciasCalculator'));
-const InstallmentsVsCashCalculator = lazy(() => import('./modules/InstallmentsVsCash/InstallmentsVsCashCalculator'));
-const SavingsComparisonCalculator = lazy(() => import('./modules/SavingsComparison/SavingsComparisonCalculator'));
-const TnaToTeaCalculator = lazy(() => import('./modules/TnaToTea/TnaToTeaCalculator'));
-const IpcActualizerCalculator = lazy(() => import('./modules/IpcActualizer/IpcActualizerCalculator'));
+// Dynamic loaders for intent-based preloading
+const calculatorLoaders = {
+  'buy-vs-rent': () => import('./modules/BuyVsRent/BuyVsRentCalculator'),
+  'compound-interest': () => import('./modules/CompoundInterest/CompoundInterestCalculator'),
+  'savings-goal': () => import('./modules/SavingsGoal/SavingsGoalCalculator'),
+  'fire': () => import('./modules/FireCalc/FireCalculator'),
+  'inflation': () => import('./modules/Inflation/InflationCalculator'),
+  'hipotecario-uva': () => import('./modules/HipotecarioUva/HipotecarioUvaCalculator'),
+  'comparador-historico': () => import('./modules/ComparadorHistorico/ComparadorHistorico'),
+  'sueldo-neto': () => import('./modules/SueldoNeto/SueldoNetoCalculator'),
+  'broker-comparator': () => import('./modules/BrokerComparator/BrokerComparator'),
+  'ganancias': () => import('./modules/Ganancias/GananciasCalculator'),
+  'installments-vs-cash': () => import('./modules/InstallmentsVsCash/InstallmentsVsCashCalculator'),
+  'savings-comparison': () => import('./modules/SavingsComparison/SavingsComparisonCalculator'),
+  'tna-to-tea': () => import('./modules/TnaToTea/TnaToTeaCalculator'),
+  'ipc-actualizer': () => import('./modules/IpcActualizer/IpcActualizerCalculator'),
+};
 
-const AcercaDe = lazy(() => import('./pages/AcercaDe'));
-const Privacidad = lazy(() => import('./pages/Privacidad'));
-const Terminos = lazy(() => import('./pages/Terminos'));
-const Inicio = lazy(() => import('./pages/Inicio'));
-const Asesores = lazy(() => import('./pages/Asesores'));
-const Blog = lazy(() => import('./pages/Blog'));
-const Glosario = lazy(() => import('./pages/Glosario'));
+const pageLoaders = {
+  'acerca': () => import('./pages/AcercaDe'),
+  'privacidad': () => import('./pages/Privacidad'),
+  'terminos': () => import('./pages/Terminos'),
+  'inicio': () => import('./pages/Inicio'),
+  'asesores': () => import('./pages/Asesores'),
+  'educacion': () => import('./pages/Blog'),
+  'glosario': () => import('./pages/Glosario'),
+};
+
+// Lazy components instantiated from loaders
+const BuyVsRentCalculator = lazy(calculatorLoaders['buy-vs-rent']);
+const CompoundInterestCalculator = lazy(calculatorLoaders['compound-interest']);
+const SavingsGoalCalculator = lazy(calculatorLoaders['savings-goal']);
+const FireCalculator = lazy(calculatorLoaders['fire']);
+const InflationCalculator = lazy(calculatorLoaders['inflation']);
+const HipotecarioUvaCalculator = lazy(calculatorLoaders['hipotecario-uva']);
+const ComparadorHistorico = lazy(calculatorLoaders['comparador-historico']);
+const SueldoNetoCalculator = lazy(calculatorLoaders['sueldo-neto']);
+const BrokerComparator = lazy(calculatorLoaders['broker-comparator']);
+const GananciasCalculator = lazy(calculatorLoaders['ganancias']);
+const InstallmentsVsCashCalculator = lazy(calculatorLoaders['installments-vs-cash']);
+const SavingsComparisonCalculator = lazy(calculatorLoaders['savings-comparison']);
+const TnaToTeaCalculator = lazy(calculatorLoaders['tna-to-tea']);
+const IpcActualizerCalculator = lazy(calculatorLoaders['ipc-actualizer']);
+
+const AcercaDe = lazy(pageLoaders['acerca']);
+const Privacidad = lazy(pageLoaders['privacidad']);
+const Terminos = lazy(pageLoaders['terminos']);
+const Inicio = lazy(pageLoaders['inicio']);
+const Asesores = lazy(pageLoaders['asesores']);
+const Blog = lazy(pageLoaders['educacion']);
+const Glosario = lazy(pageLoaders['glosario']);
+
+// Helper functions for dynamic hover preloading
+const preloadTool = (toolId) => {
+  const loader = calculatorLoaders[toolId];
+  if (loader) loader();
+};
+
+const preloadPage = (pageId) => {
+  const loader = pageLoaders[pageId];
+  if (loader) loader();
+};
 
 const LoadingState = () => (
   <div className="container" style={{ 
@@ -377,27 +417,69 @@ function App() {
 
           {/* Navigation Tabs */}
           <nav className="nav-tabs">
-            <a href="?seccion=inicio" onClick={(e) => { e.preventDefault(); setActiveTab('inicio'); }} style={getTabStyle('inicio')}>
+            <a 
+              href="?seccion=inicio" 
+              onClick={(e) => { e.preventDefault(); setActiveTab('inicio'); }} 
+              style={getTabStyle('inicio')}
+              onMouseEnter={() => preloadPage('inicio')}
+              onFocus={() => preloadPage('inicio')}
+            >
               <Home size={16} />
               Inicio
             </a>
-            <a href="?seccion=herramientas" onClick={(e) => { e.preventDefault(); setActiveTab('herramientas'); }} style={getTabStyle('herramientas')}>
+            <a 
+              href="?seccion=herramientas" 
+              onClick={(e) => { e.preventDefault(); setActiveTab('herramientas'); }} 
+              style={getTabStyle('herramientas')}
+              onMouseEnter={() => {
+                preloadPage('inicio'); // Preload inicio if not loaded
+                preloadTool(activeTool); // Preload active calculator
+              }}
+              onFocus={() => {
+                preloadPage('inicio');
+                preloadTool(activeTool);
+              }}
+            >
               <Wrench size={16} />
               Herramientas
             </a>
-            <a href="?seccion=educacion" onClick={(e) => { e.preventDefault(); setActiveTab('educacion'); }} style={getTabStyle('educacion')}>
+            <a 
+              href="?seccion=educacion" 
+              onClick={(e) => { e.preventDefault(); setActiveTab('educacion'); }} 
+              style={getTabStyle('educacion')}
+              onMouseEnter={() => preloadPage('educacion')}
+              onFocus={() => preloadPage('educacion')}
+            >
               <BookOpen size={16} />
               Educación
             </a>
-            <a href="?seccion=glosario" onClick={(e) => { e.preventDefault(); setActiveTab('glosario'); }} style={getTabStyle('glosario')}>
+            <a 
+              href="?seccion=glosario" 
+              onClick={(e) => { e.preventDefault(); setActiveTab('glosario'); }} 
+              style={getTabStyle('glosario')}
+              onMouseEnter={() => preloadPage('glosario')}
+              onFocus={() => preloadPage('glosario')}
+            >
               <Book size={16} />
               Glosario
             </a>
-            <a href="?seccion=asesores" onClick={(e) => { e.preventDefault(); setActiveTab('asesores'); }} style={getTabStyle('asesores')}>
+            <a 
+              href="?seccion=asesores" 
+              onClick={(e) => { e.preventDefault(); setActiveTab('asesores'); }} 
+              style={getTabStyle('asesores')}
+              onMouseEnter={() => preloadPage('asesores')}
+              onFocus={() => preloadPage('asesores')}
+            >
               <Users size={16} />
               Asesores
             </a>
-            <a href="?seccion=acerca" onClick={(e) => { e.preventDefault(); setActiveTab('acerca'); }} style={getTabStyle('acerca')}>
+            <a 
+              href="?seccion=acerca" 
+              onClick={(e) => { e.preventDefault(); setActiveTab('acerca'); }} 
+              style={getTabStyle('acerca')}
+              onMouseEnter={() => preloadPage('acerca')}
+              onFocus={() => preloadPage('acerca')}
+            >
               <Info size={16} />
               Acerca de
             </a>
@@ -417,6 +499,7 @@ function App() {
                 setActiveTool(toolId);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+              preloadTool={preloadTool}
             />
           )}
 
