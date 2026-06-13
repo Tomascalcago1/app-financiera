@@ -18,3 +18,12 @@ createRoot(document.getElementById('root')).render(
     <SpeedInsights />
   </StrictMode>,
 )
+
+// Register Service Worker for PWA offline capability
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registrado con éxito:', reg))
+      .catch(err => console.error('Error registrando SW:', err));
+  });
+}

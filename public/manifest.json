@@ -1,0 +1,30 @@
+{
+  "short_name": "Valia",
+  "name": "Valia | Calculadoras y Simuladores Financieros",
+  "description": "Calculadoras y simuladores financieros interactivos y 100% privados para Argentina.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/?seccion=inicio",
+  "background_color": "#090D16",
+  "theme_color": "#090D16",
+  "display": "standalone",
+  "orientation": "portrait"
+}
