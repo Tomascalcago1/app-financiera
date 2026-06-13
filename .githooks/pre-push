@@ -1,0 +1,9 @@
+#!/bin/sh
+echo "Ejecutando verificaciones previas a push (linter y tests)..."
+npm run lint && npm run test
+if [ $? -ne 0 ]; then
+  echo "ERROR: Las pruebas o el linter fallaron. Push cancelado."
+  exit 1
+fi
+echo "Verificaciones completadas con éxito."
+exit 0

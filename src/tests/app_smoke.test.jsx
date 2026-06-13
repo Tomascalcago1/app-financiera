@@ -1,65 +1,69 @@
+// @vitest-environment happy-dom
 import { describe, test, expect, vi } from 'vitest';
-import React from 'react';
-import { renderToString } from 'react-dom/server';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
 
-// Mock browser globals needed for App to load and render
-global.window = {
-  location: {
-    search: '',
-    origin: 'http://localhost',
-    pathname: '/'
-  },
-  localStorage: {
-    getItem: () => null,
-    setItem: () => null
-  },
-  addEventListener: () => {},
-  removeEventListener: () => {},
-  scrollTo: () => {}
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+
+// Mock ResizeObserver for Recharts components
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
 };
 
-global.localStorage = global.window.localStorage;
-
-Object.defineProperty(global, 'navigator', {
-  value: {
-    clipboard: {
-      writeText: () => Promise.resolve()
-    }
-  },
-  configurable: true,
-  writable: true
-});
-
-global.document = {
-  documentElement: {
-    setAttribute: () => {},
-    removeAttribute: () => {}
-  },
-  querySelector: () => null,
-  createElement: () => ({
-    setAttribute: () => {},
-    id: '',
-    type: ''
-  }),
-  head: {
-    appendChild: () => {}
-  },
-  addEventListener: () => {},
-  removeEventListener: () => {}
-};
-
-// Mock modules that import css or other files that might break in node test
+// Mock Vercel specific analytics and speed-insights
 vi.mock('@vercel/analytics', () => ({
   track: vi.fn()
 }));
 
-describe('App Smoke Test', () => {
-  test('should import and render App without crashing', async () => {
-    // Dynamically import App after setting up mock globals
+vi.mock('@vercel/speed-insights', () => ({
+  injectSpeedInsights: vi.fn()
+}));
+
+// Stub other window & navigator APIs not fully present in happy-dom
+window.scrollTo = vi.fn();
+if (!window.print) {
+  window.print = vi.fn();
+}
+
+if (!navigator.clipboard) {
+  Object.defineProperty(navigator, 'clipboard', {
+    value: {
+      writeText: vi.fn(() => Promise.resolve())
+    },
+    configurable: true,
+    writable: true
+  });
+} else if (!navigator.clipboard.writeText) {
+  navigator.clipboard.writeText = vi.fn(() => Promise.resolve());
+}
+
+describe('App Smoke Test (DOM environment)', () => {
+  test('should mount, execute lifecycles (useEffect), and render App without crashing', async () => {
+    // Dynamically import App after mocking environment globals
     const { default: App } = await import('../App');
-    
-    // Render App to static HTML string (runs render phase but not useEffects)
-    const html = renderToString(<App />);
-    expect(html).toContain('Valia');
+
+    // Create a container element in document body
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const root = createRoot(container);
+
+    // Mount the component in the mock DOM, triggering all useEffect hooks
+    await act(async () => {
+      root.render(<App />);
+    });
+
+    // Verify it rendered successfully and contains core app branding
+    expect(container.innerHTML).toContain('Valia');
+
+    // Unmount component to execute all cleanup functions
+    await act(async () => {
+      root.unmount();
+    });
+
+    // Clean up DOM container
+    document.body.removeChild(container);
   });
 });
