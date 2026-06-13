@@ -115,9 +115,9 @@ const FinancialTest = ({ onSelectTool, preloadTool }) => {
     if (score <= 9) {
       return {
         title: 'Alerta Financiera',
-        badgeColor: 'rgba(239, 68, 68, 0.1)',
-        textColor: '#f87171',
-        icon: <AlertTriangle className="text-accent-warning" size={24} style={{ color: '#ef4444' }} />,
+        badgeColor: 'rgba(239, 68, 68, 0.12)',
+        textColor: 'var(--accent-danger)',
+        icon: <AlertTriangle size={24} style={{ color: 'var(--accent-danger)' }} />,
         desc: 'Es urgente estabilizar tus finanzas personales, consolidar o reducir deudas de alto costo y constituir un fondo de emergencia inicial antes de asumir riesgos en inversiones.',
         recommendations: [
           {
@@ -139,9 +139,9 @@ const FinancialTest = ({ onSelectTool, preloadTool }) => {
     } else if (score <= 13) {
       return {
         title: 'Ahorro Conservador (Pérdida por Inflación)',
-        badgeColor: 'rgba(245, 158, 11, 0.1)',
-        textColor: '#fbbf24',
-        icon: <Scale className="text-accent-warning" size={24} style={{ color: '#f59e0b' }} />,
+        badgeColor: 'rgba(245, 158, 11, 0.12)',
+        textColor: 'var(--accent-warning)',
+        icon: <Scale size={24} style={{ color: 'var(--accent-warning)' }} />,
         desc: 'Tenés capacidad de ahorro, pero mantener el capital parado en pesos líquidos o plazos fijos tradicionales está depreciando tu poder de compra real frente a la inflación de Argentina.',
         recommendations: [
           {
@@ -163,9 +163,9 @@ const FinancialTest = ({ onSelectTool, preloadTool }) => {
     } else if (score <= 17) {
       return {
         title: 'Ahorro Activo (Paso al Mercado)',
-        badgeColor: 'rgba(16, 185, 129, 0.1)',
-        textColor: '#34d399',
-        icon: <TrendingUp className="text-accent-success" size={24} style={{ color: '#10b981' }} />,
+        badgeColor: 'rgba(16, 185, 129, 0.12)',
+        textColor: 'var(--accent-success)',
+        icon: <TrendingUp size={24} style={{ color: 'var(--accent-success)' }} />,
         desc: 'Tus finanzas son estables y contás con resguardo de emergencia. Sin embargo, para capitalizarte y batir la inflación a largo plazo, te falta dar el salto a invertir de forma profesional en la Bolsa.',
         recommendations: [
           {
@@ -189,9 +189,9 @@ const FinancialTest = ({ onSelectTool, preloadTool }) => {
     } else {
       return {
         title: 'Patrimonio en Expansión',
-        badgeColor: 'rgba(6, 182, 212, 0.1)',
-        textColor: '#22d3ee',
-        icon: <Award className="text-accent-primary" size={24} style={{ color: '#06b6d4' }} />,
+        badgeColor: 'rgba(6, 182, 212, 0.12)',
+        textColor: 'var(--accent-primary)',
+        icon: <Award size={24} style={{ color: 'var(--accent-primary)' }} />,
         desc: '¡Excelente gestión! Mantenés hábitos sólidos de inversión en el mercado y planificás a largo plazo. Tus prioridades actuales son optimizar tasas y modelar estrategias de retiro.',
         recommendations: [
           {

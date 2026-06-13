@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
-import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book, Code } from 'lucide-react';
+import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book, Code, Sun, Moon } from 'lucide-react';
 import HelpModal from './components/HelpModal';
 
 // Dynamic loaders for intent-based preloading
@@ -144,6 +144,26 @@ function App() {
   });
   const [isEmbedModalOpen, setIsEmbedModalOpen] = useState(false);
   const isEmbedded = new URLSearchParams(window.location.search).get('embed') === 'true';
+
+  const [isCopied, setIsCopied] = useState(false);
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('valia-theme') || 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('valia-theme', theme);
+    if (isEmbedded) {
+      document.documentElement.setAttribute('data-embed', 'true');
+    } else {
+      document.documentElement.removeAttribute('data-embed');
+    }
+  }, [theme, isEmbedded]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
 
   const [activeTool, setActiveTool] = useState(() => {
@@ -415,75 +435,96 @@ function App() {
             </span>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav className="nav-tabs">
-            <a 
-              href="?seccion=inicio" 
-              onClick={(e) => { e.preventDefault(); setActiveTab('inicio'); }} 
-              style={getTabStyle('inicio')}
-              onMouseEnter={() => preloadPage('inicio')}
-              onFocus={() => preloadPage('inicio')}
-            >
-              <Home size={16} />
-              Inicio
-            </a>
-            <a 
-              href="?seccion=herramientas" 
-              onClick={(e) => { e.preventDefault(); setActiveTab('herramientas'); }} 
-              style={getTabStyle('herramientas')}
-              onMouseEnter={() => {
-                preloadPage('inicio'); // Preload inicio if not loaded
-                preloadTool(activeTool); // Preload active calculator
+          {/* Navigation & Theme Switcher */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', maxWidth: '100%', justifyContent: 'center' }}>
+            <nav className="nav-tabs">
+              <a 
+                href="?seccion=inicio" 
+                onClick={(e) => { e.preventDefault(); setActiveTab('inicio'); }} 
+                style={getTabStyle('inicio')}
+                onMouseEnter={() => preloadPage('inicio')}
+                onFocus={() => preloadPage('inicio')}
+              >
+                <Home size={16} />
+                Inicio
+              </a>
+              <a 
+                href="?seccion=herramientas" 
+                onClick={(e) => { e.preventDefault(); setActiveTab('herramientas'); }} 
+                style={getTabStyle('herramientas')}
+                onMouseEnter={() => {
+                  preloadPage('inicio'); // Preload inicio if not loaded
+                  preloadTool(activeTool); // Preload active calculator
+                }}
+                onFocus={() => {
+                  preloadPage('inicio');
+                  preloadTool(activeTool);
+                }}
+              >
+                <Wrench size={16} />
+                Herramientas
+              </a>
+              <a 
+                href="?seccion=educacion" 
+                onClick={(e) => { e.preventDefault(); setActiveTab('educacion'); }} 
+                style={getTabStyle('educacion')}
+                onMouseEnter={() => preloadPage('educacion')}
+                onFocus={() => preloadPage('educacion')}
+              >
+                <BookOpen size={16} />
+                Educación
+              </a>
+              <a 
+                href="?seccion=glosario" 
+                onClick={(e) => { e.preventDefault(); setActiveTab('glosario'); }} 
+                style={getTabStyle('glosario')}
+                onMouseEnter={() => preloadPage('glosario')}
+                onFocus={() => preloadPage('glosario')}
+              >
+                <Book size={16} />
+                Glosario
+              </a>
+              <a 
+                href="?seccion=asesores" 
+                onClick={(e) => { e.preventDefault(); setActiveTab('asesores'); }} 
+                style={getTabStyle('asesores')}
+                onMouseEnter={() => preloadPage('asesores')}
+                onFocus={() => preloadPage('asesores')}
+              >
+                <Users size={16} />
+                Asesores
+              </a>
+              <a 
+                href="?seccion=acerca" 
+                onClick={(e) => { e.preventDefault(); setActiveTab('acerca'); }} 
+                style={getTabStyle('acerca')}
+                onMouseEnter={() => preloadPage('acerca')}
+                onFocus={() => preloadPage('acerca')}
+              >
+                <Info size={16} />
+                Acerca de
+              </a>
+            </nav>
+
+            <button
+              onClick={toggleTheme}
+              className="btn btn-outline"
+              title={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                width: '38px',
+                height: '38px',
+                padding: 0,
+                cursor: 'pointer',
+                flexShrink: 0
               }}
-              onFocus={() => {
-                preloadPage('inicio');
-                preloadTool(activeTool);
-              }}
             >
-              <Wrench size={16} />
-              Herramientas
-            </a>
-            <a 
-              href="?seccion=educacion" 
-              onClick={(e) => { e.preventDefault(); setActiveTab('educacion'); }} 
-              style={getTabStyle('educacion')}
-              onMouseEnter={() => preloadPage('educacion')}
-              onFocus={() => preloadPage('educacion')}
-            >
-              <BookOpen size={16} />
-              Educación
-            </a>
-            <a 
-              href="?seccion=glosario" 
-              onClick={(e) => { e.preventDefault(); setActiveTab('glosario'); }} 
-              style={getTabStyle('glosario')}
-              onMouseEnter={() => preloadPage('glosario')}
-              onFocus={() => preloadPage('glosario')}
-            >
-              <Book size={16} />
-              Glosario
-            </a>
-            <a 
-              href="?seccion=asesores" 
-              onClick={(e) => { e.preventDefault(); setActiveTab('asesores'); }} 
-              style={getTabStyle('asesores')}
-              onMouseEnter={() => preloadPage('asesores')}
-              onFocus={() => preloadPage('asesores')}
-            >
-              <Users size={16} />
-              Asesores
-            </a>
-            <a 
-              href="?seccion=acerca" 
-              onClick={(e) => { e.preventDefault(); setActiveTab('acerca'); }} 
-              style={getTabStyle('acerca')}
-              onMouseEnter={() => preloadPage('acerca')}
-              onFocus={() => preloadPage('acerca')}
-            >
-              <Info size={16} />
-              Acerca de
-            </a>
-          </nav>
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
         </div>
       </header>
       )}
@@ -1140,13 +1181,23 @@ function App() {
           onClick={() => {
             const code = `<iframe src="${window.location.origin}${window.location.pathname}?seccion=herramientas&herramienta=${toolMapReverse[activeTool] || activeTool}&embed=true" width="100%" height="800" style="border:none; border-radius:12px; background:transparent;" allowtransparency="true"></iframe>`;
             navigator.clipboard.writeText(code)
-              .then(() => alert('¡Código copiado al portapapeles!'))
+              .then(() => {
+                setIsCopied(true);
+                setTimeout(() => setIsCopied(false), 2000);
+              })
               .catch(err => console.error('Error al copiar: ', err));
           }}
-          className="btn btn-primary"
-          style={{ width: '100%', justifyContent: 'center' }}
+          className="btn"
+          style={{ 
+            width: '100%', 
+            justifyContent: 'center',
+            backgroundColor: isCopied ? 'var(--accent-success)' : 'var(--accent-primary)',
+            color: isCopied ? '#FFFFFF' : 'var(--text-btn-primary)',
+            fontWeight: 600,
+            transition: 'all 0.3s ease'
+          }}
         >
-          Copiar Código de Inserción
+          {isCopied ? '¡Código Copiado al Portapapeles! ✓' : 'Copiar Código de Inserción'}
         </button>
       </HelpModal>
     </div>

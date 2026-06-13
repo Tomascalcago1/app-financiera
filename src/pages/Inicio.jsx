@@ -186,7 +186,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           fontSize: '3rem', 
           lineHeight: '1.15', 
           fontWeight: '700',
-          background: 'linear-gradient(to right, #ffffff, #94a3b8)',
+          background: 'linear-gradient(to right, var(--text-gradient-start), var(--text-gradient-end))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           letterSpacing: '-0.03em'
@@ -430,7 +430,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
               flexDirection: 'column', 
               gap: '0.35rem',
               padding: '1.5rem 1rem',
-              background: 'linear-gradient(180deg, var(--bg-secondary) 0%, rgba(15, 23, 42, 0.4) 100%)',
+              background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-gradient-bottom) 100%)',
               transition: 'none'
             }}>
               <span style={{ 

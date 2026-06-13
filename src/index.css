@@ -1,8 +1,11 @@
-:root {
+:root, [data-theme="dark"] {
   /* Colors - Deep Premium Navy Theme (Atlántico Oscuro) */
   --bg-primary: #090D16;      /* Deep Midnight Navy */
   --bg-secondary: #0F172A;    /* Slate Dark Blue */
   --bg-tertiary: #1E293B;     /* Slate Blue */
+  --bg-secondary-hover: #131c33;
+  --bg-tertiary-hover: #273549;
+  --bg-tertiary-focus: #253348;
   
   --text-primary: #F8FAFC;    /* Slate Off-White */
   --text-secondary: #94A3B8;  /* Muted Slate Gray */
@@ -23,6 +26,12 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 15px rgba(6, 182, 212, 0.2);
+  --text-btn-primary: #090D16; /* Dark text for contrast against bright cyan */
+
+  /* Gradients */
+  --text-gradient-start: #ffffff;
+  --text-gradient-end: #94a3b8;
+  --bg-gradient-bottom: rgba(15, 23, 42, 0.4);
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -30,6 +39,37 @@
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+  /* Colors - Atlántico Claro */
+  --bg-primary: #F8FAFC;      /* Fondo claro pizarra */
+  --bg-secondary: #FFFFFF;    /* Tarjetas blancas puras */
+  --bg-tertiary: #F1F5F9;     /* Fondo de inputs/botones */
+  --bg-secondary-hover: #F8FAFC;
+  --bg-tertiary-hover: #E2E8F0;
+  --bg-tertiary-focus: #FFFFFF;
+  
+  --text-primary: #0F172A;    /* Texto oscuro pizarra */
+  --text-secondary: #475569;  /* Texto secundario */
+  --text-tertiary: #64748B;
+  
+  --accent-primary: #0891B2;  /* Cyan de mayor contraste */
+  --accent-primary-hover: #0e7490;
+  --accent-success: #059669;
+  --accent-warning: #D97706;
+  --accent-danger: #DC2626;
+  
+  --border-color: #E2E8F0;    /* Borde claro */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 4px 20px rgba(8, 145, 178, 0.08);
+  --text-btn-primary: #FFFFFF; /* White text for contrast on darker cyan button */
+
+  /* Gradients */
+  --text-gradient-start: #0F172A;
+  --text-gradient-end: #64748B;
+  --bg-gradient-bottom: rgba(241, 245, 249, 0.4);
 }
 
 * {
@@ -118,11 +158,11 @@ p {
 /* Base UI Elements */
 .card {
   background-color: var(--bg-secondary);
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   padding: 1.5rem;
-  box-shadow: none;
-  transition: background-color var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 @media (max-width: 640px) {
@@ -132,7 +172,10 @@ p {
 }
 
 .card:hover {
-  background-color: #131c33; /* slightly lighter solid slate on hover */
+  transform: translateY(-2px);
+  background-color: var(--bg-secondary-hover);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-glow);
 }
 
 .btn {
@@ -144,30 +187,35 @@ p {
   font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   border: none;
   gap: 0.5rem;
 }
 
+.btn:active {
+  transform: scale(0.97);
+}
+
 .btn-primary {
   background-color: var(--accent-primary);
-  color: #090D16; /* Dark text for contrast against cyan */
+  color: var(--text-btn-primary);
   font-weight: 600;
   box-shadow: none;
 }
 
 .btn-primary:hover {
   background-color: var(--accent-primary-hover);
+  box-shadow: var(--shadow-glow);
 }
 
 .btn-outline {
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
-  border: none;
+  border: 1px solid var(--border-color);
 }
 
 .btn-outline:hover {
-  background-color: #273549;
+  background-color: var(--bg-tertiary-hover);
 }
 
 /* Inputs */
@@ -186,19 +234,21 @@ p {
 
 .input-field {
   background-color: var(--bg-tertiary);
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   padding: 0.75rem 1rem;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: 1rem;
-  transition: background-color var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   width: 100%;
 }
 
 .input-field:focus {
   outline: none;
-  background-color: #253348;
+  background-color: var(--bg-tertiary-focus);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
 }
 
 /* Custom Scrollbar */
@@ -322,6 +372,7 @@ input[type="number"] {
 .chart-container {
   height: 400px;
   width: 100%;
+  touch-action: pan-y;
 }
 
 @media (max-width: 640px) {
@@ -333,6 +384,7 @@ input[type="number"] {
 .chart-container-large {
   height: 500px;
   width: 100%;
+  touch-action: pan-y;
 }
 
 @media (max-width: 640px) {
@@ -380,7 +432,7 @@ input[type="number"] {
 }
 
 .help-btn:hover {
-  background: #273549;
+  background: var(--bg-tertiary-hover);
 }
 
 /* Print Styles for PDF Export */
@@ -603,10 +655,38 @@ input[type="number"] {
   }
 }
 
-/* Mobile Table Responsiveness Optimization */
+/* Mobile Table & Chart Responsiveness Optimization */
 @media (max-width: 640px) {
   table th, table td {
     padding: 0.5rem !important;
     font-size: 0.8rem !important;
   }
+  .recharts-cartesian-axis-tick text {
+    font-size: 10px !important;
+  }
+  .recharts-legend-item text {
+    font-size: 10px !important;
+  }
+  .recharts-default-tooltip {
+    font-size: 0.8rem !important;
+    padding: 0.5rem !important;
+  }
 }
+
+/* Embed Mode Layout Optimizations */
+[data-embed="true"] {
+  background-color: transparent !important;
+}
+
+[data-embed="true"] body {
+  background-color: transparent !important;
+}
+
+[data-embed="true"] .container {
+  max-width: 100% !important;
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+  padding-top: 0.1rem !important;
+  padding-bottom: 0.1rem !important;
+}
+
