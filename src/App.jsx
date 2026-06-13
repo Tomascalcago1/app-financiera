@@ -149,6 +149,33 @@ function App() {
 
   const [isCopied, setIsCopied] = useState(false);
 
+  const [activeTool, setActiveTool] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tool = params.get('herramienta') || params.get('tool');
+    const validTools = [
+      'buy-vs-rent', 
+      'compound-interest', 
+      'savings-goal', 
+      'fire', 
+      'inflation', 
+      'hipotecario-uva', 
+      'comparador-historico', 
+      'sueldo-neto', 
+      'ganancias', 
+      'broker-comparator',
+      'installments-vs-cash',
+      'savings-comparison',
+      'tna-to-tea',
+      'ipc-actualizer'
+    ];
+    if (tool) {
+      if (validTools.includes(tool)) return tool;
+      if (toolMap[tool]) return toolMap[tool];
+    }
+    return 'compound-interest';
+  });
+  const scrollRef = useRef(null);
+
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('valia-theme') || 'dark';
   });
@@ -249,34 +276,6 @@ function App() {
       clearTimeout(timeoutId);
     };
   }, [activeTab, activeTool]);
-
-
-  const [activeTool, setActiveTool] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    const tool = params.get('herramienta') || params.get('tool');
-    const validTools = [
-      'buy-vs-rent', 
-      'compound-interest', 
-      'savings-goal', 
-      'fire', 
-      'inflation', 
-      'hipotecario-uva', 
-      'comparador-historico', 
-      'sueldo-neto', 
-      'ganancias', 
-      'broker-comparator',
-      'installments-vs-cash',
-      'savings-comparison',
-      'tna-to-tea',
-      'ipc-actualizer'
-    ];
-    if (tool) {
-      if (validTools.includes(tool)) return tool;
-      if (toolMap[tool]) return toolMap[tool];
-    }
-    return 'compound-interest';
-  });
-  const scrollRef = useRef(null);
 
   // Sincronizar URL con la pestaña y herramienta activa en tiempo real (pushState) en español
   useEffect(() => {
