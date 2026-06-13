@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
 import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book, Code, Sun, Moon } from 'lucide-react';
 import HelpModal from './components/HelpModal';
+import { trackEvent } from './utils/analytics';
+import { calculatorFaqs } from './utils/faqs';
 
 // Dynamic loaders for intent-based preloading
 const calculatorLoaders = {
@@ -162,8 +164,91 @@ function App() {
   }, [theme, isEmbedded]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      trackEvent('theme_toggled', { theme: next });
+      return next;
+    });
   };
+
+  // Global Event Listeners for Automatic Tracking (Print, Clipboard, Open Tool, Downloads)
+  useEffect(() => {
+    // 1. Intercept printing (PDF Export)
+    const originalPrint = window.print;
+    window.print = () => {
+      trackEvent('report_exported', { calculatorId: activeTool, format: 'pdf' });
+      originalPrint();
+    };
+
+    // 2. Intercept Clipboard Copy (Sharing & Embeds)
+    const originalWriteText = navigator.clipboard.writeText;
+    navigator.clipboard.writeText = (text) => {
+      if (text.includes('seccion=herramientas')) {
+        if (text.includes('embed=true')) {
+          trackEvent('widget_embedded', { calculatorId: activeTool });
+        } else {
+          trackEvent('link_shared', { calculatorId: activeTool });
+        }
+      }
+      return originalWriteText(text);
+    };
+
+    // 3. Track Calculator opened
+    if (activeTab === 'herramientas' && activeTool) {
+      trackEvent('calculator_opened', { calculatorId: activeTool });
+    }
+
+    // 4. Intercept CSV and PNG programmatic downloads
+    const handleGlobalClick = (e) => {
+      let target = e.target;
+      while (target && target !== document.body) {
+        if (target.tagName === 'A') {
+          const downloadAttr = target.getAttribute('download');
+          if (downloadAttr) {
+            if (downloadAttr.endsWith('.csv')) {
+              trackEvent('report_exported', { calculatorId: activeTool, format: 'csv' });
+            } else if (downloadAttr.endsWith('.png')) {
+              trackEvent('report_exported', { calculatorId: activeTool, format: 'png' });
+            }
+          }
+          break;
+        }
+        target = target.parentNode;
+      }
+    };
+    document.addEventListener('click', handleGlobalClick);
+
+    return () => {
+      window.print = originalPrint;
+      navigator.clipboard.writeText = originalWriteText;
+      document.removeEventListener('click', handleGlobalClick);
+    };
+  }, [activeTab, activeTool]);
+
+  // 4. Track input calculations (debounced)
+  useEffect(() => {
+    if (activeTab !== 'herramientas' || !activeTool) return;
+
+    let timeoutId;
+    const handleInput = (e) => {
+      if (e.target && e.target.classList && e.target.classList.contains('input-field')) {
+        const fieldName = e.target.name || e.target.placeholder || 'input';
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          trackEvent('calculator_calculated', { 
+            calculatorId: activeTool,
+            fieldName: fieldName
+          });
+        }, 2000); // 2 second debounce to prevent spamming while typing
+      }
+    };
+
+    document.addEventListener('input', handleInput);
+    return () => {
+      document.removeEventListener('input', handleInput);
+      clearTimeout(timeoutId);
+    };
+  }, [activeTab, activeTool]);
 
 
   const [activeTool, setActiveTool] = useState(() => {
@@ -350,6 +435,94 @@ function App() {
     updateTag('meta[property="og:description"]', desc);
     updateTag('meta[property="twitter:title"]', title);
     updateTag('meta[property="twitter:description"]', desc);
+
+    // Dynamic Canonical Link Injection
+    let canonicalUrl = `${window.location.origin}${window.location.pathname}`;
+    if (activeTab === 'herramientas' && activeTool) {
+      const toolUrlParam = toolMapReverse[activeTool] || activeTool;
+      canonicalUrl += `?seccion=herramientas&herramienta=${toolUrlParam}`;
+    } else if (activeTab !== 'inicio') {
+      canonicalUrl += `?seccion=${activeTab}`;
+    }
+    
+    let linkEl = document.querySelector('link[rel="canonical"]');
+    if (!linkEl) {
+      linkEl = document.createElement('link');
+      linkEl.rel = 'canonical';
+      document.head.appendChild(linkEl);
+    }
+    linkEl.setAttribute('href', canonicalUrl);
+
+    // Dynamic JSON-LD Structured Data script injection for FinancialApplication
+    let jsonLd = null;
+    if (activeTab === 'herramientas' && activeTool) {
+      const toolUrlParam = toolMapReverse[activeTool] || activeTool;
+      const toolCanonicalUrl = `${window.location.origin}${window.location.pathname}?seccion=herramientas&herramienta=${toolUrlParam}`;
+
+      jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FinancialApplication",
+        "name": title,
+        "description": desc,
+        "url": toolCanonicalUrl,
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "countriesSupported": "AR",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "ARS"
+        }
+      };
+    }
+
+    let scriptEl = document.getElementById('tool-jsonld');
+    if (jsonLd) {
+      if (!scriptEl) {
+        scriptEl = document.createElement('script');
+        scriptEl.id = 'tool-jsonld';
+        scriptEl.type = 'application/ld+json';
+        document.head.appendChild(scriptEl);
+      }
+      scriptEl.textContent = JSON.stringify(jsonLd);
+    } else {
+      if (scriptEl) {
+        scriptEl.remove();
+      }
+    }
+
+    // Dynamic JSON-LD Structured Data script injection for FAQPage
+    let faqJsonLd = null;
+    if (activeTab === 'herramientas' && activeTool && calculatorFaqs[activeTool]) {
+      faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": calculatorFaqs[activeTool].map(faq => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.a
+          }
+        }))
+      };
+    }
+
+    let faqScriptEl = document.getElementById('tool-faq-jsonld');
+    if (faqJsonLd) {
+      if (!faqScriptEl) {
+        faqScriptEl = document.createElement('script');
+        faqScriptEl.id = 'tool-faq-jsonld';
+        faqScriptEl.type = 'application/ld+json';
+        document.head.appendChild(faqScriptEl);
+      }
+      faqScriptEl.textContent = JSON.stringify(faqJsonLd);
+    } else {
+      if (faqScriptEl) {
+        faqScriptEl.remove();
+      }
+    }
   }, [activeTab, activeTool]);
 
   useEffect(() => {

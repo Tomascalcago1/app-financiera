@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Users, Award, CheckCircle, ArrowRight, MessageSquare } from 'lucide-react';
 import FinancialInput from '../components/FinancialInput';
+import { trackEvent } from '../utils/analytics';
 
 const Asesores = () => {
   const [fullName, setFullName] = useState('');
@@ -230,24 +231,36 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
               </div>
             )}
 
-            <button 
-              type="button" 
-              disabled
-              className="btn"
-              style={{ 
-                width: '100%', 
-                justifyContent: 'center', 
-                padding: '0.875rem', 
-                fontWeight: 600, 
-                marginTop: '0.5rem',
-                cursor: 'not-allowed',
-                backgroundColor: 'var(--bg-tertiary)',
-                color: 'var(--text-secondary)',
-                opacity: 0.7
-              }}
+            <div 
+              onClick={() => trackEvent('lead_generated_interest', { 
+                fullName, 
+                phone, 
+                amount, 
+                profile, 
+                goal: goal === 'otro' ? customGoal : goal,
+                source: 'asesores_page'
+              })}
+              style={{ width: '100%', cursor: 'not-allowed' }}
             >
-              Próximamente
-            </button>
+              <button 
+                type="button" 
+                disabled
+                className="btn"
+                style={{ 
+                  pointerEvents: 'none',
+                  width: '100%', 
+                  justifyContent: 'center', 
+                  padding: '0.875rem', 
+                  fontWeight: 600, 
+                  marginTop: '0.5rem',
+                  backgroundColor: 'var(--bg-tertiary)',
+                  color: 'var(--text-secondary)',
+                  opacity: 0.7
+                }}
+              >
+                Próximamente
+              </button>
+            </div>
           </form>
         </div>
       </div>

@@ -15,6 +15,7 @@ import {
   Flame,
   ChevronRight
 } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 const questions = [
   {
@@ -81,6 +82,7 @@ const FinancialTest = ({ onSelectTool, preloadTool }) => {
     setCurrentStep(0);
     setAnswers({});
     setFinished(false);
+    trackEvent('financial_test_started');
   };
 
   const handleAnswer = (score) => {
@@ -91,6 +93,9 @@ const FinancialTest = ({ onSelectTool, preloadTool }) => {
       setCurrentStep(currentStep + 1);
     } else {
       setFinished(true);
+      const finalScore = Object.values(nextAnswers).reduce((acc, curr) => acc + curr, 0);
+      const diagnosis = getDiagnosis(finalScore);
+      trackEvent('financial_test_completed', { score: finalScore, profile: diagnosis.title });
     }
   };
 

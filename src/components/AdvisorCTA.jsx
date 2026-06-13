@@ -1,5 +1,6 @@
 import React from 'react';
 import { MessageSquare } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 const AdvisorCTA = ({ 
   title = '¿Listo para empezar a invertir?',
@@ -48,25 +49,30 @@ const AdvisorCTA = ({
           </p>
         </div>
       </div>
-      <button 
-        disabled
-        className="btn" 
-        style={{ 
-          whiteSpace: 'nowrap', 
-          display: 'inline-flex', 
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.75rem 1.5rem',
-          fontWeight: 600,
-          border: 'none',
-          cursor: 'not-allowed',
-          backgroundColor: 'var(--bg-tertiary)',
-          color: 'var(--text-secondary)',
-          opacity: 0.7
-        }}
+      <div 
+        onClick={() => trackEvent('lead_generated_interest', { context: goalContext, source: 'advisor_cta' })}
+        style={{ display: 'inline-block', cursor: 'not-allowed' }}
       >
-        Próximamente
-      </button>
+        <button 
+          disabled
+          className="btn" 
+          style={{ 
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap', 
+            display: 'inline-flex', 
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.75rem 1.5rem',
+            fontWeight: 600,
+            border: 'none',
+            backgroundColor: 'var(--bg-tertiary)',
+            color: 'var(--text-secondary)',
+            opacity: 0.7
+          }}
+        >
+          Próximamente
+        </button>
+      </div>
     </div>
   );
 };
