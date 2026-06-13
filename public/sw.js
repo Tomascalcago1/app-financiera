@@ -1,24 +1,25 @@
 const CACHE_NAME = 'valia-cache-v1';
-const ASSETS_TO_CACHE = [
+const CRITICAL_ASSETS = [
   '/',
   '/index.html',
   '/favicon.svg',
   '/manifest.json'
 ];
+const NON_CRITICAL_ASSETS = [];
 
-// Instalar Service Worker y pre-cachear recursos críticos iniciales
+// Instalar Service Worker y pre-cachear solo recursos críticos iniciales (App Shell)
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('SW: Pre-cacheando recursos críticos');
-        return cache.addAll(ASSETS_TO_CACHE);
+        console.log('SW: Pre-cacheando recursos críticos de App Shell');
+        return cache.addAll(CRITICAL_ASSETS);
       })
       .then(() => self.skipWaiting())
   );
 });
 
-// Activar Service Worker y limpiar cachés antiguas
+// Activar Service Worker y limpiar cachés antiguas, luego iniciar descarga progresiva
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -30,9 +31,40 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => {
+      self.clients.claim();
+      // Descargar recursos secundarios (chunks de calculadoras) en segundo plano
+      cacheNonCriticalAssets();
+    })
   );
 });
+
+// Función para pre-cargar recursos secundarios progresivamente sin bloquear el registro
+async function cacheNonCriticalAssets() {
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    console.log(`SW: Iniciando pre-carga de ${NON_CRITICAL_ASSETS.length} recursos secundarios en segundo plano...`);
+    
+    // Descargar cada recurso de forma individual e ignorar fallos para no interrumpir el flujo
+    for (const url of NON_CRITICAL_ASSETS) {
+      try {
+        const cached = await cache.match(url);
+        if (!cached) {
+          const response = await fetch(url);
+          if (response.status === 200) {
+            await cache.put(url, response);
+            console.log(`SW: Recurso secundario pre-cargado con éxito: ${url}`);
+          }
+        }
+      } catch (err) {
+        console.warn(`SW: No se pudo pre-cargar recurso secundario en segundo plano: ${url}`, err);
+      }
+    }
+    console.log('SW: Pre-carga de recursos secundarios finalizada con éxito.');
+  } catch (err) {
+    console.error('SW: Error en proceso de pre-carga asíncrona:', err);
+  }
+}
 
 // Interceptar peticiones y aplicar estrategia de caché Stale-While-Revalidate
 self.addEventListener('fetch', event => {
