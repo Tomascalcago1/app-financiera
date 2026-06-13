@@ -20,21 +20,11 @@ import {
   Landmark
 } from 'lucide-react';
 import AdvisorCTA from '../components/AdvisorCTA';
+import FinancialTest from '../components/FinancialTest';
 
 const Inicio = ({ onSelectTool, preloadTool }) => {
-  const [monthlySavings, setMonthlySavings] = useState(200);
   const [openFaq, setOpenFaq] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
-
-  // Calcular interés compuesto rápido (8% anual, capitalización mensual)
-  const calculateQuickCompound = (monthly, years) => {
-    const r = 0.08;
-    const n = 12;
-    const rate = r / n;
-    const months = years * n;
-    const fv = monthly * (Math.pow(1 + rate, months) - 1) / rate;
-    return Math.round(fv);
-  };
 
   const formatCurrency = (val) => {
     return new Intl.NumberFormat('es-AR', {
@@ -285,109 +275,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
         </div>
       </section>
 
-      {/* 2. Interactive Quick Simulator Widget */}
+      {/* 2. Financial Health Test Widget */}
       <section className="container" style={{ maxWidth: '850px' }}>
-        <div className="card" style={{ 
-          background: 'linear-gradient(135deg, var(--bg-secondary) 0%, rgba(15, 23, 42, 0.6) 100%)',
-          border: '1px solid rgba(6, 182, 212, 0.15)',
-          boxShadow: 'var(--shadow-glow), var(--shadow-md)',
-          padding: '2rem'
-        }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-              <TrendingUp size={20} className="text-accent-primary" />
-              Simulador de Crecimiento Rápido
-            </h2>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-              Ajustá el ahorro mensual para proyectar el poder del interés compuesto (tasa anual estimada: 8% en USD)
-            </p>
-          </div>
-
-          {/* Slider Control */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Ahorro Mensual Estimado:</span>
-              <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent-primary)' }}>
-                {formatCurrency(monthlySavings)}
-              </span>
-            </div>
-            <input 
-              type="range" 
-              min="20" 
-              max="2000" 
-              step="20"
-              value={monthlySavings}
-              onChange={(e) => setMonthlySavings(Number(e.target.value))}
-              style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '5px',
-                background: 'var(--bg-tertiary)',
-                outline: 'none',
-                accentColor: 'var(--accent-primary)',
-                cursor: 'pointer'
-              }}
-            />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-              <span>$20</span>
-              <span>$500</span>
-              <span>$1.000</span>
-              <span>$1.500</span>
-              <span>$2.000</span>
-            </div>
-          </div>
-
-          {/* Projection Results */}
-          <div className="stats-grid" style={{ gap: '1.25rem' }}>
-            {[
-              { yrs: 10, label: 'En 10 Años' },
-              { yrs: 20, label: 'En 20 Años' },
-              { yrs: 30, label: 'En 30 Años' }
-            ].map((proj) => {
-              const accumulated = calculateQuickCompound(monthlySavings, proj.yrs);
-              const totalInvested = monthlySavings * 12 * proj.yrs;
-              const interestEarned = accumulated - totalInvested;
-
-              return (
-                <div key={proj.yrs} style={{ 
-                  backgroundColor: 'var(--bg-tertiary)', 
-                  border: '1px solid var(--border-color)', 
-                  borderRadius: 'var(--border-radius-md)',
-                  padding: '1.25rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                  textAlign: 'center',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}>
-                  {proj.yrs === 30 && (
-                    <div style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: '3px',
-                      background: 'linear-gradient(to right, var(--accent-primary), var(--accent-success))'
-                    }} />
-                  )}
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 600 }}>
-                    {proj.label}
-                  </span>
-                  <span style={{ fontSize: '1.35rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                    {formatCurrency(accumulated)}
-                  </span>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                    <div>Invertido: <span style={{ color: 'var(--text-primary)' }}>{formatCurrency(totalInvested)}</span></div>
-                    <div style={{ color: 'var(--accent-success)', fontWeight: 500 }}>
-                      Intereses: +{formatCurrency(interestEarned)}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <FinancialTest onSelectTool={onSelectTool} preloadTool={preloadTool} />
       </section>
 
       {/* 3. Grid of Tools */}
