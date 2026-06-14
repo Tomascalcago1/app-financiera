@@ -152,7 +152,7 @@ const Terminos = () => {
         </h2>
         <p>
           Si tenés alguna pregunta, reclamo o duda con respecto a estos Términos de Uso, por favor escribinos a{' '}
-          <a href="mailto:contacto@valia.app" style={{ color: 'var(--accent-primary)' }}>contacto@valia.app</a>.
+          <a href="mailto:contacto@valiafinanzas.com" style={{ color: 'var(--accent-primary)' }}>contacto@valiafinanzas.com</a>.
         </p>
       </section>
 

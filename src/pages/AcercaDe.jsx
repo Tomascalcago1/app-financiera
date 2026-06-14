@@ -1,5 +1,6 @@
 import React from 'react';
-import { Wallet, Target, Shield, Heart, ExternalLink } from 'lucide-react';
+import { Target, Shield, Heart, ExternalLink } from 'lucide-react';
+import valiaLogo from '../assets/valia-logo.jpg';
 
 const AcercaDe = () => {
   return (
@@ -7,18 +8,14 @@ const AcercaDe = () => {
       
       {/* Hero */}
       <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <div style={{ 
-          display: 'inline-flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
+        <img src={valiaLogo} alt="Valia Logo" style={{ 
           width: '64px', 
           height: '64px', 
-          borderRadius: '50%', 
-          background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-primary-hover))',
-          marginBottom: '1.5rem'
-        }}>
-          <Wallet size={32} style={{ color: '#090D16' }} />
-        </div>
+          borderRadius: '12px', 
+          objectFit: 'cover',
+          marginBottom: '1.5rem',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+        }} />
         <h1 style={{ marginBottom: '0.75rem' }}>Acerca de Valia</h1>
         <p style={{ fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>
           Herramientas financieras gratuitas para tomar mejores decisiones con tu dinero.
@@ -271,7 +268,7 @@ const AcercaDe = () => {
         </p>
         <p>
           ¿Tenés sugerencias, encontraste un error, o querés colaborar? Escribinos a{' '}
-          <a href="mailto:contacto@valia.app" style={{ color: 'var(--accent-primary)' }}>contacto@valia.app</a>.
+          <a href="mailto:contacto@valiafinanzas.com" style={{ color: 'var(--accent-primary)' }}>contacto@valiafinanzas.com</a>.
         </p>
       </section>
 

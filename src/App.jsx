@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
-import { Home, Wrench, Wallet, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book, Code, Sun, Moon } from 'lucide-react';
+import { Home, Wrench, Info, ChevronLeft, ChevronRight, Users, BookOpen, Book, Code, Sun, Moon } from 'lucide-react';
 import HelpModal from './components/HelpModal';
 import { trackEvent } from './utils/analytics';
 import { calculatorFaqs } from './utils/faqs';
+import valiaLogo from './assets/valia-logo.jpg';
 
 // Dynamic loaders for intent-based preloading
 const calculatorLoaders = {
@@ -601,7 +602,7 @@ function App() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Wallet className="text-accent-primary" size={20} />
+              <img src={valiaLogo} alt="Valia Logo" style={{ width: '20px', height: '20px', borderRadius: '4px', objectFit: 'cover' }} />
               <span style={{ fontWeight: '700', fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>Valia</span>
             </div>
             <span style={{ fontSize: '0.625rem', color: 'var(--text-secondary)', fontWeight: '600', marginTop: '0.15rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
@@ -1153,7 +1154,7 @@ function App() {
                   color: 'var(--text-primary)'
                 }}
               >
-                <Wallet size={20} className="text-accent-primary" />
+                <img src={valiaLogo} alt="Valia Logo" style={{ width: '20px', height: '20px', borderRadius: '4px', objectFit: 'cover' }} />
                 <span>Valia</span>
               </div>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>

@@ -159,7 +159,7 @@ const Privacidad = () => {
         </h2>
         <p>
           Si tenés preguntas sobre esta política de privacidad, podés contactarnos en{' '}
-          <a href="mailto:contacto@valia.app" style={{ color: 'var(--accent-primary)' }}>contacto@valia.app</a>.
+          <a href="mailto:contacto@valiafinanzas.com" style={{ color: 'var(--accent-primary)' }}>contacto@valiafinanzas.com</a>.
         </p>
       </section>
 
