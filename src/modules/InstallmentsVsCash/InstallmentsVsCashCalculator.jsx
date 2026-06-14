@@ -308,7 +308,9 @@ const InstallmentsVsCashCalculator = () => {
               {simulation.recommendInstallments ? '¡Conviene Cuotas!' : 'Conviene Efectivo / Contado'}
             </p>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-              Pagar en cuotas te genera un ahorro real estimado de{' '}
+              {simulation.recommendInstallments 
+                ? 'Pagar en cuotas te genera un ahorro real estimado de ' 
+                : 'Pagar de contado te genera un ahorro real estimado de '}
               <strong style={{ color: simulation.recommendInstallments ? 'var(--accent-success)' : 'var(--accent-primary)' }}>
                 {formatCurrency(simulation.finalSavings)}
               </strong> en términos de valor presente.
