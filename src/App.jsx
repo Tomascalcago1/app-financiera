@@ -208,17 +208,19 @@ function App() {
     };
 
     // 2. Intercept Clipboard Copy (Sharing & Embeds)
-    const originalWriteText = navigator.clipboard.writeText;
-    navigator.clipboard.writeText = (text) => {
-      if (text.includes('seccion=herramientas')) {
-        if (text.includes('embed=true')) {
-          trackEvent('widget_embedded', { calculatorId: activeTool });
-        } else {
-          trackEvent('link_shared', { calculatorId: activeTool });
+    const originalWriteText = navigator.clipboard ? navigator.clipboard.writeText : null;
+    if (originalWriteText) {
+      navigator.clipboard.writeText = (text) => {
+        if (text.includes('seccion=herramientas')) {
+          if (text.includes('embed=true')) {
+            trackEvent('widget_embedded', { calculatorId: activeTool });
+          } else {
+            trackEvent('link_shared', { calculatorId: activeTool });
+          }
         }
-      }
-      return originalWriteText(text);
-    };
+        return originalWriteText.call(navigator.clipboard, text);
+      };
+    }
 
     // 3. Track Calculator opened
     if (activeTab === 'herramientas' && activeTool) {
