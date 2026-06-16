@@ -58,11 +58,11 @@ const InstallmentsVsCashCalculator = () => {
   });
   const [monthlyInflation, setMonthlyInflation] = useState(() => {
     const val = queryParams.get('infl');
-    return val ? Number(val) : 4.0; // 4% mensual estimado
+    return val ? Number(val) : 2.0; // 2% mensual estimado
   });
   const [investmentTna, setInvestmentTna] = useState(() => {
     const val = queryParams.get('tna');
-    return val ? Number(val) : 35; // 35% TNA de plazo fijo o billetera digital
+    return val ? Number(val) : 19; // 19% TNA de plazo fijo o billetera digital
   });
 
   const [shareCopied, setShareCopied] = useState(false);
