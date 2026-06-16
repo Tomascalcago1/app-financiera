@@ -309,7 +309,17 @@ export const exportChartToPNG = (containerId, filename = 'simulacion_valia.png')
 
         // Valor
         ctx.fillStyle = '#10B981'; // Emerald Green
-        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif';
+        let fontSize = 28;
+        ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
+        let textWidth = ctx.measureText(mainResultValue).width;
+        const maxTextWidth = boxWidth - 30; // 310px
+        
+        if (textWidth > maxTextWidth) {
+          fontSize = Math.floor(28 * (maxTextWidth / textWidth));
+          if (fontSize < 14) fontSize = 14; // Límite mínimo de legibilidad
+          ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
+        }
+        
         ctx.fillText(mainResultValue, 55, boxY + 68);
       }
 
