@@ -674,26 +674,64 @@ function App() {
               </a>
             </nav>
 
-            {/* Language Selector Button */}
-            <button
-              onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
-              className="btn btn-outline"
-              title={language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
-              style={{
+            {/* Language Selector */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
+              <Globe size={16} style={{ color: 'var(--text-secondary)', opacity: 0.8 }} />
+              <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.3rem',
-                borderRadius: '50%',
-                width: '38px',
+                backgroundColor: 'var(--bg-tertiary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '20px',
+                padding: '2px',
+                gap: '2px',
                 height: '38px',
-                padding: 0,
-                cursor: 'pointer',
-                flexShrink: 0
-              }}
-            >
-              <Globe size={18} />
-            </button>
+                boxSizing: 'border-box'
+              }}>
+                <button
+                  onClick={() => setLanguage('es')}
+                  title="Español"
+                  style={{
+                    padding: '0 10px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    height: '32px',
+                    borderRadius: '16px',
+                    border: 'none',
+                    backgroundColor: language === 'es' ? 'var(--accent-primary)' : 'transparent',
+                    color: language === 'es' ? '#ffffff' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    transition: 'all var(--transition-fast)',
+                    lineHeight: 1
+                  }}
+                >
+                  ES
+                </button>
+                <button
+                  onClick={() => setLanguage('en')}
+                  title="English"
+                  style={{
+                    padding: '0 10px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    height: '32px',
+                    borderRadius: '16px',
+                    border: 'none',
+                    backgroundColor: language === 'en' ? 'var(--accent-primary)' : 'transparent',
+                    color: language === 'en' ? '#ffffff' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    transition: 'all var(--transition-fast)',
+                    lineHeight: 1
+                  }}
+                >
+                  EN
+                </button>
+              </div>
+            </div>
  
             <button
               onClick={toggleTheme}
