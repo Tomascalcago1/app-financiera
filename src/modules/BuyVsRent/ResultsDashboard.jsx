@@ -14,23 +14,28 @@ import { Download, Printer, Image } from 'lucide-react';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 import { exportChartToPNG } from '../../utils/chartExporter';
+import { useLanguage } from '../../utils/LanguageContext';
+import { translations } from './translations';
 
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat('es-AR', {
+const formatCurrency = (value, lang) => {
+  const locale = lang === 'en' ? 'en-US' : 'es-AR';
+  const currency = lang === 'en' ? 'USD' : 'ARS';
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'ARS',
+    currency: currency,
     maximumFractionDigits: 0
   }).format(value);
 };
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, lang }) => {
   if (active && payload && payload.length) {
+    const yearLabel = lang === 'en' ? `Year ${label}` : `Año ${label}`;
     return (
       <div className="card" style={{ padding: '1rem', border: '1px solid var(--border-color)' }}>
-        <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Año {label}</p>
+        <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{yearLabel}</p>
         {payload.map((entry, index) => (
           <p key={index} style={{ color: entry.color, fontSize: '0.875rem' }}>
-            {entry.name}: {formatCurrency(entry.value)}
+            {entry.name}: {formatCurrency(entry.value, lang)}
           </p>
         ))}
       </div>
@@ -40,6 +45,11 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const ResultsDashboard = ({ data, inputs = {} }) => {
+  const { language } = useLanguage();
+  const tLocal = (key) => {
+    return translations[language][key] || translations['es'][key] || key;
+  };
+
   // Calcular el año de cruce (equilibrio)
   const crossoverYear = useMemo(() => {
     if (!data || data.length < 2) return null;
@@ -60,7 +70,10 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
   const difference = Math.abs(finalYear.buyNetWorth - finalYear.rentNetWorth);
 
   const exportToCSV = () => {
-    const headers = ['Año', 'Patrimonio Comprando (Net Worth)', 'Patrimonio Alquilando (Net Worth)', 'Valor Propiedad', 'Deuda Hipoteca'];
+    const headers = language === 'en'
+      ? ['Year', 'Net Worth Buying', 'Net Worth Renting', 'Property Value', 'Remaining Debt']
+      : ['Año', 'Patrimonio Comprando (Net Worth)', 'Patrimonio Alquilando (Net Worth)', 'Valor Propiedad', 'Deuda Hipoteca'];
+      
     const rows = data.map(row => [
       row.year,
       row.buyNetWorth,
@@ -76,7 +89,12 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
     
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `valia_comprar_vs_alquilar_${finalYear.year}_anos.csv`);
+    
+    const fileName = language === 'en'
+      ? `valia_buy_vs_rent_${finalYear.year}_years.csv`
+      : `valia_comprar_vs_alquilar_${finalYear.year}_anos.csv`;
+      
+    link.setAttribute("download", fileName);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -91,20 +109,20 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
       
       {/* Print-only Report Header & Parameters */}
       <PrintReportHeader 
-        title="Reporte de Simulación: ¿Comprar o Alquilar?"
-        subtitle="Ficha de Planificación Inmobiliaria"
+        title={tLocal('dash.print.title')}
+        subtitle={tLocal('dash.print.subtitle')}
         params={[
-          { label: 'Precio de la Propiedad', value: formatCurrency(inputs.propertyPrice) },
-          { label: 'Capital Inicial (Ahorros)', value: formatCurrency(inputs.initialCapital) },
-          { label: 'Alquiler Mensual Inicial', value: formatCurrency(inputs.monthlyRent) },
-          { label: 'Horizonte Temporal', value: `${inputs.years} años` },
-          { label: 'Inflación Anual Estimada', value: `${inputs.inflationRate}%` },
-          { label: 'Rendimiento Inversión (TNA)', value: `${inputs.investmentReturn}%` },
-          { label: 'Apreciación Anual Propiedad', value: `${inputs.propertyAppreciation}%` },
-          { label: 'Mantenimiento Anual Propiedad', value: `${inputs.maintenanceRate}%` },
+          { label: tLocal('dash.param.price'), value: formatCurrency(inputs.propertyPrice, language) },
+          { label: tLocal('dash.param.initial'), value: formatCurrency(inputs.initialCapital, language) },
+          { label: tLocal('dash.param.rent'), value: formatCurrency(inputs.monthlyRent, language) },
+          { label: tLocal('dash.param.term'), value: tLocal('dash.param.term.val').replace('{years}', inputs.years) },
+          { label: language === 'en' ? 'Estimated Annual Inflation' : 'Inflación Anual Estimada', value: `${inputs.inflationRate}%` },
+          { label: language === 'en' ? 'Expected Investment Return (APR)' : 'Rendimiento Inversión (TNA)', value: `${inputs.investmentReturn}%` },
+          { label: language === 'en' ? 'Annual Property Appreciation' : 'Apreciación Anual Propiedad', value: `${inputs.propertyAppreciation}%` },
+          { label: language === 'en' ? 'Annual Property Maintenance' : 'Mantenimiento Anual Propiedad', value: `${inputs.maintenanceRate}%` },
           ...(inputs.propertyPrice > inputs.initialCapital ? [
-            { label: 'Tasa Hipotecaria (Anual)', value: `${inputs.mortgageRate}%` },
-            { label: 'Plazo de Hipoteca', value: `${inputs.mortgageYears} años` }
+            { label: language === 'en' ? 'Mortgage Rate (Annual)' : 'Tasa Hipotecaria (Anual)', value: `${inputs.mortgageRate}%` },
+            { label: language === 'en' ? 'Mortgage Term' : 'Plazo de Hipoteca', value: language === 'en' ? `${inputs.mortgageYears} years` : `${inputs.mortgageYears} años` }
           ] : [])
         ]}
       />
@@ -117,45 +135,52 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
         borderLeft: `4px solid ${buyWins ? 'var(--accent-success)' : 'var(--accent-primary)'}`
       }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-          Resultado en {finalYear.year} años
+          {language === 'en' ? `Result in ${finalYear.year} years` : `Resultado en {years} años`.replace('{years}', finalYear.year)}
         </h2>
         <p style={{ fontSize: '1.125rem' }}>
-          <strong style={{ color: buyWins ? 'var(--accent-success)' : 'var(--accent-primary)' }}>
-            {buyWins ? 'Comprar' : 'Alquilar e invertir'}
-          </strong> te deja con un patrimonio estimado de{' '}
-          <strong style={{ color: 'var(--text-primary)' }}>
-            {formatCurrency(buyWins ? finalYear.buyNetWorth : finalYear.rentNetWorth)}
-          </strong>.
+          {buyWins ? (
+            tLocal('dash.result.buy')
+              .replace('{years}', finalYear.year)
+              .replace('{worth}', formatCurrency(finalYear.buyNetWorth, language))
+          ) : (
+            tLocal('dash.result.rent')
+              .replace('{years}', finalYear.year)
+              .replace('{worth}', formatCurrency(finalYear.rentNetWorth, language))
+          )}
         </p>
 
         {/* Breakdown */}
         <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-primary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
-          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Desglose de tu Riqueza ({buyWins ? 'Comprando' : 'Alquilando'}):</h4>
+          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+            {language === 'en' 
+              ? `Your Net Worth Breakdown (${buyWins ? 'Buying' : 'Renting'}):` 
+              : `Desglose de tu Riqueza (${buyWins ? 'Comprando' : 'Alquilando'}):`}
+          </h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.875rem' }}>
             {buyWins ? (
               <>
                 <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <span>Inmueble (Libre de deuda):</span>
-                  <strong>{formatCurrency(finalYear.propertyValue - finalYear.remainingDebt)}</strong>
+                  <span>{tLocal('dash.breakdown.buy.net')}</span>
+                  <strong>{formatCurrency(finalYear.propertyValue - finalYear.remainingDebt, language)}</strong>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <span>Capital Inicial Invertido:</span>
-                  <strong>{formatCurrency(finalYear.buyBaseline)}</strong>
+                  <span>{language === 'en' ? 'Invested Initial Capital:' : 'Capital Inicial Invertido:'}</span>
+                  <strong>{formatCurrency(finalYear.buyBaseline, language)}</strong>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--accent-success)' }}>Ahorros Mensuales Extra Invertidos:</span>
-                  <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(finalYear.buySavings)}</strong>
+                  <span style={{ color: 'var(--accent-success)' }}>{tLocal('dash.breakdown.buy.savings')}</span>
+                  <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(finalYear.buySavings, language)}</strong>
                 </li>
               </>
             ) : (
               <>
                 <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <span>Capital Inicial Invertido:</span>
-                  <strong>{formatCurrency(finalYear.rentBaseline)}</strong>
+                  <span>{language === 'en' ? 'Invested Initial Capital:' : 'Capital Inicial Invertido:'}</span>
+                  <strong>{formatCurrency(finalYear.rentBaseline, language)}</strong>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--accent-primary)' }}>Ahorros Mensuales Extra Invertidos:</span>
-                  <strong style={{ color: 'var(--accent-primary)' }}>{formatCurrency(finalYear.rentSavings)}</strong>
+                  <span style={{ color: 'var(--accent-primary)' }}>{tLocal('dash.breakdown.rent.savings')}</span>
+                  <strong style={{ color: 'var(--accent-primary)' }}>{formatCurrency(finalYear.rentSavings, language)}</strong>
                 </li>
               </>
             )}
@@ -163,7 +188,9 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
         </div>
 
         <p style={{ fontSize: '0.875rem', marginTop: '1rem', color: 'var(--text-tertiary)' }}>
-          Una diferencia de {formatCurrency(difference)} a favor de {buyWins ? 'comprar' : 'alquilar'}.
+          {tLocal('dash.result.comparison')
+            .replace('{diff}', formatCurrency(difference, language))
+            .replace('{winner}', buyWins ? tLocal('dash.winner.buy') : tLocal('dash.winner.rent'))}
         </p>
       </div>
 
@@ -175,7 +202,7 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
           style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
         >
           <Download size={16} />
-          Exportar CSV (Excel)
+          {tLocal('dash.btn.csv')}
         </button>
         <button 
           onClick={exportToPDF}
@@ -183,21 +210,21 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
           style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
         >
           <Printer size={16} />
-          Imprimir / Guardar PDF
+          {tLocal('dash.btn.pdf')}
         </button>
         <button 
-          onClick={() => exportChartToPNG('buy-rent-chart-container', 'valia_comprar_vs_alquilar.png')}
+          onClick={() => exportChartToPNG('buy-rent-chart-container', language === 'en' ? 'valia_buy_vs_rent.png' : 'valia_comprar_vs_alquilar.png')}
           className="btn btn-outline" 
           style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
         >
           <Image size={16} />
-          Descargar Gráfico
+          {tLocal('dash.btn.image')}
         </button>
       </div>
 
       {/* Chart */}
       <div className="card chart-container" id="buy-rent-chart-container">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Evolución del Patrimonio</h3>
+        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>{tLocal('dash.chart.title')}</h3>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
@@ -214,7 +241,7 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
               tick={{ fill: 'var(--text-secondary)' }}
               tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip lang={language} />} />
             <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
             
             {crossoverYear && (
@@ -223,7 +250,7 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
                 stroke="var(--accent-warning)" 
                 strokeDasharray="3 3" 
                 label={{ 
-                  value: `Cruce: Año ${crossoverYear}`, 
+                  value: language === 'en' ? `Cross: Year ${crossoverYear}` : `Cruce: Año ${crossoverYear}`, 
                   fill: 'var(--accent-warning)', 
                   position: 'top', 
                   fontSize: 11,
@@ -234,7 +261,7 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
 
             <Line 
               type="monotone" 
-              name="Comprando"
+              name={tLocal('dash.chart.buy')}
               dataKey="buyNetWorth" 
               stroke="var(--accent-success)" 
               strokeWidth={3}
@@ -243,7 +270,7 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
             />
             <Line 
               type="monotone" 
-              name="Alquilando"
+              name={tLocal('dash.chart.rent')}
               dataKey="rentNetWorth" 
               stroke="var(--accent-primary)" 
               strokeWidth={3}

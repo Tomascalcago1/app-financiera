@@ -5,8 +5,15 @@ import { simulateCompoundInterest } from './CompoundSimulationEngine';
 import HelpModal from '../../components/HelpModal';
 import { TrendingUp, Settings2, HelpCircle, BookOpen } from 'lucide-react';
 import FAQSection from '../../components/FAQSection';
+import { useLanguage } from '../../utils/LanguageContext';
+import { translations } from './translations';
 
 const CompoundInterestCalculator = () => {
+  const { language } = useLanguage();
+  const tLocal = (key) => {
+    return translations[language][key] || translations['es'][key] || key;
+  };
+
   const navigateToArticle = (articleId) => {
     const url = new URL(window.location.href);
     url.searchParams.set('seccion', 'educacion');
@@ -142,16 +149,16 @@ const CompoundInterestCalculator = () => {
       <header className="calculator-header">
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <TrendingUp className="text-accent-primary" size={32} />
-          Calculadora de Interés Compuesto
+          {tLocal('header.title')}
         </h1>
-        <p>Descubre cuánto puede crecer tu dinero a lo largo del tiempo.</p>
+        <p>{tLocal('header.subtitle')}</p>
         
         <button 
           onClick={() => setIsHelpOpen(true)}
           className="help-btn"
         >
           <HelpCircle size={18} className="text-accent-primary" />
-          ¿Cómo funciona?
+          {tLocal('header.how_works')}
         </button>
       </header>
 
@@ -164,11 +171,11 @@ const CompoundInterestCalculator = () => {
         {/* Input Panel */}
         <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
-            Tu Inversión
+            {tLocal('card.title')}
           </h2>
           
           <FinancialInput 
-            label="Capital Inicial" 
+            label={tLocal('input.initial')} 
             value={initialInvestment} 
             onChange={setInitialInvestment}
             prefix="$"
@@ -176,7 +183,7 @@ const CompoundInterestCalculator = () => {
           />
           
           <FinancialInput 
-            label="Aporte Mensual" 
+            label={tLocal('input.monthly')} 
             value={monthlyContribution} 
             onChange={setMonthlyContribution}
             prefix="$"
@@ -184,16 +191,16 @@ const CompoundInterestCalculator = () => {
           />
           
           <FinancialInput 
-            label="Plazo de Inversión (Años)" 
+            label={tLocal('input.years')} 
             value={years} 
             onChange={setYears}
-            suffix="años"
+            suffix={tLocal('input.years.suffix')}
             min={1}
             max={50}
           />
 
           <FinancialInput 
-            label="Tasa de Interés Estimada" 
+            label={tLocal('input.rate')} 
             value={interestRate} 
             onChange={setInterestRate}
             suffix="%"
@@ -206,7 +213,7 @@ const CompoundInterestCalculator = () => {
             onClick={() => setShowAdvanced(!showAdvanced)}
           >
             <Settings2 size={18} />
-            {showAdvanced ? 'Ocultar Opciones Avanzadas' : 'Mostrar Opciones Avanzadas'}
+            {showAdvanced ? tLocal('btn.advanced.hide') : tLocal('btn.advanced.show')}
           </button>
 
           {showAdvanced && (
@@ -221,7 +228,7 @@ const CompoundInterestCalculator = () => {
               
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>
-                  Calcular Escenarios de Varianza
+                  {tLocal('advanced.variance.label')}
                 </label>
                 <input 
                   type="checkbox" 
@@ -233,7 +240,7 @@ const CompoundInterestCalculator = () => {
 
               {enableVariance && (
                 <FinancialInput 
-                  label="Rango de Varianza de la Tasa (+/-)" 
+                  label={tLocal('advanced.variance.input')} 
                   value={varianceRange} 
                   onChange={setVarianceRange}
                   suffix="%"
@@ -242,17 +249,17 @@ const CompoundInterestCalculator = () => {
               )}
 
               <div className="input-group">
-                <label className="input-label">Frecuencia de Capitalización</label>
+                <label className="input-label">{tLocal('advanced.freq.label')}</label>
                 <select 
                   className="input-field" 
                   value={compoundFrequency}
                   onChange={(e) => setCompoundFrequency(Number(e.target.value))}
                   style={{ appearance: 'auto' }}
                 >
-                  <option value={1}>Anualmente</option>
-                  <option value={2}>Semestralmente</option>
-                  <option value={12}>Mensualmente</option>
-                  <option value={365}>Diariamente</option>
+                  <option value={1}>{tLocal('advanced.freq.annual')}</option>
+                  <option value={2}>{tLocal('advanced.freq.semiannual')}</option>
+                  <option value={12}>{tLocal('advanced.freq.monthly')}</option>
+                  <option value={365}>{tLocal('advanced.freq.daily')}</option>
                 </select>
               </div>
 
@@ -277,8 +284,8 @@ const CompoundInterestCalculator = () => {
           >
             <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
             <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
-              <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>Guía Recomendada</span>
-              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Jubilación Temprana con Interés Compuesto y aportes</span>
+              <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>{tLocal('guide.tag')}</span>
+              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{tLocal('guide.title')}</span>
             </div>
           </div>
         </div>
@@ -305,28 +312,28 @@ const CompoundInterestCalculator = () => {
       {/* Guía SEO y Contexto Financiero */}
       <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          Entendiendo la Fórmula: ¿Qué es el Interés Compuesto y cómo calcularlo?
+          {tLocal('seo.title')}
         </h2>
         <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-          El interés compuesto representa la reinversión sistemática de los rendimientos generados por una inversión en el capital inicial. Esto produce un efecto de crecimiento exponencial o "bola de nieve", donde los intereses acumulados devengan nuevos intereses en los períodos sucesivos, multiplicando el patrimonio de forma acelerada con el transcurso de los años.
+          {tLocal('seo.desc')}
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Frecuencia de Capitalización</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('seo.freq.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              Cuanto más frecuente sea la capitalización (diaria o mensual en lugar de anual), más rápido crecerá tu dinero. Esto se debe a que los intereses se suman al capital inicial con mayor asiduidad, comenzando a generar nuevos rendimientos de forma inmediata.
+              {tLocal('seo.freq.desc')}
             </p>
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Factor del Tiempo</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('seo.time.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              El interés compuesto premia la paciencia y el inicio temprano. En horizontes temporales largos (15, 20 o 30 años), la curva de crecimiento se vuelve sumamente empinada. Empezar a ahorrar e invertir cinco años antes puede llegar a duplicar el saldo final acumulado al momento del retiro.
+              {tLocal('seo.time.desc')}
             </p>
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Aportes Periódicos</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('seo.contrib.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              Combinar un capital inicial con aportaciones constantes mensuales (anualidad ordinaria) acelera la acumulación de capital drásticamente, amortiguando además las fluctuaciones de precios en el mercado de valores a través del promedio de costos.
+              {tLocal('seo.contrib.desc')}
             </p>
           </div>
         </div>
@@ -335,20 +342,20 @@ const CompoundInterestCalculator = () => {
       <FAQSection 
         faqs={[
           {
-            question: "¿Qué es el interés compuesto y cómo funciona?",
-            answer: "El interés compuesto es la acumulación de intereses sobre el capital inicial y sobre los intereses previamente generados período a período. De esta forma, el dinero crece de manera exponencial a lo largo del tiempo, ya que los rendimientos se reinvierten continuamente para generar nuevos rendimientos."
+            question: tLocal('faq.q1'),
+            answer: tLocal('faq.a1')
           },
           {
-            question: "¿Cómo influye la frecuencia de capitalización en el saldo final?",
-            answer: "La frecuencia de capitalización es la cantidad de veces que se liquidan y reinvierten los intereses en un año (ej. mensual, trimestral, anual). A mayor frecuencia de capitalización, mayor es el crecimiento del saldo final, ya que los intereses acumulados comienzan a generar rendimientos mucho antes."
+            question: tLocal('faq.q2'),
+            answer: tLocal('faq.a2')
           },
           {
-            question: "¿Qué diferencia hay entre la Tasa Nominal Anual (TNA) y la Tasa Efectiva Anual (TEA)?",
-            answer: "La TNA es la tasa de referencia anual que no contempla la reinversión de los intereses dentro del año. La TEA es la tasa de rendimiento real obtenida al final del año si se reinvierten todos los intereses con la frecuencia de capitalización correspondiente (la TEA siempre es mayor que la TNA si la capitalización es sub-anual)."
+            question: tLocal('faq.q3'),
+            answer: tLocal('faq.a3')
           },
           {
-            question: "¿Por qué es fundamental la constancia y el factor tiempo en la inversión?",
-            answer: "Debido a la naturaleza exponencial del interés compuesto, la variable más poderosa es el tiempo. Empezar a ahorrar e invertir unos años antes o mantener aportes constantes (por pequeños que sean) genera un saldo final acumulado drásticamente mayor en el largo plazo que intentar ingresar una suma grande de dinero de golpe al final."
+            question: tLocal('faq.q4'),
+            answer: tLocal('faq.a4')
           }
         ]}
       />
@@ -356,30 +363,25 @@ const CompoundInterestCalculator = () => {
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}
-        title="¿Cómo funciona el Interés Compuesto?"
+        title={tLocal('help.title')}
       >
         <p>
-          El interés compuesto es la fuerza más poderosa de las finanzas personales. A diferencia del interés simple, 
-          aquí los intereses que ganás se suman a tu capital y **generan nuevos intereses el mes siguiente**.
+          {tLocal('help.p1')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>1. El Efecto Bola de Nieve</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.h1')}</h3>
         <p>
-          Si invertís $100 y ganás 10% el primer año, al final tenés $110. El segundo año, tu 10% se calcula sobre 
-          $110 (no sobre los $100 iniciales), obteniendo $121. Con el tiempo, este crecimiento se acelera de forma exponencial.
+          {tLocal('help.p2')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>2. Aportes Mensuales</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.h2')}</h3>
         <p>
-          Al sumar una contribución fija cada mes, no solo crece tu capital principal, sino que cada aporte empieza a generar 
-          su propia "bola de nieve" de intereses inmediatamente, multiplicando la velocidad de crecimiento.
+          {tLocal('help.p3')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>3. Frecuencia de Capitalización</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.h3')}</h3>
         <p>
-          Es la frecuencia con la que los intereses ganados se suman al capital (ej: mensual o anualmente). Cuanto más 
-          frecuente sea (por ejemplo, mensual en vez de anual), más rápido crece tu dinero porque los intereses generan 
-          ganancias más seguido.
+          {tLocal('help.p4')}
         </p>
       </HelpModal>
     </div>

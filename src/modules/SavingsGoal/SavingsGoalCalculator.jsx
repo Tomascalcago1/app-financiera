@@ -4,8 +4,15 @@ import SavingsGoalDashboard from './SavingsGoalDashboard';
 import { simulateSavingsGoal } from './SavingsGoalEngine';
 import HelpModal from '../../components/HelpModal';
 import { Target, HelpCircle } from 'lucide-react';
+import { useLanguage } from '../../utils/LanguageContext';
+import { translations } from './translations';
 
 const SavingsGoalCalculator = () => {
+  const { language } = useLanguage();
+  const tLocal = (key) => {
+    return translations[language][key] || translations['es'][key] || key;
+  };
+
   // Main Variables (Empty by default like the previous one)
   const [goalAmount, setGoalAmount] = useState(() => {
     const saved = localStorage.getItem('valia_savings_goalAmount');
@@ -62,19 +69,19 @@ const SavingsGoalCalculator = () => {
       <header className="calculator-header">
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Target className="text-accent-primary" size={32} />
-          Calculadora de Objetivo de Ahorro
+          {tLocal('header.title')}
         </h1>
-        <p>Averigua exactamente cuánto debes aportar cada mes para alcanzar tu meta.</p>
+        <p>{tLocal('header.subtitle')}</p>
         
         <button 
           onClick={() => setIsHelpOpen(true)}
           className="help-btn"
         >
           <HelpCircle size={18} className="text-accent-primary" />
-          ¿Cómo funciona?
+          {tLocal('header.how_works')}
         </button>
       </header>
-
+ 
       <div className="grid" style={{ 
         gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', 
         gap: '2rem',
@@ -84,11 +91,11 @@ const SavingsGoalCalculator = () => {
         {/* Input Panel */}
         <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
-            Tu Meta
+            {tLocal('card.title')}
           </h2>
           
           <FinancialInput 
-            label="Objetivo de Ahorro" 
+            label={tLocal('input.goal')} 
             value={goalAmount} 
             onChange={setGoalAmount}
             prefix="$"
@@ -96,7 +103,7 @@ const SavingsGoalCalculator = () => {
           />
           
           <FinancialInput 
-            label="Capital Inicial (Ahorros Actuales)" 
+            label={tLocal('input.initial')} 
             value={initialInvestment} 
             onChange={setInitialInvestment}
             prefix="$"
@@ -104,19 +111,19 @@ const SavingsGoalCalculator = () => {
           />
           
           <FinancialInput 
-            label="Plazo para la Meta (Años)" 
+            label={tLocal('input.years')} 
             value={years} 
             onChange={setYears}
-            suffix="años"
+            suffix={tLocal('input.years.suffix')}
             min={1}
             max={50}
           />
 
           <FinancialInput 
-            label="Tasa de Interés Estimada (Anual)" 
+            label={tLocal('input.rate')} 
             value={interestRate} 
             onChange={setInterestRate}
-            suffix="%"
+            suffix={tLocal('input.rate.suffix')}
             step={0.1}
           />
         </div>
@@ -141,28 +148,28 @@ const SavingsGoalCalculator = () => {
       {/* Guía SEO y Contexto Financiero */}
       <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          Guía de Planificación: ¿Cómo calcular y alcanzar tu Objetivo de Ahorro?
+          {tLocal('guide.title')}
         </h2>
         <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-          Alcanzar una meta financiera (comprar un vehículo, realizar un viaje o acumular un fondo de emergencia) requiere disciplina y una estrategia clara de ahorro e inversión periódica. Esta calculadora determina el esfuerzo mensual exacto que debés hacer de acuerdo a tus metas y la tasa de interés obtenida.
+          {tLocal('guide.desc')}
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>La Regla de Ahorro Sistemático</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('guide.rule.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              Separar una porción fija de tus ingresos al comienzo del mes (estrategia de "pagarte a vos primero") en lugar de ahorrar lo que sobra al final es el método más efectivo para acumular capital a mediano plazo. Automatizar este ahorro mensual reduce la fricción y asegura la consistencia de tu plan.
+              {tLocal('guide.rule.desc')}
             </p>
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Apalancamiento del Interés Compuesto</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('guide.compound.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              Al invertir tus aportes mensuales en activos financieros (como fondos comunes, bonos o acciones), tus ahorros generan intereses que a su vez se reinvierten para generar más intereses. En plazos largos, esta acumulación exponencial hace que una gran parte de tu meta se financie con ganancias del mercado y no de tu bolsillo.
+              {tLocal('guide.compound.desc')}
             </p>
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Definición de Metas SMART</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('guide.smart.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              Una meta efectiva debe ser específica, medible, alcanzable, relevante y con un límite de tiempo definido (SMART). Estimar un horizonte temporal real (ej. 3 o 5 años) te permite elegir instrumentos de inversión adecuados para ese plazo, minimizando los riesgos de volatilidad del mercado.
+              {tLocal('guide.smart.desc')}
             </p>
           </div>
         </div>
@@ -171,29 +178,25 @@ const SavingsGoalCalculator = () => {
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}
-        title="¿Cómo funciona el Objetivo de Ahorro?"
+        title={tLocal('help.title')}
       >
         <p>
-          Esta calculadora te ayuda a descifrar **cuánto dinero debés separar de tu bolsillo mes a mes** para comprar 
-          un auto, irte de viaje o acumular una suma específica en un plazo determinado.
+          {tLocal('help.intro')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>1. La Meta e Inversión Inicial</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.step1.title')}</h3>
         <p>
-          Partís de tu **Objetivo de Ahorro** y le restás tu **Capital Inicial** (lo que ya tenés ahorrado hoy).
-          El capital inicial que ya poseés trabaja desde el día uno generando intereses para achicar la brecha.
+          {tLocal('help.step1.desc')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>2. Intereses a tu Favor</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.step2.title')}</h3>
         <p>
-          Gracias al interés compuesto, no necesitás depositar el 100% de la meta de tu propio bolsillo. 
-          Una gran parte de la meta se pagará sola a través del rendimiento acumulado de tus ahorros mensuales invertidos.
+          {tLocal('help.step2.desc')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>3. El Resultado Mensual</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.step3.title')}</h3>
         <p>
-          El sistema utiliza fórmulas financieras estándar para calcular el aporte mensual exacto necesario para que, 
-          sumado a tus intereses acumulados y tu capital inicial, alcances tu meta en la fecha exacta.
+          {tLocal('help.step3.desc')}
         </p>
       </HelpModal>
     </div>

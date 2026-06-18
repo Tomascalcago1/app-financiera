@@ -4,8 +4,15 @@ import FireResultsDashboard from './FireResultsDashboard';
 import { runFireSimulation } from './FireSimulationEngine';
 import HelpModal from '../../components/HelpModal';
 import { Flame, Settings2, HelpCircle, Share2, Trash2, Plus, X } from 'lucide-react';
+import { useLanguage } from '../../utils/LanguageContext';
+import { translations } from './translations';
 
 const FireCalculator = () => {
+  const { language } = useLanguage();
+  const tLocal = (key) => {
+    return translations[language][key] || translations['es'][key] || key;
+  };
+
   const queryParams = new URLSearchParams(window.location.search);
   const getNumericParam = (key, fallback) => {
     const val = queryParams.get(key);
@@ -139,7 +146,12 @@ const FireCalculator = () => {
   const handleShare = () => {
     const params = new URLSearchParams();
     params.set('seccion', 'herramientas');
-    params.set('herramienta', 'simulador-de-retiro');
+    params.set('lang', language);
+    if (language === 'en') {
+      params.set('tool', 'retirement-simulator');
+    } else {
+      params.set('herramienta', 'simulador-de-retiro');
+    }
     if (portfolioValue) params.set('port', portfolioValue);
     if (retirementLength) params.set('len', retirementLength);
     if (withdrawalStrategy) params.set('strat', withdrawalStrategy);
@@ -217,16 +229,16 @@ const FireCalculator = () => {
       <header className="calculator-header">
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Flame size={32} style={{ color: '#F59E0B' }} />
-          Simulador de Retiro
+          {tLocal('header.title')}
         </h1>
-        <p>Backtesting de retiro con datos históricos del mercado desde 1926.</p>
+        <p>{tLocal('header.subtitle')}</p>
         
         <button 
           onClick={() => setIsHelpOpen(true)}
           className="help-btn"
         >
           <HelpCircle size={18} className="text-accent-primary" />
-          ¿Cómo funciona?
+          {tLocal('header.how_works')}
         </button>
       </header>
 
@@ -234,32 +246,32 @@ const FireCalculator = () => {
         {/* Input Panel */}
         <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
-            Tu Plan de Retiro
+            {tLocal('card.title')}
           </h2>
 
-          <FinancialInput label="Valor del Portafolio" value={portfolioValue} onChange={setPortfolioValue} prefix="$" step={10000} />
-          <FinancialInput label="Duración del Retiro" value={retirementLength} onChange={setRetirementLength} suffix="años" min={1} max={80} />
+          <FinancialInput label={tLocal('input.portfolio')} value={portfolioValue} onChange={setPortfolioValue} prefix="$" step={10000} />
+          <FinancialInput label={tLocal('input.length')} value={retirementLength} onChange={setRetirementLength} suffix={tLocal('input.length.suffix')} min={1} max={80} />
 
           <div className="input-group">
-            <label className="input-label">Estrategia de Retiro</label>
+            <label className="input-label">{tLocal('input.strategy')}</label>
             <select className="input-field" value={withdrawalStrategy} onChange={e => setWithdrawalStrategy(e.target.value)} style={{ appearance: 'auto' }}>
-              <option value="constant-dollar">Dólar Constante (Ajustado por Inflación)</option>
-              <option value="percent-of-portfolio">Porcentaje del Portafolio</option>
+              <option value="constant-dollar">{tLocal('input.strategy.constant')}</option>
+              <option value="percent-of-portfolio">{tLocal('input.strategy.percent')}</option>
             </select>
           </div>
 
           {withdrawalStrategy === 'constant-dollar' ? (
-            <FinancialInput label="Retiro Anual Inicial" value={withdrawalAmount} onChange={setWithdrawalAmount} prefix="$" step={1000} />
+            <FinancialInput label={tLocal('input.amount')} value={withdrawalAmount} onChange={setWithdrawalAmount} prefix="$" step={1000} />
           ) : (
             <>
-              <FinancialInput label="Porcentaje de Retiro Anual" value={withdrawalPercent} onChange={setWithdrawalPercent} suffix="%" step={0.1} />
+              <FinancialInput label={tLocal('input.percent')} value={withdrawalPercent} onChange={setWithdrawalPercent} suffix="%" step={0.1} />
               
               <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
                 <div style={{ flex: 1 }}>
-                  <FinancialInput label="Retiro Mínimo Anual (Opcional)" value={minWithdrawal} onChange={setMinWithdrawal} prefix="$" step={1000} />
+                  <FinancialInput label={tLocal('input.min')} value={minWithdrawal} onChange={setMinWithdrawal} prefix="$" step={1000} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <FinancialInput label="Retiro Máximo Anual (Opcional)" value={maxWithdrawal} onChange={setMaxWithdrawal} prefix="$" step={1000} />
+                  <FinancialInput label={tLocal('input.max')} value={maxWithdrawal} onChange={setMaxWithdrawal} prefix="$" step={1000} />
                 </div>
               </div>
             </>
@@ -268,7 +280,7 @@ const FireCalculator = () => {
           {/* Flujos Extraordinarios */}
           <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <h3 style={{ fontSize: '1rem', margin: 0, color: 'var(--text-secondary)' }}>Flujos Extraordinarios</h3>
+              <h3 style={{ fontSize: '1rem', margin: 0, color: 'var(--text-secondary)' }}>{tLocal('flows.title')}</h3>
               <button
                 type="button"
                 onClick={handleAddExtraFlow}
@@ -276,13 +288,13 @@ const FireCalculator = () => {
                 style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
               >
                 <Plus size={12} />
-                Agregar
+                {tLocal('flows.add')}
               </button>
             </div>
 
             {extraFlows.length === 0 ? (
               <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', margin: '0.5rem 0' }}>
-                No hay flujos adicionales configurados. Podés agregar ingresos (ej. jubilación) o gastos extras (ej. compra de auto).
+                {tLocal('flows.empty')}
               </p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -313,7 +325,7 @@ const FireCalculator = () => {
                         cursor: 'pointer', 
                         padding: '0.25rem' 
                       }}
-                      title="Eliminar flujo"
+                      title={tLocal('flows.delete')}
                     >
                       <X size={14} />
                     </button>
@@ -322,7 +334,7 @@ const FireCalculator = () => {
                       <input
                         type="text"
                         className="input-field"
-                        placeholder="Nombre (ej. Pensión)"
+                        placeholder={tLocal('flows.placeholder.name')}
                         value={flow.name}
                         onChange={e => handleUpdateExtraFlow(flow.id, 'name', e.target.value)}
                         style={{ flex: 2, padding: '0.375rem', fontSize: '0.85rem' }}
@@ -333,8 +345,8 @@ const FireCalculator = () => {
                         onChange={e => handleUpdateExtraFlow(flow.id, 'type', e.target.value)}
                         style={{ flex: 1, padding: '0.375rem', fontSize: '0.85rem', appearance: 'auto' }}
                       >
-                        <option value="income">Ingreso</option>
-                        <option value="expense">Egreso</option>
+                        <option value="income">{tLocal('flows.type.income')}</option>
+                        <option value="expense">{tLocal('flows.type.expense')}</option>
                       </select>
                     </div>
 
@@ -344,7 +356,7 @@ const FireCalculator = () => {
                         <input
                           type="number"
                           className="input-field"
-                          placeholder="Monto"
+                          placeholder={tLocal('flows.placeholder.amount')}
                           value={flow.amount}
                           onChange={e => handleUpdateExtraFlow(flow.id, 'amount', e.target.value)}
                           style={{ paddingLeft: '1.25rem', paddingRight: '0.25rem', paddingY: '0.375rem', width: '100%', fontSize: '0.85rem' }}
@@ -357,8 +369,8 @@ const FireCalculator = () => {
                         onChange={e => handleUpdateExtraFlow(flow.id, 'recurring', e.target.value === 'recurring')}
                         style={{ flex: 1, padding: '0.375rem', fontSize: '0.85rem', appearance: 'auto' }}
                       >
-                        <option value="single">Año único</option>
-                        <option value="recurring">Recurrente</option>
+                        <option value="single">{tLocal('flows.recurrence.single')}</option>
+                        <option value="recurring">{tLocal('flows.recurrence.recurring')}</option>
                       </select>
                     </div>
 
@@ -366,7 +378,7 @@ const FireCalculator = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         {!flow.recurring ? (
                           <>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Año:</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{tLocal('flows.label.year')}</span>
                             <input
                               type="number"
                               className="input-field"
@@ -384,7 +396,7 @@ const FireCalculator = () => {
                           </>
                         ) : (
                           <>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Años:</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{tLocal('flows.label.years')}</span>
                             <input
                               type="number"
                               className="input-field"
@@ -400,7 +412,7 @@ const FireCalculator = () => {
                               style={{ width: '45px', padding: '0.25rem', textAlign: 'center', fontSize: '0.85rem' }}
                               placeholder="Desde"
                             />
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>al</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{tLocal('flows.label.to')}</span>
                             <input
                               type="number"
                               className="input-field"
@@ -426,7 +438,7 @@ const FireCalculator = () => {
                           checked={flow.adjustForInflation}
                           onChange={e => handleUpdateExtraFlow(flow.id, 'adjustForInflation', e.target.checked)}
                         />
-                        ¿Ajusta infl.?
+                        {tLocal('flows.label.adjust')}
                       </label>
                     </div>
                   </div>
@@ -436,13 +448,13 @@ const FireCalculator = () => {
           </div>
 
           <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
-            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>Distribución del Portafolio</h3>
-            <FinancialInput label="Acciones (Stocks)" value={stockAlloc} onChange={setStockAlloc} suffix="%" min={0} max={100} />
-            <FinancialInput label="Bonos (Bonds)" value={bondAlloc} onChange={setBondAlloc} suffix="%" min={0} max={100} />
-            <FinancialInput label="Efectivo (Cash)" value={cashAlloc} onChange={setCashAlloc} suffix="%" min={0} max={100} />
+            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>{tLocal('allocation.title')}</h3>
+            <FinancialInput label={tLocal('allocation.stocks')} value={stockAlloc} onChange={setStockAlloc} suffix="%" min={0} max={100} />
+            <FinancialInput label={tLocal('allocation.bonds')} value={bondAlloc} onChange={setBondAlloc} suffix="%" min={0} max={100} />
+            <FinancialInput label={tLocal('allocation.cash')} value={cashAlloc} onChange={setCashAlloc} suffix="%" min={0} max={100} />
             {allocSum !== 100 && (
               <p style={{ color: 'var(--accent-warning)', fontSize: '0.8rem', marginTop: '0.5rem' }}>
-                ⚠ La suma de la distribución debe ser 100% (actualmente {allocSum}%)
+                {tLocal('allocation.warning').replace('{sum}', allocSum)}
               </p>
             )}
           </div>
@@ -473,28 +485,28 @@ const FireCalculator = () => {
       {/* Guía SEO y Contexto Financiero */}
       <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          Guía de Retiro Temprano y la Regla del 4%
+          {tLocal('guide.title')}
         </h2>
         <p style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-          El concepto de Retiro Temprano (Independencia Financiera) promueve el ahorro planificado y la inversión inteligente para lograr la libertad de dejar el trabajo tradicional mucho antes de la edad de jubilación obligatoria. Para determinar la viabilidad de un plan de retiro temprano, este simulador somete tu estrategia a más de 90 años de historia financiera real.
+          {tLocal('guide.desc')}
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>El Estudio Trinity y la Regla del 4%</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('guide.rule.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              La regla del 4% establece que un jubilado puede retirar el 4% de su portafolio inicial de inversiones durante el primer año y luego ajustar dicho monto por inflación anualmente, con una probabilidad de éxito superior al 95% de no agotar su capital en un período de 30 años, basándose en la rentabilidad histórica de una cartera mixta de acciones y bonos.
+              {tLocal('guide.rule.desc')}
             </p>
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Riesgo de Secuencia de Retornos</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('guide.sequence.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              El mayor peligro al que se enfrenta un jubilado temprano es el orden de los rendimientos del mercado en los primeros años de su retiro. Si el mercado sufre una fuerte caída justo al jubilarse, el efecto conjunto del retiro de capital y la desvalorización de activos puede vaciar la cartera prematuramente. Un porcentaje mayor en bonos o efectivo ayuda a mitigar este riesgo.
+              {tLocal('guide.sequence.desc')}
             </p>
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>Estrategias de Retiro Dinámicas</h3>
+            <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{tLocal('guide.dynamic.title')}</h3>
             <p style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0, color: 'var(--text-secondary)' }}>
-              A diferencia del dólar constante ajustado por inflación, retirar un porcentaje variable de tu cartera cada año te permite recortar gastos en épocas de crisis de mercado y gastar más cuando el portafolio crece. Esto reduce a la larga la probabilidad de agotar el capital, aunque requiere flexibilidad y adaptación en tu nivel de consumo.
+              {tLocal('guide.dynamic.desc')}
             </p>
           </div>
         </div>
@@ -503,31 +515,25 @@ const FireCalculator = () => {
       <HelpModal 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)}
-        title="¿Cómo funciona la simulación de retiro?"
+        title={tLocal('help.title')}
       >
         <p>
-          La planificación del **Retiro Temprano** (Independencia Financiera) consiste en vivir de tus inversiones sin tener la necesidad de trabajar de forma tradicional.
+          {tLocal('help.intro')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>1. Backtesting Histórico (El Viaje en el Tiempo)</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.step1.title')}</h3>
         <p>
-          Este simulador no predice el futuro ni usa proyecciones fijas. En su lugar, somete tu plan a un **viaje en el tiempo** 
-          y calcula cómo te habría ido en cada año de la historia real desde 1926 (ej: si te hubieras jubilado justo antes de la 
-          Gran Depresión de 1929 o en el boom de los 90).
+          {tLocal('help.step1.desc')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>2. Estrategia de Dólar Constante vs Porcentaje</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.step2.title')}</h3>
         <p>
-          - **Dólar Constante:** Retirás un monto fijo el primer año (ej: $40,000) y en los años siguientes ajustás esa suma 
-          según la inflación para mantener tu poder de compra.
-          - **Porcentaje de Cartera:** Retirás un porcentaje fijo (ej: 4%) del valor que tenga tu cartera al inicio de cada año, 
-          lo que significa que retirarás más cuando al mercado le vaya bien y menos cuando esté en caída.
+          {tLocal('help.step2.desc')}
         </p>
 
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>3. Probabilidad de Éxito</h3>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginTop: '0.5rem' }}>{tLocal('help.step3.title')}</h3>
         <p>
-          Al final de la simulación, obtendrás un porcentaje de éxito. Si de 100 períodos simulados tu dinero sobrevivió 
-          en 95 sin llegar a cero, tu probabilidad de éxito es del 95%. La histórica **regla del 4%** se basa en este cálculo.
+          {tLocal('help.step3.desc')}
         </p>
       </HelpModal>
     </div>

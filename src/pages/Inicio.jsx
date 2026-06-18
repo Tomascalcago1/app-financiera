@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Calculator, 
   TrendingUp, 
@@ -21,137 +21,165 @@ import {
 } from 'lucide-react';
 import AdvisorCTA from '../components/AdvisorCTA';
 import FinancialTest from '../components/FinancialTest';
+import { useLanguage } from '../utils/LanguageContext';
+import { translations } from './Inicio.translations';
+import { tools as configTools } from '../utils/toolsConfig';
 
 const Inicio = ({ onSelectTool, preloadTool }) => {
   const [openFaq, setOpenFaq] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
+  const { language } = useLanguage();
 
-  const formatCurrency = (val) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(val);
+  const t = (key) => {
+    return translations[language][key] || translations['es'][key] || key;
   };
+
+  useEffect(() => {
+    if (language === 'en' && selectedCategory === 'impuestos') {
+      setSelectedCategory('todas');
+    }
+  }, [language, selectedCategory]);
 
   const tools = [
     {
       id: 'sueldo-neto',
-      name: 'Sueldo Neto Freelancer',
+      name: t('tool.sueldo-neto.name'),
       icon: <Percent size={24} className="text-accent-primary" />,
-      desc: 'Calculá tus ingresos netos en mano estimando la cuota del Monotributo 2026, comisiones de cobro e Ingresos Brutos.',
+      desc: t('tool.sueldo-neto.desc'),
       color: 'var(--accent-primary)',
       category: 'impuestos'
     },
     {
       id: 'ganancias',
-      name: 'Simulador de Ganancias',
+      name: t('tool.ganancias.name'),
       icon: <Percent size={24} className="text-accent-primary" />,
-      desc: 'Calculá la retención del Impuesto a las Ganancias sobre tu sueldo (4° categoría) con las deducciones y escalas oficiales de 2026.',
+      desc: t('tool.ganancias.desc'),
       color: 'var(--accent-primary)',
       category: 'impuestos'
     },
     {
       id: 'installments-vs-cash',
-      name: '¿Cuotas o Efectivo?',
+      name: t('tool.installments-vs-cash.name'),
       icon: <Scale size={24} className="text-accent-primary" />,
-      desc: 'Simulá si te conviene pagar en cuotas fijas o al contado con descuento evaluando inflación e inversiones.',
+      desc: t('tool.installments-vs-cash.desc'),
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     },
     {
       id: 'compound-interest',
-      name: 'Interés Compuesto',
+      name: t('tool.compound-interest.name'),
       icon: <TrendingUp size={24} className="text-accent-primary" />,
-      desc: 'Simula el crecimiento a largo plazo de tus inversiones mensuales con escenarios optimistas, realistas y conservadores.',
+      desc: t('tool.compound-interest.desc'),
       color: 'var(--accent-primary)',
       category: 'inversiones'
     },
     {
       id: 'savings-comparison',
-      name: '¿UVA, Plazo Fijo o Caución?',
+      name: t('tool.savings-comparison.name'),
       icon: <Landmark size={24} className="text-accent-primary" />,
-      desc: 'Compará la rentabilidad y ganancia real de tus pesos entre Plazo Fijo UVA, Plazo Fijo Tradicional y Cauciones bursátiles.',
+      desc: t('tool.savings-comparison.desc'),
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     },
     {
       id: 'hipotecario-uva',
-      name: 'Crédito Hipotecario UVA',
+      name: t('tool.hipotecario-uva.name'),
       icon: <Home size={24} className="text-accent-primary" />,
-      desc: 'Simulá créditos hipotecarios UVA vs tasa fija, comparando el sistema Francés y Alemán con la inflación de Argentina.',
+      desc: t('tool.hipotecario-uva.desc'),
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     },
     {
       id: 'tna-to-tea',
-      name: 'Conversor TNA a TEA',
+      name: t('tool.tna-to-tea.name'),
       icon: <Percent size={24} className="text-accent-primary" />,
-      desc: 'Calculá la tasa de interés efectiva anual (TEA) y mensual (TEM) a partir de una TNA según la capitalización de intereses.',
+      desc: t('tool.tna-to-tea.desc'),
       color: 'var(--accent-primary)',
       category: 'inversiones'
     },
     {
       id: 'ipc-actualizer',
-      name: 'Actualizador IPC (INDEC)',
+      name: t('tool.ipc-actualizer.name'),
       icon: <Calculator size={24} className="text-accent-primary" />,
-      desc: 'Ajustá montos de dinero del pasado según la inflación oficial del INDEC (IPC) en Argentina para calcular la pérdida de poder de compra.',
+      desc: t('tool.ipc-actualizer.desc'),
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     },
     {
       id: 'buy-vs-rent',
-      name: '¿Alquilar o Comprar?',
+      name: t('tool.buy-vs-rent.name'),
       icon: <Calculator size={24} className="text-accent-primary" />,
-      desc: 'Compara financieramente si te conviene alquilar una propiedad e invertir la diferencia, o comprarla con un crédito hipotecario.',
+      desc: t('tool.buy-vs-rent.desc'),
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     },
     {
       id: 'comparador-historico',
-      name: 'Dólar vs Plazo Fijo vs Merval',
+      name: t('tool.comparador-historico.name'),
       icon: <TrendingUp size={24} style={{ color: 'var(--accent-success)' }} />,
-      desc: 'Compará el rendimiento histórico real en pesos de ahorrar en dólares blue, plazo fijo tradicional, plazo fijo UVA y el Merval desde 2015.',
+      desc: t('tool.comparador-historico.desc'),
       color: 'var(--accent-success)',
       category: 'inversiones'
     },
     {
       id: 'savings-goal',
-      name: 'Objetivo de Ahorro',
+      name: t('tool.savings-goal.name'),
       icon: <Target size={24} className="text-accent-primary" />,
-      desc: 'Calcula exactamente cuánto debés ahorrar e invertir por mes para alcanzar una meta financiera (comprar un auto, viajar, etc.) en un plazo determinado.',
+      desc: t('tool.savings-goal.desc'),
       color: 'var(--accent-primary)',
       category: 'ahorro-credito'
     },
     {
       id: 'inflation',
-      name: 'Inflación Histórica',
+      name: t('tool.inflation.name'),
       icon: <DollarSign size={24} style={{ color: 'var(--accent-success)' }} />,
-      desc: 'Visualiza la pérdida de poder adquisitivo del dinero a lo largo del tiempo con registros oficiales e históricos desde 1635.',
+      desc: t('tool.inflation.desc'),
       color: 'var(--accent-success)',
       category: 'ahorro-credito'
     },
     {
       id: 'fire',
-      name: 'Simulador de Retiro Temprano',
+      name: t('tool.fire.name'),
       icon: <Flame size={24} style={{ color: 'var(--accent-warning)' }} />,
-      desc: 'Poné a prueba tu estrategia de retiro haciendo un "backtesting" contra 99 años de datos históricos reales del mercado financiero.',
+      desc: t('tool.fire.desc'),
       color: 'var(--accent-warning)',
       category: 'inversiones'
     },
     {
       id: 'broker-comparator',
-      name: 'Comparador de Brokers',
+      name: t('tool.broker-comparator.name'),
       icon: <TrendingUp size={24} className="text-accent-primary" />,
-      desc: 'Compara comisiones, cuenta remunerada (TNA) y beneficios exclusivos de Balanz y otras plataformas en tiempo real.',
+      desc: t('tool.broker-comparator.desc'),
       color: 'var(--accent-primary)',
       category: 'inversiones'
     }
   ];
 
-  const filteredTools = selectedCategory === 'todas' 
+  const filteredTools = (selectedCategory === 'todas' 
     ? tools 
-    : tools.filter(t => t.category === selectedCategory);
+    : tools.filter(t => t.category === selectedCategory)
+  ).filter(tool => language === 'es' || configTools.find(ct => ct.id === tool.id)?.isGlobal);
+
+  const trustSources = [
+    { name: t('trust.yale.name'), sub: t('trust.yale.sub') },
+    { name: t('trust.bcra.name'), sub: t('trust.bcra.sub') },
+    { name: t('trust.afip.name'), sub: t('trust.afip.sub') },
+    { name: t('trust.indec.name'), sub: t('trust.indec.sub') },
+    { name: t('trust.bls.name'), sub: t('trust.bls.sub') }
+  ];
+
+  const categoryOptions = [
+    { id: 'todas', label: t('cat.todas') },
+    { id: 'inversiones', label: t('cat.inversiones') },
+    { id: 'ahorro-credito', label: t('cat.ahorro-credito') },
+    { id: 'impuestos', label: t('cat.impuestos') }
+  ].filter(cat => language === 'es' || cat.id !== 'impuestos');
+
+  const faqs = [
+    { q: t('faq.1.q'), a: t('faq.1.a') },
+    { q: t('faq.2.q'), a: t('faq.2.a') },
+    { q: t('faq.3.q'), a: t('faq.3.a') }
+  ];
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
@@ -180,7 +208,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           fontWeight: 500
         }}>
           <Sparkles size={14} />
-          Herramientas Financieras Gratuitas
+          {t('hero.badge')}
         </div>
         <h1 style={{ 
           fontSize: '3rem', 
@@ -191,7 +219,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           WebkitTextFillColor: 'transparent',
           letterSpacing: '-0.03em'
         }}>
-          Tomá decisiones financieras inteligentes
+          {t('hero.title')}
         </h1>
         <p style={{ 
           fontSize: '1.25rem', 
@@ -200,7 +228,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           margin: '0 auto',
           lineHeight: '1.6'
         }}>
-          Simuladores financieros interactivos y 100% privados. Sin registrarse, sin anuncios y procesados de manera local en tu navegador.
+          {t('hero.desc')}
         </p>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1rem' }}>
           <button 
@@ -210,7 +238,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             onMouseEnter={() => preloadTool && preloadTool('buy-vs-rent')}
             onFocus={() => preloadTool && preloadTool('buy-vs-rent')}
           >
-            Comenzar a Simular
+            {t('hero.cta')}
             <ArrowRight size={18} />
           </button>
           <a 
@@ -222,7 +250,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
               document.getElementById('porque-valia')?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            ¿Por qué Valia?
+            {t('hero.secondary')}
           </a>
         </div>
       </section>
@@ -242,7 +270,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           fontWeight: 600,
           marginBottom: '1rem'
         }}>
-          Modelos e Índices de Referencia Validados con Datos de
+          {t('trust.label')}
         </p>
         <div style={{ 
           display: 'flex', 
@@ -252,13 +280,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           flexWrap: 'wrap',
           opacity: 0.85
         }}>
-          {[
-            { name: 'Universidad de Yale', sub: 'Robert Shiller Data' },
-            { name: 'BCRA', sub: 'CER e Índices UVA' },
-            { name: 'AFIP / ARCA', sub: 'Escalas Ganancias/Monotributo' },
-            { name: 'INDEC', sub: 'IPC Argentina' },
-            { name: 'BLS (EE.UU.)', sub: 'CPI Histórico' }
-          ].map((source, i) => (
+          {trustSources.map((source, i) => (
             <div key={i} style={{ 
               display: 'flex', 
               flexDirection: 'column', 
@@ -275,17 +297,19 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
         </div>
       </section>
 
-      {/* 2. Financial Health Test Widget */}
-      <section className="container" style={{ maxWidth: '850px' }}>
-        <FinancialTest onSelectTool={onSelectTool} preloadTool={preloadTool} />
-      </section>
+      {/* 2. Financial Health Test Widget (Only shown in Spanish) */}
+      {language === 'es' && (
+        <section className="container" style={{ maxWidth: '850px' }}>
+          <FinancialTest onSelectTool={onSelectTool} preloadTool={preloadTool} />
+        </section>
+      )}
 
       {/* 3. Grid of Tools */}
       <section className="container">
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Nuestras Calculadoras</h2>
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>{t('section.title')}</h2>
           <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto' }}>
-            Explorá herramientas específicas para simular tus finanzas con precisión científica.
+            {t('section.desc')}
           </p>
         </div>
 
@@ -299,12 +323,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           maxWidth: '800px',
           margin: '0 auto 3rem auto'
         }}>
-          {[
-            { id: 'todas', label: 'Todas' },
-            { id: 'inversiones', label: 'Inversión y Retiro' },
-            { id: 'ahorro-credito', label: 'Ahorro y Créditos' },
-            { id: 'impuestos', label: 'Impuestos y Salarios' }
-          ].map(cat => (
+          {categoryOptions.map(cat => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
@@ -384,7 +403,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
                   fontWeight: 500
                 }}
               >
-                Abrir Calculadora
+                {t('section.action')}
                 <ArrowRight size={14} />
               </button>
             </div>
@@ -394,8 +413,8 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
         {/* Lead Gen Advisor CTA banner */}
         <div style={{ marginTop: '3rem' }}>
           <AdvisorCTA 
-            title="¿Querés delegar tus inversiones en un profesional?"
-            description="Contactá a nuestro asesor asociado en Balanz para estructurar tu cartera de inversión, abrir tu cuenta sin costo y operar los mejores FCI del mercado."
+            title={t('advisor.title')}
+            description={t('advisor.desc')}
           />
         </div>
       </section>
@@ -410,8 +429,8 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
       }}>
         {/* Valia en Números Stats */}
         <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
-          <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Valia en Números</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Métricas clave que avalan nuestra integridad y transparencia operativa.</p>
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>{t('stats.title')}</h2>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('stats.desc')}</p>
         </div>
         <div style={{
           display: 'grid',
@@ -420,10 +439,10 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           textAlign: 'center'
         }}>
           {[
-            { val: '11', label: 'Simuladores Financieros', desc: 'Sin sesgos ni comisiones comerciales ocultas' },
-            { val: '0%', label: 'Custodia de Datos', desc: 'No requerimos registros, correos ni datos personales' },
-            { val: '100%', label: 'Procesamiento Local', desc: 'Tus simulaciones se calculan 100% en tu navegador' },
-            { val: '2026', label: 'Actualización Fiscal', desc: 'Tablas tributarias vigentes (Monotributo y Ganancias)' }
+            { val: t('stats.simulators.val'), label: t('stats.simulators.label'), desc: t('stats.simulators.desc') },
+            { val: t('stats.custody.val'), label: t('stats.custody.label'), desc: t('stats.custody.desc') },
+            { val: t('stats.local.val'), label: t('stats.local.label'), desc: t('stats.local.desc') },
+            { val: t('stats.fiscal.val'), label: t('stats.fiscal.label'), desc: t('stats.fiscal.desc') }
           ].map((stat, i) => (
             <div key={i} className="card" style={{ 
               display: 'flex', 
@@ -469,11 +488,12 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             fontSize: '1.1rem'
           }}>
             <Shield size={22} />
-            Privacidad por Diseño Garantizada
+            {t('privacy.title')}
           </div>
-          <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', maxWidth: '700px', margin: 0, lineHeight: 1.6 }}>
-            En cumplimiento estricto con los más altos estándares de protección de datos, <strong>Valia no recopila, transmite ni almacena</strong> ninguna información personal o financiera que ingreses. Todos los cálculos matemáticos y lógicas de simulación se ejecutan de manera aislada en el hilo del cliente (tu navegador), garantizando confidencialidad patrimonial absoluta.
-          </p>
+          <p 
+            style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', maxWidth: '700px', margin: 0, lineHeight: 1.6 }}
+            dangerouslySetInnerHTML={{ __html: t('privacy.desc') }}
+          />
         </div>
       </section>
 
@@ -483,8 +503,8 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
         borderTop: '1px solid var(--border-color)'
       }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Diseñado para protegerte y educarte</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Por qué Valia es una forma diferente de pensar en tu patrimonio.</p>
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>{t('why.title')}</h2>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('why.subtitle')}</p>
         </div>
 
         <div style={{ 
@@ -506,9 +526,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             }}>
               <Lock size={22} />
             </div>
-            <h3 style={{ fontSize: '1.125rem' }}>100% Privado</h3>
+            <h3 style={{ fontSize: '1.125rem' }}>{t('why.p1.title')}</h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Ningún dato financiero que ingreses sale de tu navegador. No guardamos registros en servidores ni bases de datos.
+              {t('why.p1.desc')}
             </p>
           </div>
 
@@ -526,9 +546,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             }}>
               <Database size={22} />
             </div>
-            <h3 style={{ fontSize: '1.125rem' }}>Datos Científicos</h3>
+            <h3 style={{ fontSize: '1.125rem' }}>{t('why.p2.title')}</h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Nuestras simulaciones utilizan datos históricos reales desde 1926 e índices de precios históricos de fuentes oficiales.
+              {t('why.p2.desc')}
             </p>
           </div>
 
@@ -546,9 +566,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             }}>
               <EyeOff size={22} />
             </div>
-            <h3 style={{ fontSize: '1.125rem' }}>Sin Fricciones</h3>
+            <h3 style={{ fontSize: '1.125rem' }}>{t('why.p3.title')}</h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Sin cuentas obligatorias, sin registro de correo y sin anuncios invasivos que arruinen tu experiencia visual.
+              {t('why.p3.desc')}
             </p>
           </div>
         </div>
@@ -565,26 +585,13 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
             <HelpCircle size={24} className="text-accent-primary" />
-            Preguntas Frecuentes
+            {t('faq.title')}
           </h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Respuestas transparentes sobre la seguridad, metodología e independencia de Valia.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('faq.subtitle')}</p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {[
-            {
-              q: '¿Cómo se financia Valia si la plataforma es gratuita?',
-              a: 'Valia es un portal educativo 100% independiente. Para sostener el proyecto a largo plazo y ofrecerte herramientas avanzadas gratuitas sin anuncios invasivos, establecemos alianzas transparentes con asesores financieros regulados (matriculados CNV) para derivar consultas. Sin embargo, no hay comisiones ocultas y el uso de las calculadoras es y seguirá siendo libre para todos.'
-            },
-            {
-              q: '¿Dónde se guardan mis datos financieros?',
-              a: 'En ningún lado. Valia está diseñada bajo el principio de "Privacidad por Diseño". No tenemos servidores de base de datos ni registramos tu información personal. Todo el procesamiento y las simulaciones se ejecutan localmente en la memoria de tu navegador y se pierden al cerrar la pestaña, a menos que decidas copiar el enlace de tu simulación para compartirlo.'
-            },
-            {
-              q: '¿De dónde provienen los datos históricos y las fórmulas utilizadas?',
-              a: 'Las fórmulas matemáticas empleadas en las simulaciones son estándares de mercado validados contra plataformas internacionales como Investor.gov. Las escalas del Monotributo y Ganancias siguen estrictamente las tablas oficiales provistas por la AFIP/ARCA para el período fiscal 2026. Los rendimientos de mercado del S&P 500 y bonos del tesoro provienen de bases de datos académicas abiertas del Prof. Robert Shiller de la Universidad de Yale.'
-            }
-          ].map((faq, index) => {
+          {faqs.map((faq, index) => {
             const isOpen = openFaq === index;
             return (
               <div 

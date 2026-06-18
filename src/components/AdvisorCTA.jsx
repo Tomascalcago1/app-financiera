@@ -1,17 +1,27 @@
 import React from 'react';
 import { MessageSquare } from 'lucide-react';
 import { trackEvent } from '../utils/analytics';
+import { useLanguage } from '../utils/LanguageContext';
 
 const AdvisorCTA = ({ 
-  title = '¿Listo para empezar a invertir?',
-  description = 'Contactá a nuestro asesor asociado en Balanz para armar tu portafolio ideal y alcanzar tus metas financieras.',
+  title,
+  description,
   goalContext = 'ahorro' // 'ahorro' | 'retiro' | 'vivienda' | 'otro'
 }) => {
+  const { language } = useLanguage();
   const handleClick = (e) => {
     e.preventDefault();
     localStorage.setItem('valia_advisor_goal_context', goalContext);
     window.dispatchEvent(new CustomEvent('change-tab', { detail: 'asesores' }));
   };
+
+  const defaultTitle = language === 'en' ? 'Ready to start investing?' : '¿Listo para empezar a invertir?';
+  const defaultDesc = language === 'en'
+    ? 'Contact our associate advisor at Balanz to structure your ideal portfolio and reach your financial goals.'
+    : 'Contactá a nuestro asesor asociado en Balanz para armar tu portafolio ideal y alcanzar tus metas financieras.';
+
+  const displayTitle = title || defaultTitle;
+  const displayDesc = description || defaultDesc;
 
   return (
     <div className="card no-print" style={{ 
@@ -42,10 +52,10 @@ const AdvisorCTA = ({
         </div>
         <div>
           <h4 style={{ fontSize: '1rem', marginBottom: '0.25rem', color: 'var(--text-primary)', fontWeight: '600' }}>
-            {title}
+            {displayTitle}
           </h4>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.5' }}>
-            {description}
+            {displayDesc}
           </p>
         </div>
       </div>
@@ -70,7 +80,7 @@ const AdvisorCTA = ({
             opacity: 0.7
           }}
         >
-          Próximamente
+          {language === 'en' ? 'Coming Soon' : 'Próximamente'}
         </button>
       </div>
     </div>

@@ -41,8 +41,9 @@ if (!navigator.clipboard) {
 
 describe('App Smoke Test (DOM environment)', () => {
   test('should mount, execute lifecycles (useEffect), and render App without crashing', async () => {
-    // Dynamically import App after mocking environment globals
+    // Dynamically import App and LanguageProvider after mocking environment globals
     const { default: App } = await import('../App');
+    const { LanguageProvider } = await import('../utils/LanguageContext');
 
     // Create a container element in document body
     const container = document.createElement('div');
@@ -52,7 +53,11 @@ describe('App Smoke Test (DOM environment)', () => {
 
     // Mount the component in the mock DOM, triggering all useEffect hooks
     await act(async () => {
-      root.render(<App />);
+      root.render(
+        <LanguageProvider>
+          <App />
+        </LanguageProvider>
+      );
     });
 
     // Verify it rendered successfully and contains core app branding

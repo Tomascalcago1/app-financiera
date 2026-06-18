@@ -1,8 +1,283 @@
 import React from 'react';
-import { Target, Shield, Heart, ExternalLink } from 'lucide-react';
+import { Target, Shield, Heart } from 'lucide-react';
 import valiaLogo from '../assets/valia-logo.jpg';
+import { useLanguage } from '../utils/LanguageContext';
 
 const AcercaDe = () => {
+  const { language } = useLanguage();
+
+  if (language === 'en') {
+    return (
+      <div className="container animate-fade-in" style={{ padding: '2rem 0', maxWidth: '800px' }}>
+        
+        {/* Hero */}
+        <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <img src={valiaLogo} alt="Valia Logo" style={{ 
+            width: '64px', 
+            height: '64px', 
+            borderRadius: '12px', 
+            objectFit: 'cover',
+            marginBottom: '1.5rem',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+          }} />
+          <h1 style={{ marginBottom: '0.75rem' }}>About Valia</h1>
+          <p style={{ fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>
+            Free financial tools to make better decisions with your money.
+          </p>
+        </header>
+
+        {/* What is Valia */}
+        <section className="card" style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Target size={20} className="text-accent-primary" />
+            What is Valia?
+          </h2>
+          <p style={{ marginBottom: '1rem' }}>
+            <strong>Valia</strong> is a financial tools web platform designed to help people 
+            plan their economic future. Our interactive calculators allow you to simulate 
+            complex scenarios simply and visually.
+          </p>
+          <p>
+            From comparing whether it is better to rent or buy a property, to simulating retirement plans 
+            with real historical market data, Valia puts at your fingertips the same tools used by financial professionals.
+          </p>
+        </section>
+
+        {/* Tools */}
+        <section className="card" style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Our Tools</h2>
+          <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {[
+              { name: 'Buy vs. Rent', desc: 'Compare financially both scenarios considering mortgage, investments, inflation, and property appreciation.' },
+              { name: 'Compound Interest', desc: 'Project your capital growth over time with optimistic and conservative scenarios.' },
+              { name: 'Savings Goal', desc: 'Calculate exactly how much you need to contribute monthly to reach a financial goal.' },
+              { name: 'Retirement Simulator (FIRE)', desc: 'Retirement backtesting with 99 years of real historical US market data (since 1926).' },
+              { name: 'Historical Inflation', desc: 'Understand how the purchasing power of money changes with data from 1635 to today.' },
+            ].map((tool, i) => (
+              <li key={i} style={{ 
+                padding: '0.75rem 1rem', 
+                background: 'var(--bg-tertiary)', 
+                borderRadius: 'var(--border-radius-sm)',
+                borderLeft: '3px solid var(--accent-primary)'
+              }}>
+                <strong style={{ color: 'var(--text-primary)' }}>{tool.name}</strong>
+                <p style={{ fontSize: '0.875rem', marginTop: '0.25rem', marginBottom: 0 }}>{tool.desc}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Commitments of Trust */}
+        <section className="card" style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
+            Our Commitments of Trust
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Shield size={16} />
+                Absolute Privacy
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', margin: 0 }}>
+                We do not require user registration, emails, or credit cards. Your financial data is never sent or stored on any external server.
+              </p>
+            </div>
+            <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Target size={16} />
+                Rigor & Transparency
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', margin: 0 }}>
+                We use standard market formulas, official historical data, and indexes provided by reputable regulated or academic entities.
+              </p>
+            </div>
+            <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Heart size={16} />
+                Editorial Independence
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', margin: 0 }}>
+                Valia is a free access portal. We do not receive hidden commissions for recommending products, nor do we place invasive advertisements.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Mathematical Methodology */}
+        <section className="card" style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
+            Mathematical Calculation Methodology
+          </h2>
+          <p style={{ fontSize: '0.9rem', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>
+            At Valia we believe in absolute transparency. Below, we detail the mathematical models and logical algorithms used by our simulators:
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Compound Interest */}
+            <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                1. Compound Interest with Contributions
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                Calculates capital growth with periodic (monthly) compounding combining classic compound interest and ordinary annuity (contributions):
+              </p>
+              <div style={{ 
+                fontFamily: 'monospace', 
+                background: 'rgba(0,0,0,0.25)', 
+                padding: '0.75rem', 
+                borderRadius: '4px', 
+                fontSize: '0.85rem', 
+                color: 'var(--accent-primary)',
+                textAlign: 'center',
+                margin: '0.5rem 0'
+              }}>
+                FV = IC * (1 + r/n)^(n*t) + PMT * [((1 + r/n)^(n*t) - 1) / (r/n)]
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+                Where: <strong>FV</strong> = Future Value • <strong>IC</strong> = Initial Capital • <strong>PMT</strong> = Monthly Contribution • <strong>r</strong> = Nominal Annual Interest Rate • <strong>n</strong> = Compounding Frequency (12) • <strong>t</strong> = Time in Years.
+              </div>
+            </div>
+
+            {/* UVA Credits */}
+            <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                2. UVA Mortgage Amortization (Argentina specific)
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                The borrowed capital is converted to Purchasing Value Units (UVA) at the quote value on the day the loan is signed. The debt balance is amortized in UVAs under the French or German system, with the resulting installments indexed according to IPC inflation:
+              </p>
+              <div style={{ 
+                fontFamily: 'monospace', 
+                background: 'rgba(0,0,0,0.25)', 
+                padding: '0.75rem', 
+                borderRadius: '4px', 
+                fontSize: '0.85rem', 
+                color: 'var(--accent-primary)',
+                textAlign: 'center',
+                margin: '0.5rem 0'
+              }}>
+                UVA Installment (French) = UVA Debt * [i_u * (1 + i_u)^k] / [((1 + i_u)^k) - 1]
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+                Where: <strong>i_u</strong> = Agreed real monthly interest rate • <strong>k</strong> = Remaining installments. The installment in ARS is: <strong>Installment ($) = UVA Installment * UVA Value (adjusted by CER)</strong>.
+              </div>
+            </div>
+
+            {/* FIRE */}
+            <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                3. Early Retirement Simulation (4% Rule)
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                Based on the asset allocation study of Trinity University. The simulator evaluates the probability of wealth survival through continuous backtesting, running the portfolio against real monthly series of the S&P 500 and US Treasury Bonds since 1926:
+              </p>
+              <div style={{ 
+                fontFamily: 'monospace', 
+                background: 'rgba(0,0,0,0.25)', 
+                padding: '0.75rem', 
+                borderRadius: '4px', 
+                fontSize: '0.85rem', 
+                color: 'var(--accent-primary)',
+                textAlign: 'center',
+                margin: '0.5rem 0'
+              }}>
+                Withdrawal_t = Initial_Expense * (1 + Accumulated_Inflation_t)
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+                The portfolio balance is updated month-by-month: <strong>Balance_t = (Balance_t-1 - Withdrawal_t/12) * (1 + Market_Return_t)</strong>. If the balance falls to zero before the target term, the simulation is considered failed.
+              </div>
+            </div>
+
+            {/* Income Tax */}
+            <div style={{ padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--border-radius-sm)', borderLeft: '3px solid var(--accent-primary)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                4. Taxes and Progressive Brackets (Argentina specific)
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                To estimate the Income Tax (4th category) and Monotributo installments in force for the 2026 fiscal period in Argentina, we apply the progressive brackets provided by the regulatory frameworks of AFIP/ARCA:
+              </p>
+              <div style={{ 
+                fontFamily: 'monospace', 
+                background: 'rgba(0,0,0,0.25)', 
+                padding: '0.75rem', 
+                borderRadius: '4px', 
+                fontSize: '0.85rem', 
+                color: 'var(--accent-primary)',
+                textAlign: 'center',
+                margin: '0.5rem 0'
+              }}>
+                Net Tax = Fixed_Charge + (Net_Taxable_Income - Bracket_Floor) * Marginal_Rate
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+                Where: <strong>Net Taxable Income</strong> = Gross Income - General Deductions (personal exemption, dependents, health insurance, rent) - Legal contributions.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Disclaimer */}
+        <section className="card" style={{ 
+          marginBottom: '2rem',
+          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.03))',
+          borderLeft: '4px solid var(--accent-warning)'
+        }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Shield size={20} style={{ color: 'var(--accent-warning)' }} />
+            Important Legal Disclaimer
+          </h2>
+          <p style={{ marginBottom: '1rem' }}>
+            Valia is an <strong>educational and informational</strong> tool. The results provided by 
+            our calculators are estimates based on data and assumptions entered by the user, 
+            and <strong>do not constitute financial, tax, or legal advice</strong>.
+          </p>
+          <p style={{ marginBottom: '1rem' }}>
+            Past performance does not guarantee future results. Simulations with historical data 
+            (such as the Retirement Simulator) show what <em>would have happened</em> in past periods but do not 
+            predict future market behavior.
+          </p>
+          <p>
+            Before making any major financial decisions, we recommend consulting with a 
+            professional financial advisor who can assess your particular situation.
+          </p>
+        </section>
+
+        {/* Sources */}
+        <section className="card" style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Data Sources</h2>
+          <p style={{ marginBottom: '1rem' }}>
+            The historical data used in our tools comes from well-recognized public sources:
+          </p>
+          <ul style={{ paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-secondary)' }}>
+            <li><strong>S&P 500, Treasury Bonds, and T-Bills:</strong> Annual data since 1926 (source: Robert Shiller, Yale University).</li>
+            <li><strong>Consumer Price Index (CPI):</strong> US Bureau of Labor Statistics, with interpolated data since 1635.</li>
+            <li><strong>Early Retirement Methodology:</strong> Based on the Trinity study and the <a href="https://ficalc.app" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>ficalc.app</a> tool.</li>
+            <li><strong>Compound Interest Formulas:</strong> Validated against <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>Investor.gov</a>.</li>
+          </ul>
+        </section>
+
+        {/* Contact */}
+        <section className="card" style={{ 
+          marginBottom: '2rem',
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(6, 182, 212, 0.03))',
+          borderLeft: '4px solid var(--accent-primary)'
+        }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Heart size={20} className="text-accent-primary" />
+            Contact
+          </h2>
+          <p style={{ marginBottom: '1rem' }}>
+            Valia is a project developed to democratize access to quality financial planning tools.
+          </p>
+          <p>
+            Do you have suggestions, found an error, or want to collaborate? Write to us at{' '}
+            <a href="mailto:contacto@valiafinanzas.com" style={{ color: 'var(--accent-primary)' }}>contacto@valiafinanzas.com</a>.
+          </p>
+        </section>
+
+      </div>
+    );
+  }
+
   return (
     <div className="container animate-fade-in" style={{ padding: '2rem 0', maxWidth: '800px' }}>
       
