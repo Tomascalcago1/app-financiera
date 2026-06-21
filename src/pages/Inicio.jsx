@@ -30,8 +30,8 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const { language } = useLanguage();
 
-  const [savings, setSavings] = useState(() => language === 'en' ? 200 : 100000);
-  const [rate, setRate] = useState(() => language === 'en' ? 8 : 40);
+  const [savings, setSavings] = useState(200);
+  const [rate, setRate] = useState(8);
   const [years, setYears] = useState(10);
 
   const calcResults = () => {
@@ -62,22 +62,45 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
   const interestPct = total > 0 ? (interest / total) * 100 : 0;
 
   const formatValue = (val) => {
-    return new Intl.NumberFormat(language === 'en' ? 'en-US' : 'es-AR', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: language === 'en' ? 'USD' : 'ARS',
+      currency: 'USD',
       maximumFractionDigits: 0
     }).format(val);
   };
 
   const handleCtaClick = () => {
-    // Precargar en localStorage
-    localStorage.setItem('valia_ci_init', '0');
-    localStorage.setItem('valia_ci_contrib', String(savings));
-    localStorage.setItem('valia_ci_yrs', String(years));
-    localStorage.setItem('valia_ci_rate', String(rate));
-    localStorage.setItem('valia_ci_var', '0');
-    localStorage.setItem('valia_ci_freq', 'monthly');
-    localStorage.setItem('valia_ci_showAdv', 'false');
+    // Clean up url parameters that might interfere with compound-interest
+    const url = new URL(window.location.href);
+    url.searchParams.delete('init');
+    url.searchParams.delete('contrib');
+    url.searchParams.delete('yrs');
+    url.searchParams.delete('rate');
+    url.searchParams.delete('var');
+    url.searchParams.delete('varRange');
+    url.searchParams.delete('freq');
+    url.searchParams.delete('showAdv');
+
+    // Set new url parameters so they are immediately loaded by the component
+    url.searchParams.set('init', '0');
+    url.searchParams.set('contrib', String(savings));
+    url.searchParams.set('yrs', String(years));
+    url.searchParams.set('rate', String(rate));
+    url.searchParams.set('var', 'false');
+    url.searchParams.set('varRange', '0');
+    url.searchParams.set('freq', '12'); // 12 for monthly compounding
+    url.searchParams.set('showAdv', 'false');
+
+    window.history.replaceState({}, '', url.toString());
+
+    // Precargar en localStorage as fallback
+    localStorage.setItem('valia_compound_initialInvestment', '0');
+    localStorage.setItem('valia_compound_monthlyContribution', String(savings));
+    localStorage.setItem('valia_compound_years', String(years));
+    localStorage.setItem('valia_compound_interestRate', String(rate));
+    localStorage.setItem('valia_compound_varianceRange', '0');
+    localStorage.setItem('valia_compound_compoundFrequency', '12');
+    localStorage.setItem('valia_compound_enableVariance', 'false');
 
     // Cambiar de pestaña y herramienta
     onSelectTool('compound-interest');
@@ -362,9 +385,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
               </div>
               <input 
                 type="range"
-                min={language === 'en' ? 10 : 10000}
-                max={language === 'en' ? 1000 : 500000}
-                step={language === 'en' ? 10 : 5000}
+                min={10}
+                max={1000}
+                step={10}
                 value={savings}
                 onChange={(e) => setSavings(Number(e.target.value))}
                 style={{ 
@@ -383,9 +406,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
               </div>
               <input 
                 type="range"
-                min={language === 'en' ? 2 : 10}
-                max={language === 'en' ? 15 : 70}
-                step={language === 'en' ? 0.5 : 1}
+                min={2}
+                max={15}
+                step={0.5}
                 value={rate}
                 onChange={(e) => setRate(Number(e.target.value))}
                 style={{ 
