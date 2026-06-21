@@ -30,22 +30,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const { language } = useLanguage();
 
-  const [savings, setSavings] = useState(100000);
-  const [rate, setRate] = useState(40);
+  const [savings, setSavings] = useState(() => language === 'en' ? 200 : 100000);
+  const [rate, setRate] = useState(() => language === 'en' ? 8 : 40);
   const [years, setYears] = useState(10);
-
-  // Re-inicializar valores al cambiar el idioma para no desbordar rangos
-  useEffect(() => {
-    if (language === 'en') {
-      setSavings(200);
-      setRate(8);
-      setYears(10);
-    } else {
-      setSavings(100000);
-      setRate(40);
-      setYears(10);
-    }
-  }, [language]);
 
   const calcResults = () => {
     const pmt = Number(savings) || 0;
@@ -55,12 +42,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
     const rMonthly = r / 12;
     const n = y * 12;
     
-    let fv = 0;
-    if (rMonthly > 0) {
-      fv = pmt * ((Math.pow(1 + rMonthly, n) - 1) / rMonthly);
-    } else {
-      fv = pmt * n;
-    }
+    const fv = rMonthly > 0
+      ? pmt * ((Math.pow(1 + rMonthly, n) - 1) / rMonthly)
+      : pmt * n;
     
     const totalContributed = pmt * n;
     const totalInterest = Math.max(0, fv - totalContributed);
@@ -102,12 +86,6 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
   const t = (key) => {
     return translations[language][key] || translations['es'][key] || key;
   };
-
-  useEffect(() => {
-    if (language === 'en' && selectedCategory === 'impuestos') {
-      setSelectedCategory('todas');
-    }
-  }, [language, selectedCategory]);
 
   const tools = [
     {

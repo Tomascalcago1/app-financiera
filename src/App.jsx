@@ -768,6 +768,7 @@ function App() {
           <div key={activeTab} className="animate-fade-in">
           {activeTab === 'inicio' && (
             <Inicio 
+              key={language}
               onSelectTool={(toolId) => {
                 setActiveTab('herramientas');
                 setActiveTool(toolId);
