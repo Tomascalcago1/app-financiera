@@ -356,7 +356,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
         {/* Columna Derecha: Mini-Simulador */}
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
           <div className="card animate-fade-in" style={{
-            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(9, 13, 22, 0.6) 100%)',
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
             border: '1px solid var(--border-color)',
             backdropFilter: 'blur(12px)',
             padding: '1.5rem',
@@ -767,8 +767,8 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           flexDirection: 'column',
           alignItems: 'center',
           gap: '1rem',
-          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%)',
-          border: '1px solid rgba(6, 182, 212, 0.2)',
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, var(--bg-tertiary) 100%)',
+          border: '1px solid var(--border-color)',
           borderRadius: 'var(--border-radius-md)',
           padding: '1.5rem 2rem',
           textAlign: 'center'
@@ -894,9 +894,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
                 style={{ 
                   padding: '1.25rem 1.5rem',
                   cursor: 'pointer',
-                  borderColor: isOpen ? 'rgba(6, 182, 212, 0.4)' : 'var(--border-color)',
+                  borderColor: isOpen ? 'var(--accent-primary)' : 'var(--border-color)',
                   background: isOpen 
-                    ? 'linear-gradient(to bottom, var(--bg-secondary) 0%, rgba(15, 23, 42, 0.3) 100%)' 
+                    ? 'linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)' 
                     : 'var(--bg-secondary)',
                   transition: 'all var(--transition-fast)'
                 }}

@@ -169,8 +169,8 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
 
           {/* Right: Contact Form */}
           <div className="card" style={{ 
-            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, rgba(15, 23, 42, 0.4) 100%)',
-            border: '1px solid rgba(6, 182, 212, 0.2)',
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--border-color)',
             boxShadow: 'var(--shadow-glow), var(--shadow-md)',
             padding: '2rem'
           }}>
@@ -370,8 +370,8 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
 
         {/* Right: Contact Form */}
         <div className="card" style={{ 
-          background: 'linear-gradient(135deg, var(--bg-secondary) 0%, rgba(15, 23, 42, 0.4) 100%)',
-          border: '1px solid rgba(6, 182, 212, 0.2)',
+          background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+          border: '1px solid var(--border-color)',
           boxShadow: 'var(--shadow-glow), var(--shadow-md)',
           padding: '2rem'
         }}>

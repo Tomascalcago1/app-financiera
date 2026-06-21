@@ -33,6 +33,11 @@
   --text-gradient-end: #94a3b8;
   --bg-gradient-bottom: rgba(15, 23, 42, 0.4);
 
+  /* Theme-aware Header variables */
+  --header-bg: rgba(15, 23, 42, 0.85);
+  --header-border: rgba(51, 65, 85, 0.4);
+  --header-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   
@@ -50,15 +55,15 @@
   --bg-tertiary-hover: #E2E8F0;
   --bg-tertiary-focus: #FFFFFF;
   
-  --text-primary: #0F172A;    /* Texto oscuro pizarra */
-  --text-secondary: #475569;  /* Texto secundario */
-  --text-tertiary: #64748B;
+  --text-primary: #0F172A;    /* Texto oscuro pizarra (slate-900) */
+  --text-secondary: #334155;  /* Texto secundario con mayor contraste (slate-700) */
+  --text-tertiary: #475569;   /* Texto terciario con mayor contraste (slate-600) */
   
-  --accent-primary: #0891B2;  /* Cyan de mayor contraste */
-  --accent-primary-hover: #0e7490;
-  --accent-success: #059669;
-  --accent-warning: #D97706;
-  --accent-danger: #DC2626;
+  --accent-primary: #0e7490;  /* Cyan-700 para pasar WCAG AA (4.77:1) */
+  --accent-primary-hover: #155e75; /* Cyan-800 */
+  --accent-success: #047857;  /* Emerald-700 para pasar WCAG AA */
+  --accent-warning: #B45309;  /* Amber-700 para pasar WCAG AA */
+  --accent-danger: #B91C1C;   /* Red-700 para pasar WCAG AA */
   
   --border-color: #E2E8F0;    /* Borde claro */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -68,8 +73,13 @@
 
   /* Gradients */
   --text-gradient-start: #0F172A;
-  --text-gradient-end: #64748B;
+  --text-gradient-end: #475569;
   --bg-gradient-bottom: rgba(241, 245, 249, 0.4);
+
+  /* Theme-aware Header variables */
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --header-border: rgba(226, 232, 240, 0.8);
+  --header-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -303,8 +313,8 @@ input[type="number"] {
     -webkit-overflow-scrolling: touch;
     padding: 0.25rem 0.5rem;
     border-radius: var(--border-radius-sm);
-    background-color: rgba(15, 23, 42, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
   }
   .nav-tabs::-webkit-scrollbar {
     display: none;

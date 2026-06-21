@@ -579,16 +579,16 @@ function App() {
       {/* Top Navigation Bar */}
       {!isEmbedded && (
         <header style={{ 
-          backgroundColor: 'rgba(15, 23, 42, 0.85)', 
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(51, 65, 85, 0.4)',
-        padding: '0.75rem 0',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
-      }}>
+          backgroundColor: 'var(--header-bg)', 
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid var(--header-border)',
+          padding: '0.75rem 0',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: 'var(--header-shadow)'
+        }}>
         <div className="container header-content">
           {/* Logo/Brand */}
           <div 

@@ -440,9 +440,9 @@ const Glosario = () => {
                 style={{ 
                   padding: '1.25rem 1.5rem',
                   cursor: 'pointer',
-                  borderColor: isOpen ? 'rgba(6, 182, 212, 0.4)' : 'var(--border-color)',
+                  borderColor: isOpen ? 'var(--accent-primary)' : 'var(--border-color)',
                   background: isOpen 
-                    ? 'linear-gradient(to bottom, var(--bg-secondary) 0%, rgba(15, 23, 42, 0.3) 100%)' 
+                    ? 'linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)' 
                     : 'var(--bg-secondary)',
                   transition: 'all var(--transition-fast)'
                 }}

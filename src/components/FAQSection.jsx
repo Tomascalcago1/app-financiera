@@ -7,7 +7,7 @@ const FAQItem = ({ question, answer }) => {
   return (
     <div 
       style={{ 
-        borderBottom: '1px solid rgba(51, 65, 85, 0.4)',
+        borderBottom: '1px solid var(--border-color)',
         padding: '1rem 0',
         transition: 'all 0.2s ease'
       }}
