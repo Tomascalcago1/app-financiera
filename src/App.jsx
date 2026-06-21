@@ -451,8 +451,13 @@ function App() {
     // Dynamic JSON-LD Structured Data script injection for FinancialApplication
     let jsonLd = null;
     if (activeTab === 'herramientas' && activeTool) {
-      const toolUrlParam = toolMapReverse[activeTool] || activeTool;
-      const toolCanonicalUrl = `${window.location.origin}${window.location.pathname}?seccion=herramientas&herramienta=${toolUrlParam}`;
+      const toolUrlParam = getToolPath(activeTool, language);
+      let toolCanonicalUrl = `${window.location.origin}${window.location.pathname}?lang=${language}&seccion=herramientas`;
+      if (language === 'en') {
+        toolCanonicalUrl += `&tool=${toolUrlParam}`;
+      } else {
+        toolCanonicalUrl += `&herramienta=${toolUrlParam}`;
+      }
 
       jsonLd = {
         "@context": "https://schema.org",
@@ -463,11 +468,11 @@ function App() {
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "All",
         "browserRequirements": "Requires JavaScript. Requires HTML5.",
-        "countriesSupported": "AR",
+        "countriesSupported": language === 'en' ? "US" : "AR",
         "offers": {
           "@type": "Offer",
           "price": "0.00",
-          "priceCurrency": "ARS"
+          "priceCurrency": language === 'en' ? "USD" : "ARS"
         }
       };
     }
@@ -489,11 +494,12 @@ function App() {
 
     // Dynamic JSON-LD Structured Data script injection for FAQPage
     let faqJsonLd = null;
-    if (activeTab === 'herramientas' && activeTool && calculatorFaqs[activeTool]) {
+    const toolFaqs = calculatorFaqs[language]?.[activeTool] || calculatorFaqs['es']?.[activeTool];
+    if (activeTab === 'herramientas' && activeTool && toolFaqs) {
       faqJsonLd = {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": calculatorFaqs[activeTool].map(faq => ({
+        "mainEntity": toolFaqs.map(faq => ({
           "@type": "Question",
           "name": faq.q,
           "acceptedAnswer": {
@@ -1162,12 +1168,12 @@ function App() {
           whiteSpace: 'pre-wrap',
           marginBottom: '1.5rem'
         }}>
-          {`<iframe src="${window.location.origin}${window.location.pathname}?seccion=herramientas&herramienta=${toolMapReverse[activeTool] || activeTool}&embed=true" width="100%" height="800" style="border:none; border-radius:12px; background:transparent;" allowtransparency="true"></iframe>`}
+          {`<iframe src="${window.location.origin}${window.location.pathname}?lang=${language}&seccion=herramientas&${language === 'en' ? 'tool' : 'herramienta'}=${getToolPath(activeTool, language)}&embed=true" width="100%" height="800" style="border:none; border-radius:12px; background:transparent;" allowtransparency="true"></iframe>`}
         </div>
 
         <button
           onClick={() => {
-            const code = `<iframe src="${window.location.origin}${window.location.pathname}?seccion=herramientas&herramienta=${toolMapReverse[activeTool] || activeTool}&embed=true" width="100%" height="800" style="border:none; border-radius:12px; background:transparent;" allowtransparency="true"></iframe>`;
+            const code = `<iframe src="${window.location.origin}${window.location.pathname}?lang=${language}&seccion=herramientas&${language === 'en' ? 'tool' : 'herramienta'}=${getToolPath(activeTool, language)}&embed=true" width="100%" height="800" style="border:none; border-radius:12px; background:transparent;" allowtransparency="true"></iframe>`;
             navigator.clipboard.writeText(code)
               .then(() => {
                 setIsCopied(true);

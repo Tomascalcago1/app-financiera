@@ -107,8 +107,13 @@ const TnaToTeaCalculator = () => {
 
   const handleShare = () => {
     const params = new URLSearchParams();
+    params.set('lang', language);
     params.set('seccion', 'herramientas');
-    params.set('herramienta', 'conversor-tasa');
+    if (language === 'en') {
+      params.set('tool', 'rate-converter');
+    } else {
+      params.set('herramienta', 'conversor-tasa');
+    }
     if (tna) params.set('tna', tna);
     if (frequency) params.set('freq', frequency);
     if (inflation) params.set('inf', inflation);
