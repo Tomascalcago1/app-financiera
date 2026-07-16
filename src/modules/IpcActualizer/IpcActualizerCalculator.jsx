@@ -432,7 +432,8 @@ const IpcActualizerCalculator = () => {
     { year: 2026, month: 2, rate: 2.90, monthName: 'Feb' },
     { year: 2026, month: 3, rate: 3.40, monthName: 'Mar' },
     { year: 2026, month: 4, rate: 2.60, monthName: 'Abr' },
-    { year: 2026, month: 5, rate: 2.10, monthName: 'May' }
+    { year: 2026, month: 5, rate: 2.10, monthName: 'May' },
+    { year: 2026, month: 6, rate: 1.90, monthName: 'Jun' }
   ], []);
 
   // Compute cumulative indexes on the fly
