@@ -95,7 +95,7 @@ const Asesores = () => {
       body: JSON.stringify(payload)
     })
     .then(response => response.json())
-    .then(data => {
+    .then(() => {
       setIsSubmitting(false);
       window.open(targetUrl, '_blank');
     })
