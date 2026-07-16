@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Users, Award, CheckCircle, ArrowRight, MessageSquare } from 'lucide-react';
+import { Shield, Users, Award, CheckCircle, MessageSquare } from 'lucide-react';
 import FinancialInput from '../components/FinancialInput';
 import { trackEvent } from '../utils/analytics';
 import { useLanguage } from '../utils/LanguageContext';
@@ -36,6 +36,8 @@ const Asesores = () => {
     return 'ahorro';
   });
   const [customGoal, setCustomGoal] = useState('');
+  const [broker, setBroker] = useState('balanz');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,37 +50,70 @@ const Asesores = () => {
       return;
     }
 
-    const advisorPhone = '5491130843105'; // WhatsApp del asesor Balanz
+    const brokerUrls = {
+      balanz: 'https://www.balanz.com/abrir-cuenta-2.aspx?reference=juanpcavagnaro@gmail.com',
+      ecovalores: 'https://www.ecovalores.com.ar/abrir_cuenta_persona_fisica.php?asesor=Juan%20Cavagnaro',
+      iol: 'https://micuenta.invertironline.com/registrarme?codigoAsesor=Cavagnaro',
+      bullmarket: 'http://bullmarketbrokers.com/Apertura/BullMarketBrokers?ID=MTM2MDc2'
+    };
+
+    const targetUrl = brokerUrls[broker] || brokerUrls.balanz;
+    const amountFormatted = amount ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(amount) : 'no especificado';
     const goalText = goal === 'otro' ? customGoal : 
                      goal === 'ahorro' ? 'Ahorro a largo plazo' :
                      goal === 'retiro' ? 'Retiro anticipado' : 'Comprar una vivienda';
-
     const profileText = profile === 'conservador' ? 'Conservador (Preservar capital)' :
                         profile === 'moderado' ? 'Moderado (Crecimiento balanceado)' : 'Agresivo (Máximo crecimiento)';
 
-    const amountFormatted = amount ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(amount) : 'no especificado';
+    trackEvent('lead_generated_interest', { 
+      fullName, 
+      phone, 
+      broker,
+      amount, 
+      profile, 
+      goal: goal === 'otro' ? customGoal : goal,
+      source: 'asesores_page'
+    });
 
-    const text = `Hola! Vengo de la plataforma Valia. Mi nombre es ${fullName}. Estoy buscando un asesor en Balanz para abrir mi cuenta impositiva y operativamente bonificada.
-Mis datos de planificación son:
-- Teléfono/WhatsApp: ${phone}
-- Capital estimado a invertir: ${amountFormatted}
-- Perfil de riesgo: ${profileText}
-- Objetivo principal: ${goalText}
+    const payload = {
+      "Nombre Completo": fullName,
+      "WhatsApp / Telefono": phone,
+      "Broker Seleccionado": broker.toUpperCase(),
+      "Capital a Invertir": amountFormatted,
+      "Perfil de Riesgo": profileText,
+      "Objetivo Principal": goalText,
+      "_subject": `Nuevo Lead de Asesor: ${fullName} (${broker.toUpperCase()})`
+    };
 
-Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi cartera.`;
-
-    const url = `https://wa.me/${advisorPhone}?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+    setIsSubmitting(true);
+    fetch('https://formsubmit.co/ajax/tomascalcagno76@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+      setIsSubmitting(false);
+      window.open(targetUrl, '_blank');
+    })
+    .catch(error => {
+      console.error('Error submitting lead:', error);
+      setIsSubmitting(false);
+      window.open(targetUrl, '_blank');
+    });
   };
 
   const faqsEn = [
     {
       q: 'Is there any cost for the advisory service?',
-      a: 'No. Advisory through Valia and Balanz is 100% waived. The advisor is compensated via standard platform transaction fees, which are the same fees you would pay if trading alone.'
+      a: 'No. Advisory through Valia is 100% waived. The advisor is compensated via standard platform transaction fees, which are the same fees you would pay if trading alone.'
     },
     {
       q: 'Does the advisor have access to withdraw my money?',
-      a: 'Absolutely not. Your account at Balanz is personal, and funds are custodied by the Clearing and Settlement Agent (ALyC) under CNV regulations. The advisor is only authorized to suggest investment recommendations; you maintain full control to execute and withdraw your funds.'
+      a: 'Absolutely not. Your account at the broker is personal, and funds are custodied by the Clearing and Settlement Agent (ALyC) under CNV regulations. The advisor is only authorized to suggest investment recommendations; you maintain full control to execute and withdraw your funds.'
     },
     {
       q: 'What is the minimum capital to start?',
@@ -89,11 +124,11 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
   const faqsEs = [
     {
       q: '¿Tiene algún costo el servicio de asesoramiento?',
-      a: 'No. El asesoramiento a través de Valia y Balanz está 100% bonificado. El asesor se financia con las comisiones estándar de operación de la plataforma, que son las mismas que pagarías si operases solo.'
+      a: 'No. El asesoramiento a través de Valia está 100% bonificado. El asesor se financia con las comisiones estándar de operación de la plataforma, que son las mismas que pagarías si operases solo.'
     },
     {
       q: '¿El asesor tiene acceso a retirar mi dinero?',
-      a: 'Absolutamente no. Tu cuenta en Balanz es personal y los fondos están custodiados por el Agente de Liquidación y Compensación (ALyC) bajo regulación de la CNV. El asesor solo está habilitado para sugerirte recomendaciones de inversión; vos tenés el control total de ejecutar y retirar tus fondos.'
+      a: 'Absolutamente no. Tu cuenta en el broker es personal y los fondos están custodiados por el Agente de Liquidación y Compensación (ALyC) bajo regulación de la CNV. El asesor solo está habilitado para sugerirte recomendaciones de inversión; vos tenés el control total de ejecutar y retirar tus fondos.'
     },
     {
       q: '¿Cuál es el capital mínimo para empezar?',
@@ -111,9 +146,9 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
         <header className="calculator-header" style={{ marginBottom: '3rem' }}>
           <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
             <Users size={32} className="text-accent-primary" />
-            Balanz Financial Advisors
+            Preferred Financial Advisors
           </h1>
-          <p>Connect with certified advisors registered with the National Securities Commission (CNV) at no management cost.</p>
+          <p>Connect with certified advisors registered with the National Securities Commission (CNV) to open your broker account at no management cost.</p>
         </header>
 
         {/* Grid: Value Prop & Form */}
@@ -122,9 +157,9 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
           {/* Left: Value Proposition */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div>
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Why operate with a Balanz Advisor?</h2>
+              <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Why work with a Financial Advisor?</h2>
               <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                Investing on your own in the capital markets can be complex. A financial advisor helps you structure your savings, choose the best instruments, and optimize returns according to your real goals.
+                Investing on your own in the capital markets can be complex. A registered financial advisor helps you structure your savings, choose the best instruments in leading brokers (such as Balanz, Ecovalores, IOL, or Bull Market), and optimize returns according to your real goals.
               </p>
             </div>
 
@@ -136,7 +171,7 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
                 <div>
                   <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>100% Secure Operation</h3>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                    Your assets are custodied in Balanz under Central Bank and CNV regulations. Only you control withdrawal of funds.
+                    Your assets are custodied under Central Bank and CNV regulations at the broker of your choice. Only you control withdrawal of funds.
                   </p>
                 </div>
               </div>
@@ -160,7 +195,7 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
                 <div>
                   <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Diversified Portfolio</h3>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                    Access to mutual funds (FCI), US stocks (CEDEARs), local equities, and corporate bonds (ONs).
+                    Access to mutual funds (FCI), CEDEARs of global companies, equities, bonds, and corporate bonds (ONs).
                   </p>
                 </div>
               </div>
@@ -176,7 +211,7 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
           }}>
             <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <MessageSquare size={20} className="text-accent-primary" />
-              Request Preferred Advisor
+              Request Advisor
             </h2>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -202,6 +237,21 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
                   onChange={e => setPhone(e.target.value)}
                   required
                 />
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">Preferred Broker</label>
+                <select 
+                  className="input-field" 
+                  value={broker} 
+                  onChange={e => setBroker(e.target.value)}
+                  style={{ appearance: 'auto' }}
+                >
+                  <option value="balanz">Balanz</option>
+                  <option value="ecovalores">Eco Valores</option>
+                  <option value="iol">InvertirOnline (IOL)</option>
+                  <option value="bullmarket">Bull Market Brokers</option>
+                </select>
               </div>
 
               <FinancialInput 
@@ -254,36 +304,21 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
                 </div>
               )}
 
-              <div 
-                onClick={() => trackEvent('lead_generated_interest', { 
-                  fullName, 
-                  phone, 
-                  amount, 
-                  profile, 
-                  goal: goal === 'otro' ? customGoal : goal,
-                  source: 'asesores_page'
-                })}
-                style={{ width: '100%', cursor: 'not-allowed' }}
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="btn btn-primary"
+                style={{ 
+                  width: '100%', 
+                  justifyContent: 'center', 
+                  padding: '0.875rem', 
+                  fontWeight: 600, 
+                  marginTop: '0.5rem',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                }}
               >
-                <button 
-                  type="button" 
-                  disabled
-                  className="btn"
-                  style={{ 
-                    pointerEvents: 'none',
-                    width: '100%', 
-                    justifyContent: 'center', 
-                    padding: '0.875rem', 
-                    fontWeight: 600, 
-                    marginTop: '0.5rem',
-                    backgroundColor: 'var(--bg-tertiary)',
-                    color: 'var(--text-secondary)',
-                    opacity: 0.7
-                  }}
-                >
-                  Coming Soon
-                </button>
-              </div>
+                {isSubmitting ? 'Redirecting...' : 'Open Account & Contact Advisor'}
+              </button>
             </form>
           </div>
         </div>
@@ -312,9 +347,9 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
       <header className="calculator-header" style={{ marginBottom: '3rem' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Users size={32} className="text-accent-primary" />
-          Asesores Financieros Balanz
+          Asesores Financieros Preferenciales
         </h1>
-        <p>Conectá con asesores matriculados idóneos ante la Comisión Nacional de Valores (CNV) sin costo de gestión.</p>
+        <p>Conectá con asesores matriculados idóneos ante la Comisión Nacional de Valores (CNV) para abrir tu cuenta sin costo de gestión.</p>
       </header>
 
       {/* Grid: Value Prop & Form */}
@@ -323,9 +358,9 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
         {/* Left: Value Proposition */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>¿Por qué operar con un Asesor de Balanz?</h2>
+            <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>¿Por qué operar con un Asesor Financiero?</h2>
             <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-              Invertir por tu cuenta en el mercado de capitales puede ser complejo. Un asesor financiero te ayuda a estructurar tus ahorros, elegir los mejores instrumentos y optimizar la rentabilidad de acuerdo a tus metas reales.
+              Invertir por tu cuenta en el mercado de capitales puede ser complejo. Un asesor financiero matriculado te ayuda a estructurar tus ahorros, elegir los mejores instrumentos en plataformas líderes (como Balanz, Ecovalores, IOL o Bull Market) y optimizar la rentabilidad de acuerdo a tus metas reales.
             </p>
           </div>
 
@@ -337,7 +372,7 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
               <div>
                 <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Operación 100% Segura</h3>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  Tus activos están custodiados en Balanz bajo la regulación del Banco Central y la CNV. Solo vos controlás el retiro de fondos.
+                  Tus activos están custodiados en el broker de tu elección bajo la regulación de la CNV y Caja de Valores. Solo vos controlás el retiro de fondos.
                 </p>
               </div>
             </div>
@@ -361,7 +396,7 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
               <div>
                 <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Cartera Diversificada</h3>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  Acceso a Fondos Comunes de Inversión (FCI) preferenciales de Balanz, CEDEARs de empresas de EE.UU., acciones argentinas y Obligaciones Negociables (ONs).
+                  Acceso a Fondos Comunes de Inversión (FCI), CEDEARs de empresas globales, acciones, bonos y Obligaciones Negociables (ONs).
                 </p>
               </div>
             </div>
@@ -403,6 +438,21 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
                 onChange={e => setPhone(e.target.value)}
                 required
               />
+            </div>
+
+            <div className="input-group">
+              <label className="input-label">Broker de Preferencia</label>
+              <select 
+                className="input-field" 
+                value={broker} 
+                onChange={e => setBroker(e.target.value)}
+                style={{ appearance: 'auto' }}
+              >
+                <option value="balanz">Balanz</option>
+                <option value="ecovalores">Eco Valores</option>
+                <option value="iol">InvertirOnline (IOL)</option>
+                <option value="bullmarket">Bull Market Brokers</option>
+              </select>
             </div>
 
             <FinancialInput 
@@ -455,36 +505,21 @@ Me gustaría coordinar una breve llamada para analizar mis opciones y armar mi c
               </div>
             )}
 
-            <div 
-              onClick={() => trackEvent('lead_generated_interest', { 
-                fullName, 
-                phone, 
-                amount, 
-                profile, 
-                goal: goal === 'otro' ? customGoal : goal,
-                source: 'asesores_page'
-              })}
-              style={{ width: '100%', cursor: 'not-allowed' }}
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="btn btn-primary"
+              style={{ 
+                width: '100%', 
+                justifyContent: 'center', 
+                padding: '0.875rem', 
+                fontWeight: 600, 
+                marginTop: '0.5rem',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer'
+              }}
             >
-              <button 
-                type="button" 
-                disabled
-                className="btn"
-                style={{ 
-                  pointerEvents: 'none',
-                  width: '100%', 
-                  justifyContent: 'center', 
-                  padding: '0.875rem', 
-                  fontWeight: 600, 
-                  marginTop: '0.5rem',
-                  backgroundColor: 'var(--bg-tertiary)',
-                  color: 'var(--text-secondary)',
-                  opacity: 0.7
-                }}
-              >
-                Próximamente
-              </button>
-            </div>
+              {isSubmitting ? 'Redirigiendo...' : 'Abrir Cuenta y Contactar Asesor'}
+            </button>
           </form>
         </div>
       </div>
