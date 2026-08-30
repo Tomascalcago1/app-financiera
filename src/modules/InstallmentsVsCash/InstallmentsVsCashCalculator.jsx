@@ -9,7 +9,8 @@ import {
   Share2, 
   Image,
   AlertTriangle,
-  Scale
+  Scale,
+  TableProperties
 } from 'lucide-react';
 import {
   BarChart,
@@ -66,6 +67,7 @@ const InstallmentsVsCashCalculator = () => {
   });
 
   const [shareCopied, setShareCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState('chart'); // 'chart' | 'table'
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   // Lógica de simulación y cálculos
@@ -418,100 +420,126 @@ const InstallmentsVsCashCalculator = () => {
             </div>
           </div>
 
-          {/* 4. Action buttons */}
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-            <button 
-              onClick={handleShare}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Share2 size={16} />
-              {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
-            </button>
-            <button 
-              onClick={exportToCSV}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Download size={16} />
-              Exportar CSV (Excel)
-            </button>
-            <button 
-              onClick={() => window.print()}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Printer size={16} />
-              Imprimir Ficha
-            </button>
-            <button 
-              onClick={() => exportChartToPNG('installments-chart-container', 'valia_cuotas_vs_efectivo.png')}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Image size={16} />
-              Descargar Gráfico
-            </button>
-          </div>
-
-          {/* 5. Chart */}
-          <div className="card chart-container" id="installments-chart-container">
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Evolución Proyectada de la Inversión</h3>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={simulation.monthlyData}
-                margin={{ top: 15, right: 20, left: 10, bottom: 25 }}
+          {/* 4. Toolbar: Views Switch and Export Actions */}
+          <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            {/* Tab Switcher */}
+            <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+              <button
+                type="button"
+                className={`btn transition-spring ${activeTab === 'chart' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setActiveTab('chart')}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                <XAxis dataKey="month" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
-                <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
-                <Tooltip formatter={value => [formatCurrency(value), 'Saldo Cuenta']} />
-                <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
-                <Bar name="Saldo Remanente de Inversión (ARS)" dataKey="investmentBalance" fill="var(--accent-primary)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+                <TrendingUp size={14} />
+                Gráfico
+              </button>
+              <button
+                type="button"
+                className={`btn transition-spring ${activeTab === 'table' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setActiveTab('table')}
+              >
+                <TableProperties size={14} />
+                Tabla Detallada
+              </button>
+            </div>
+
+            {/* Export Buttons */}
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button 
+                onClick={handleShare}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+              >
+                <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                {shareCopied ? '¡Copiado!' : 'Compartir'}
+              </button>
+              
+              <button 
+                onClick={exportToCSV}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Download size={14} />
+                CSV
+              </button>
+
+              <button 
+                onClick={() => window.print()}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Printer size={14} />
+                PDF
+              </button>
+
+              <button 
+                onClick={() => exportChartToPNG('installments-chart-container', 'valia_cuotas_vs_efectivo.png')}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Image size={14} />
+                PNG
+              </button>
+            </div>
           </div>
 
-          {/* 6. Detailed Table */}
-          <div className="card" style={{ padding: '1.5rem', overflowX: 'auto' }}>
-            <h3 style={{ fontSize: '1.05rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
-              Flujo Mensual Detallado
-            </h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', textAlign: 'right' }}>
-              <thead>
-                <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                  <th style={{ padding: '0.75rem', textAlign: 'center' }}>Período</th>
-                  <th style={{ padding: '0.75rem' }}>Cuota Nominal</th>
-                  <th style={{ padding: '0.75rem' }}>Cuota Valor Real</th>
-                  <th style={{ padding: '0.75rem' }}>Saldo Inversión</th>
-                  <th style={{ padding: '0.75rem' }}>Pago Acumulado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {simulation.monthlyData.map((row, index) => (
-                  <tr key={index} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                    <td style={{ padding: '0.6rem 0.75rem', textAlign: 'center', fontWeight: 500 }}>{row.month}</td>
-                    <td style={{ padding: '0.6rem 0.75rem', color: 'var(--text-primary)' }}>
-                      {index === 0 ? '-' : formatCurrency(row.installmentNominal)}
-                    </td>
-                    <td style={{ padding: '0.6rem 0.75rem', color: 'var(--accent-warning)' }}>
-                      {index === 0 ? '-' : formatCurrency(row.installmentReal)}
-                    </td>
-                    <td style={{ 
-                      padding: '0.6rem 0.75rem', 
-                      fontWeight: 600,
-                      color: row.investmentBalance >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' 
-                    }}>
-                      {formatCurrency(row.investmentBalance)}
-                    </td>
-                    <td style={{ padding: '0.6rem 0.75rem', color: 'var(--text-tertiary)' }}>
-                      {index === 0 ? '-' : formatCurrency(row.totalPaidNominal)}
-                    </td>
+          {/* 5. Chart or Table View */}
+          {activeTab === 'chart' ? (
+            <div className="taste-card chart-container" id="installments-chart-container" style={{ padding: '1.5rem', height: '380px' }}>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 700 }}>Evolución Proyectada de la Inversión</h3>
+              <ResponsiveContainer width="100%" height="80%">
+                <BarChart
+                  data={simulation.monthlyData}
+                  margin={{ top: 15, right: 20, left: 10, bottom: 25 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                  <XAxis dataKey="month" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
+                  <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
+                  <Tooltip formatter={value => [formatCurrency(value), 'Saldo Cuenta']} />
+                  <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+                  <Bar name="Saldo Remanente de Inversión (ARS)" dataKey="investmentBalance" fill="var(--accent-primary)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="taste-card animate-fade-in" style={{ padding: 0, overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', textAlign: 'right' }}>
+                <thead>
+                  <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
+                    <th style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>Período</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Cuota Nominal</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Cuota Valor Real</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Saldo Inversión</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Pago Acumulado</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {simulation.monthlyData.map((row, index) => (
+                    <tr key={index} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <td style={{ padding: '0.6rem 1rem', textAlign: 'center', fontWeight: 500 }}>{row.month}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: 'var(--text-primary)' }}>
+                        {index === 0 ? '-' : formatCurrency(row.installmentNominal)}
+                      </td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: 'var(--accent-warning)' }}>
+                        {index === 0 ? '-' : formatCurrency(row.installmentReal)}
+                      </td>
+                      <td className="tabular-nums" style={{ 
+                        padding: '0.6rem 1rem', 
+                        fontWeight: 600,
+                        color: row.investmentBalance >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' 
+                      }}>
+                        {formatCurrency(row.investmentBalance)}
+                      </td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: 'var(--text-tertiary)' }}>
+                        {index === 0 ? '-' : formatCurrency(row.totalPaidNominal)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {/* Advisory print CTA */}
           <PrintAdvisorCTA />
@@ -519,7 +547,7 @@ const InstallmentsVsCashCalculator = () => {
       </div>
 
       {/* Guía SEO y Contexto Financiero */}
-      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+      <section className="taste-card faq-section no-print animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
           Guía de Compra: ¿Cómo elegir entre Cuotas Fijas o Pago Contado en Argentina?
         </h2>

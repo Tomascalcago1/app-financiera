@@ -532,7 +532,7 @@ input[type="number"] {
     color: #334155 !important;
   }
 
-  .no-print {
+  .no-print, .faq-section {
     display: none !important;
   }
 

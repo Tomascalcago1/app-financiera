@@ -5,13 +5,14 @@ import {
 } from 'recharts';
 import { 
   TrendingUp, Award, TableProperties, Download, 
-  Printer, Share2, Calendar, Percent, Landmark, HelpCircle 
+  Printer, Share2, Calendar, Percent, Landmark, HelpCircle, Image 
 } from 'lucide-react';
 import FinancialInput from '../../components/FinancialInput';
 import HelpModal from '../../components/HelpModal';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
+import { exportChartToPNG } from '../../utils/chartExporter';
 import { runSavingsComparison } from './SavingsComparisonEngine';
 
 const formatCurrency = (value) => {
@@ -454,69 +455,97 @@ const SavingsComparisonCalculator = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-0.5rem' }}>
-                <button 
-                  onClick={() => {
-                    handleShare()
-                      .then(() => {
-                        setShareCopied(true);
-                        setTimeout(() => setShareCopied(false), 2000);
-                      })
-                      .catch(err => console.error(err));
-                  }}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Share2 size={16} />
-                  {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
-                </button>
-                
-                <button 
-                  onClick={exportToCSV}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Download size={16} />
-                  Exportar CSV (Excel)
-                </button>
+              {/* Toolbar: Views Switch and Export Actions */}
+              <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                {/* Tab Switcher */}
+                <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+                  <button
+                    type="button"
+                    className={`btn transition-spring ${!showTable ? 'btn-primary' : 'btn-outline'}`}
+                    style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                    onClick={() => setShowTable(false)}
+                  >
+                    <TrendingUp size={14} />
+                    Gráfico
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn transition-spring ${showTable ? 'btn-primary' : 'btn-outline'}`}
+                    style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                    onClick={() => setShowTable(true)}
+                  >
+                    <TableProperties size={14} />
+                    Tabla Detallada
+                  </button>
+                </div>
 
-                <button 
-                  onClick={() => window.print()}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Printer size={16} />
-                  Imprimir Reporte PDF
-                </button>
+                {/* Export Buttons */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <button 
+                    onClick={() => {
+                      handleShare()
+                        .then(() => {
+                          setShareCopied(true);
+                          setTimeout(() => setShareCopied(false), 2000);
+                        })
+                        .catch(err => console.error(err));
+                    }}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+                  >
+                    <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                    {shareCopied ? '¡Copiado!' : 'Compartir'}
+                  </button>
+                  
+                  <button 
+                    onClick={exportToCSV}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Download size={14} />
+                    CSV
+                  </button>
+
+                  <button 
+                    onClick={() => window.print()}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Printer size={14} />
+                    PDF
+                  </button>
+
+                  <button 
+                    onClick={() => exportChartToPNG('savings-comparison-chart', 'valia_comparador_ahorros.png')}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Image size={14} />
+                    PNG
+                  </button>
+                </div>
               </div>
 
-              {/* Chart */}
-              <div className="card chart-container" id="savings-comparison-chart" style={{ height: '360px' }}>
-                <h3 style={{ marginBottom: '1.25rem', fontSize: '1rem', fontWeight: 600 }}>Crecimiento Proyectado del Capital</h3>
-                <ResponsiveContainer width="100%" height="90%">
-                  <LineChart data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                    <XAxis dataKey="monthIndex" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                    <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickFormatter={formatCurrency} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '15px', fontSize: 12 }} />
-                    
-                    <Line type="monotone" dataKey="uva" name="PF UVA" stroke="#10B981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                    <Line type="monotone" dataKey="traditional" name="PF Tradicional" stroke="#F59E0B" strokeWidth={2} strokeDasharray="3 3" dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="cauciones" name="Cauciones 7d" stroke="#EF4444" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Table Toggle */}
-              <button className="btn btn-outline" onClick={() => setShowTable(!showTable)} style={{ alignSelf: 'flex-start' }}>
-                <TableProperties size={18} />
-                {showTable ? 'Ocultar Tabla' : 'Mostrar Desglose Mensual'}
-              </button>
-
-              {showTable && (
-                <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+              {/* Chart or Table View */}
+              {!showTable ? (
+                <div className="taste-card chart-container" id="savings-comparison-chart" style={{ height: '380px', padding: '1.5rem' }}>
+                  <h3 style={{ marginBottom: '1.25rem', fontSize: '1rem', fontWeight: 700 }}>Crecimiento Proyectado del Capital</h3>
+                  <ResponsiveContainer width="100%" height="80%">
+                    <LineChart data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                      <XAxis dataKey="monthIndex" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
+                      <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickFormatter={formatCurrency} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '15px', fontSize: 12 }} />
+                      
+                      <Line type="monotone" dataKey="uva" name="PF UVA" stroke="#10B981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="traditional" name="PF Tradicional" stroke="#F59E0B" strokeWidth={2} strokeDasharray="3 3" dot={{ r: 3 }} />
+                      <Line type="monotone" dataKey="cauciones" name="Cauciones 7d" stroke="#EF4444" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
                     <thead>
                       <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
@@ -531,10 +560,10 @@ const SavingsComparisonCalculator = () => {
                       {results.monthlyBreakdown.map((row) => (
                         <tr key={row.monthIndex} style={{ borderBottom: '1px solid var(--border-color)' }}>
                           <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>{row.monthName}</td>
-                          <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 'bold' }}>{row.inflationValue}%</td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#10B981', fontWeight: 600 }}>{formatCurrencyFull(row.uvaBalance)}</td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#F59E0B' }}>{formatCurrencyFull(row.traditionalBalance)}</td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#EF4444' }}>{formatCurrencyFull(row.caucionesBalance)}</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 'bold' }}>{row.inflationValue}%</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: '#10B981', fontWeight: 600 }}>{formatCurrencyFull(row.uvaBalance)}</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: '#F59E0B' }}>{formatCurrencyFull(row.traditionalBalance)}</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: '#EF4444' }}>{formatCurrencyFull(row.caucionesBalance)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -550,7 +579,7 @@ const SavingsComparisonCalculator = () => {
       </div>
 
       {/* FAQs Section */}
-      <section className="card animate-fade-in" style={{ marginTop: '3rem' }}>
+      <section className="taste-card faq-section no-print animate-fade-in" style={{ marginTop: '3rem' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
           Preguntas Frecuentes sobre Instrumentos en Pesos
         </h2>

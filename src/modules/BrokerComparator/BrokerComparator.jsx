@@ -11,14 +11,42 @@ import {
   DollarSign, 
   Percent, 
   ChevronRight,
-  Info
+  Info,
+  Download,
+  Printer,
+  Share2,
+  Image,
+  TableProperties
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
 import FinancialInput from '../../components/FinancialInput';
+import { exportChartToPNG } from '../../utils/chartExporter';
 
 const BrokerComparator = ({ onNavigateToAsesores }) => {
   // Simulator states
   const [tradeAmount, setTradeAmount] = useState('500000'); // Monto a operar
   const [cashBalance, setCashBalance] = useState('200000'); // Dinero en cuenta sin invertir
+  const [activeTab, setActiveTab] = useState('chart'); // 'chart' | 'table'
+  const [shareCopied, setShareCopied] = useState(false);
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('seccion', 'brokers');
+    params.set('trade', tradeAmount);
+    params.set('cash', cashBalance);
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    return navigator.clipboard.writeText(shareUrl);
+  };
 
   // Navigation via window event or prop
   const handleContactAdvisor = () => {
@@ -490,14 +518,104 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
 
       {/* Simulator / Savings Calculator Card */}
       <section style={{ marginBottom: '4rem' }}>
-        <div className="card" style={{ padding: '2rem' }}>
-          <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Percent size={20} className="text-accent-primary" />
-            Simulador de Ahorro y Comisiones en Tiempo Real
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '2rem' }}>
-            Ingresá los montos que estimás operar y mantener en tu cuenta para ver el impacto financiero directo en comisiones y rendimientos mensuales.
-          </p>
+        <div className="taste-card" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
+                <Percent size={20} className="text-accent-primary" />
+                Simulador de Ahorro y Comisiones en Tiempo Real
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: 0 }}>
+                Ingresá los montos que estimás operar y mantener en tu cuenta para ver el impacto financiero directo en comisiones y rendimientos mensuales.
+              </p>
+            </div>
+
+            {/* Toolbar: Switch and Export Actions */}
+            <div className="no-print" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              {/* Tab Switcher */}
+              <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)', marginRight: '0.5rem' }}>
+                <button
+                  type="button"
+                  className={`btn transition-spring ${activeTab === 'chart' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                  onClick={() => setActiveTab('chart')}
+                >
+                  <TrendingUp size={14} />
+                  Gráfico
+                </button>
+                <button
+                  type="button"
+                  className={`btn transition-spring ${activeTab === 'table' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                  onClick={() => setActiveTab('table')}
+                >
+                  <TableProperties size={14} />
+                  Tarjetas Detalladas
+                </button>
+              </div>
+
+              <button 
+                onClick={() => {
+                  handleShare();
+                  setShareCopied(true);
+                  setTimeout(() => setShareCopied(false), 2000);
+                }}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+              >
+                <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                {shareCopied ? '¡Copiado!' : 'Compartir'}
+              </button>
+              
+              <button 
+                onClick={() => {
+                  const headers = ['Broker', 'Comisión Acciones', 'Comisión ONs', 'Comisión Letras', 'TNA Remunerada', 'Costo Operación (ARS)', 'Interés Mensual Estimado (ARS)', 'Asesoría'];
+                  const rows = simulatorResults.map(b => [
+                    b.name,
+                    b.commissionAcciones,
+                    b.commissionONs,
+                    b.commissionLetras,
+                    b.tnaRemunerada,
+                    b.tradeCostRaw,
+                    b.monthlyYieldRaw,
+                    b.advisoryCostText
+                  ]);
+                  const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.map(val => typeof val === 'number' ? val.toFixed(2) : `"${val}"`).join(','))].join('\n');
+                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.setAttribute("href", url);
+                  link.setAttribute("download", `valia_comparador_brokers.csv`);
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Download size={14} />
+                CSV
+              </button>
+
+              <button 
+                onClick={() => window.print()}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Printer size={14} />
+                PDF
+              </button>
+
+              <button 
+                onClick={() => exportChartToPNG('broker-chart-container', 'valia_comparador_brokers.png')}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Image size={14} />
+                PNG
+              </button>
+            </div>
+          </div>
 
           <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
             <FinancialInput 
@@ -516,85 +634,109 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
             />
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
-              {simulatorResults.map((broker) => {
-                const isRecommended = broker.recommended;
-                return (
-                  <div 
-                    key={broker.id}
-                    className="card"
-                    style={{
-                      background: isRecommended ? 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, var(--bg-tertiary) 100%)' : 'var(--bg-tertiary)',
-                      border: isRecommended ? '1px solid rgba(6, 182, 212, 0.4)' : '1px solid var(--border-color)',
-                      boxShadow: isRecommended ? 'var(--shadow-glow)' : 'none',
-                      padding: '1.25rem',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.75rem',
-                      position: 'relative'
-                    }}
-                  >
-                    {isRecommended && (
-                      <span style={{ 
-                        position: 'absolute', 
-                        top: '0.75rem', 
-                        right: '0.75rem', 
-                        fontSize: '0.65rem', 
-                        backgroundColor: 'var(--accent-primary)', 
-                        color: '#090D16', 
-                        padding: '0.15rem 0.35rem', 
-                        borderRadius: '4px',
-                        fontWeight: 'bold'
-                      }}>
-                        RECOMENDADO
-                      </span>
-                    )}
-
-                    <span style={{ fontWeight: 'bold', fontSize: '1rem', color: isRecommended ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
-                      {broker.name}
-                    </span>
-
-                    <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>Costo Comisión:</span>
-                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{broker.tradeCostText}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>Interés Mensual:</span>
-                        <span style={{ fontWeight: 600, color: 'var(--accent-success)' }}>+{broker.monthlyYieldText} / mes</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.4rem', marginTop: '0.1rem' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>Asesoría idónea:</span>
-                        <span style={{ fontWeight: 500, color: isRecommended ? 'var(--accent-primary)' : 'var(--text-tertiary)' }}>
-                          {broker.advisoryCostText}
-                        </span>
-                      </div>
-                    </div>
-
-                    {isRecommended && (
-                      <div style={{ 
-                        fontSize: '0.75rem', 
-                        color: 'rgba(6, 182, 212, 0.9)', 
-                        backgroundColor: 'rgba(6, 182, 212, 0.05)', 
-                        padding: '0.5rem', 
-                        borderRadius: '4px', 
-                        marginTop: '0.25rem',
-                        lineHeight: '1.3'
-                      }}>
-                        Ahorrás en comisiones, optimizás tus saldos líquidos y contás con asesoría bonificada de por vida.
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+          {activeTab === 'chart' ? (
+            <div className="taste-card chart-container animate-fade-in" id="broker-chart-container" style={{ height: '360px', padding: '1.5rem' }}>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.05rem', fontWeight: 700 }}>Comparación de Costos y Rendimientos por Broker</h3>
+              <ResponsiveContainer width="100%" height="80%">
+                <BarChart
+                  data={simulatorResults.map(b => ({
+                    name: b.id === 'balanz_valia' ? 'Balanz (Valia)' : b.name.split(' ')[0],
+                    'Costo Comisión': b.tradeCostRaw,
+                    'Interés Mensual': Math.round(b.monthlyYieldRaw)
+                  }))}
+                  margin={{ top: 15, right: 20, left: 10, bottom: 25 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                  <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
+                  <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
+                  <Tooltip formatter={value => [new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value)]} />
+                  <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px', fontSize: 12 }} />
+                  <Bar name="Costo Comisión ($)" dataKey="Costo Comisión" fill="#EF4444" radius={[4, 4, 0, 0]} />
+                  <Bar name="Interés Mensual Líquido ($)" dataKey="Interés Mensual" fill="var(--accent-success)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
-          </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }} className="animate-fade-in">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
+                {simulatorResults.map((broker) => {
+                  const isRecommended = broker.recommended;
+                  return (
+                    <div 
+                      key={broker.id}
+                      className="taste-card"
+                      style={{
+                        background: isRecommended ? 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, var(--bg-tertiary) 100%)' : 'var(--bg-tertiary)',
+                        border: isRecommended ? '1px solid rgba(6, 182, 212, 0.4)' : '1px solid var(--border-color)',
+                        boxShadow: isRecommended ? 'var(--shadow-glow)' : 'none',
+                        padding: '1.25rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                        position: 'relative'
+                      }}
+                    >
+                      {isRecommended && (
+                        <span style={{ 
+                          position: 'absolute', 
+                          top: '0.75rem', 
+                          right: '0.75rem', 
+                          fontSize: '0.65rem', 
+                          backgroundColor: 'var(--accent-primary)', 
+                          color: '#090D16', 
+                          padding: '0.15rem 0.35rem', 
+                          borderRadius: '4px',
+                          fontWeight: 'bold'
+                        }}>
+                          RECOMENDADO
+                        </span>
+                      )}
+
+                      <span style={{ fontWeight: 'bold', fontSize: '1rem', color: isRecommended ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
+                        {broker.name}
+                      </span>
+
+                      <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Costo Comisión:</span>
+                          <span className="tabular-nums" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{broker.tradeCostText}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Interés Mensual:</span>
+                          <span className="tabular-nums" style={{ fontWeight: 600, color: 'var(--accent-success)' }}>+{broker.monthlyYieldText} / mes</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.4rem', marginTop: '0.1rem' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Asesoría idónea:</span>
+                          <span style={{ fontWeight: 500, color: isRecommended ? 'var(--accent-primary)' : 'var(--text-tertiary)' }}>
+                            {broker.advisoryCostText}
+                          </span>
+                        </div>
+                      </div>
+
+                      {isRecommended && (
+                        <div style={{ 
+                          fontSize: '0.75rem', 
+                          color: 'rgba(6, 182, 212, 0.9)', 
+                          backgroundColor: 'rgba(6, 182, 212, 0.05)', 
+                          padding: '0.5rem', 
+                          borderRadius: '4px', 
+                          marginTop: '0.25rem',
+                          lineHeight: '1.3'
+                        }}>
+                          Ahorrás en comisiones, optimizás tus saldos líquidos y contás con asesoría bonificada de por vida.
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Guía SEO y Contexto Financiero */}
-      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+      <section className="taste-card faq-section no-print animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
           Guía Comparativa: ¿Cómo elegir el mejor Broker de Bolsa (ALyC) en Argentina?
         </h2>
@@ -624,11 +766,11 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       </section>
 
       {/* FAQs Section */}
-      <section style={{ borderTop: '1px solid var(--border-color)', paddingTop: '3rem' }}>
+      <section className="taste-card faq-section no-print animate-fade-in" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '2rem', marginTop: '3rem' }}>
         <h2 style={{ fontSize: '1.5rem', marginBottom: '2rem', textAlign: 'center' }}>Preguntas Frecuentes sobre Brokers y Comisiones</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '800px', margin: '0 auto' }}>
           {faqs.map((faq, index) => (
-            <div key={index} className="card" style={{ padding: '1.5rem' }}>
+            <div key={index} className="taste-card" style={{ padding: '1.5rem' }}>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>{faq.q}</h3>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5', margin: 0 }}>{faq.a}</p>
             </div>

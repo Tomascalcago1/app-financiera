@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   LineChart,
   Line,
@@ -10,7 +10,7 @@ import {
   Legend,
   ReferenceLine
 } from 'recharts';
-import { Download, Printer, Image } from 'lucide-react';
+import { Download, Printer, Image, TrendingUp, TableProperties, Share2 } from 'lucide-react';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 import { exportChartToPNG } from '../../utils/chartExporter';
@@ -31,12 +31,13 @@ const CustomTooltip = ({ active, payload, label, lang }) => {
   if (active && payload && payload.length) {
     const yearLabel = lang === 'en' ? `Year ${label}` : `Año ${label}`;
     return (
-      <div className="card" style={{ padding: '1rem', border: '1px solid var(--border-color)' }}>
-        <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{yearLabel}</p>
+      <div className="taste-card" style={{ padding: '0.85rem 1.1rem', border: '1px solid var(--border-color)', minWidth: '220px' }}>
+        <p style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '0.9rem' }}>{yearLabel}</p>
         {payload.map((entry, index) => (
-          <p key={index} style={{ color: entry.color, fontSize: '0.875rem' }}>
-            {entry.name}: {formatCurrency(entry.value, lang)}
-          </p>
+          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', gap: '0.5rem' }}>
+            <span style={{ color: entry.color, fontSize: '0.825rem' }}>{entry.name}:</span>
+            <strong className="tabular-nums" style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>{formatCurrency(entry.value, lang)}</strong>
+          </div>
         ))}
       </div>
     );
@@ -46,6 +47,9 @@ const CustomTooltip = ({ active, payload, label, lang }) => {
 
 const ResultsDashboard = ({ data, inputs = {} }) => {
   const { language } = useLanguage();
+  const [activeTab, setActiveTab] = useState('chart'); // 'chart' | 'table'
+  const [shareCopied, setShareCopied] = useState(false);
+
   const tLocal = (key) => {
     return translations[language][key] || translations['es'][key] || key;
   };
@@ -102,6 +106,18 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
 
   const exportToPDF = () => {
     window.print();
+  };
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('tool', 'buy-vs-rent');
+    if (inputs.propertyPrice) params.set('price', inputs.propertyPrice);
+    if (inputs.monthlyRent) params.set('rent', inputs.monthlyRent);
+    if (inputs.initialCapital) params.set('capital', inputs.initialCapital);
+    if (inputs.years) params.set('years', inputs.years);
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    return navigator.clipboard.writeText(shareUrl);
   };
 
   return (
@@ -163,26 +179,26 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
               <>
                 <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                   <span>{tLocal('dash.breakdown.buy.net')}</span>
-                  <strong>{formatCurrency(finalYear.propertyValue - finalYear.remainingDebt, language)}</strong>
+                  <strong className="tabular-nums">{formatCurrency(finalYear.propertyValue - finalYear.remainingDebt, language)}</strong>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                   <span>{language === 'en' ? 'Invested Initial Capital:' : 'Capital Inicial Invertido:'}</span>
-                  <strong>{formatCurrency(finalYear.buyBaseline, language)}</strong>
+                  <strong className="tabular-nums">{formatCurrency(finalYear.buyBaseline, language)}</strong>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--accent-success)' }}>{tLocal('dash.breakdown.buy.savings')}</span>
-                  <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(finalYear.buySavings, language)}</strong>
+                  <strong className="tabular-nums" style={{ color: 'var(--accent-success)' }}>{formatCurrency(finalYear.buySavings, language)}</strong>
                 </li>
               </>
             ) : (
               <>
                 <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                   <span>{language === 'en' ? 'Invested Initial Capital:' : 'Capital Inicial Invertido:'}</span>
-                  <strong>{formatCurrency(finalYear.rentBaseline, language)}</strong>
+                  <strong className="tabular-nums">{formatCurrency(finalYear.rentBaseline, language)}</strong>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--accent-primary)' }}>{tLocal('dash.breakdown.rent.savings')}</span>
-                  <strong style={{ color: 'var(--accent-primary)' }}>{formatCurrency(finalYear.rentSavings, language)}</strong>
+                  <strong className="tabular-nums" style={{ color: 'var(--accent-primary)' }}>{formatCurrency(finalYear.rentSavings, language)}</strong>
                 </li>
               </>
             )}
@@ -196,92 +212,164 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
         </p>
       </div>
 
-      {/* Export Actions */}
-      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-        <button 
-          onClick={exportToCSV}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Download size={16} />
-          {tLocal('dash.btn.csv')}
-        </button>
-        <button 
-          onClick={exportToPDF}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Printer size={16} />
-          {tLocal('dash.btn.pdf')}
-        </button>
-        <button 
-          onClick={() => exportChartToPNG('buy-rent-chart-container', language === 'en' ? 'valia_buy_vs_rent.png' : 'valia_comprar_vs_alquilar.png')}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Image size={16} />
-          {tLocal('dash.btn.image')}
-        </button>
-      </div>
-
-      {/* Chart */}
-      <div className="card chart-container" id="buy-rent-chart-container">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>{tLocal('dash.chart.title')}</h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{ top: 15, right: 20, left: 20, bottom: 25 }}
+      {/* Toolbar: Views Switch and Export Actions */}
+      <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        {/* Tab Switcher */}
+        <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+          <button
+            type="button"
+            className={`btn transition-spring ${activeTab === 'chart' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setActiveTab('chart')}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis 
-              dataKey="year" 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)' }}
-            />
-            <YAxis 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)' }}
-              tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
-            />
-            <Tooltip content={<CustomTooltip lang={language} />} />
-            <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
-            
-            {crossoverYear && (
-              <ReferenceLine 
-                x={crossoverYear} 
-                stroke="var(--accent-warning)" 
-                strokeDasharray="3 3" 
-                label={{ 
-                  value: language === 'en' ? `Cross: Year ${crossoverYear}` : `Cruce: Año ${crossoverYear}`, 
-                  fill: 'var(--accent-warning)', 
-                  position: 'top', 
-                  fontSize: 11,
-                  fontWeight: 500
-                }} 
-              />
-            )}
+            <TrendingUp size={14} />
+            {language === 'en' ? 'Growth Chart' : 'Gráfico'}
+          </button>
+          <button
+            type="button"
+            className={`btn transition-spring ${activeTab === 'table' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setActiveTab('table')}
+          >
+            <TableProperties size={14} />
+            {language === 'en' ? 'Detailed Table' : 'Tabla Detallada'}
+          </button>
+        </div>
 
-            <Line 
-              type="monotone" 
-              name={tLocal('dash.chart.buy')}
-              dataKey="buyNetWorth" 
-              stroke="var(--accent-success)" 
-              strokeWidth={3}
-              dot={false}
-              activeDot={{ r: 6 }}
-            />
-            <Line 
-              type="monotone" 
-              name={tLocal('dash.chart.rent')}
-              dataKey="rentNetWorth" 
-              stroke="var(--accent-primary)" 
-              strokeWidth={3}
-              dot={false}
-              activeDot={{ r: 6 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        {/* Export Buttons */}
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <button 
+            onClick={() => {
+              handleShare()
+                .then(() => {
+                  setShareCopied(true);
+                  setTimeout(() => setShareCopied(false), 2000);
+                })
+                .catch(err => console.error(err));
+            }}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+          >
+            <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+            {shareCopied ? (language === 'en' ? 'Copied!' : '¡Copiado!') : (language === 'en' ? 'Share' : 'Compartir')}
+          </button>
+          
+          <button 
+            onClick={exportToCSV}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Download size={14} />
+            CSV
+          </button>
+
+          <button 
+            onClick={exportToPDF}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Printer size={14} />
+            PDF
+          </button>
+
+          <button 
+            onClick={() => exportChartToPNG('buy-rent-chart-container', language === 'en' ? 'valia_buy_vs_rent.png' : 'valia_comprar_vs_alquilar.png')}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Image size={14} />
+            PNG
+          </button>
+        </div>
       </div>
+
+      {/* Chart or Table View */}
+      {activeTab === 'chart' ? (
+        <div className="taste-card chart-container" id="buy-rent-chart-container" style={{ padding: '1.5rem', height: '380px' }}>
+          <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 700 }}>{tLocal('dash.chart.title')}</h3>
+          <ResponsiveContainer width="100%" height="80%">
+            <LineChart
+              data={data}
+              margin={{ top: 15, right: 20, left: 20, bottom: 25 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+              <XAxis 
+                dataKey="year" 
+                stroke="var(--text-secondary)"
+                tick={{ fill: 'var(--text-secondary)' }}
+              />
+              <YAxis 
+                stroke="var(--text-secondary)"
+                tick={{ fill: 'var(--text-secondary)' }}
+                tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+              />
+              <Tooltip content={<CustomTooltip lang={language} />} />
+              <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+              
+              {crossoverYear && (
+                <ReferenceLine 
+                  x={crossoverYear} 
+                  stroke="var(--accent-warning)" 
+                  strokeDasharray="3 3" 
+                  label={{ 
+                    value: language === 'en' ? `Cross: Year ${crossoverYear}` : `Cruce: Año ${crossoverYear}`, 
+                    fill: 'var(--accent-warning)', 
+                    position: 'top', 
+                    fontSize: 11,
+                    fontWeight: 500
+                  }} 
+                />
+              )}
+
+              <Line 
+                type="monotone" 
+                name={tLocal('dash.chart.buy')}
+                dataKey="buyNetWorth" 
+                stroke="var(--accent-success)" 
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6 }}
+              />
+              <Line 
+                type="monotone" 
+                name={tLocal('dash.chart.rent')}
+                dataKey="rentNetWorth" 
+                stroke="var(--accent-primary)" 
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
+            <thead>
+              <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
+                <th style={{ padding: '1rem', textAlign: 'center' }}>{language === 'en' ? 'Year' : 'Año'}</th>
+                <th style={{ padding: '1rem' }}>{language === 'en' ? 'Net Worth (Buying)' : 'Patrimonio Comprando'}</th>
+                <th style={{ padding: '1rem' }}>{language === 'en' ? 'Net Worth (Renting)' : 'Patrimonio Alquilando'}</th>
+                <th style={{ padding: '1rem' }}>{language === 'en' ? 'Property Value' : 'Valor Propiedad'}</th>
+                <th style={{ padding: '1rem' }}>{language === 'en' ? 'Mortgage Debt' : 'Deuda Hipoteca'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((row) => (
+                <tr key={row.year} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                    {language === 'en' ? `Year ${row.year}` : `Año ${row.year}`}
+                  </td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: 'var(--accent-success)', fontWeight: 600 }}>{formatCurrency(row.buyNetWorth, language)}</td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: 'var(--accent-primary)', fontWeight: 600 }}>{formatCurrency(row.rentNetWorth, language)}</td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: 'var(--text-secondary)' }}>{formatCurrency(row.propertyValue, language)}</td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: '#EF4444' }}>{formatCurrency(row.remainingDebt, language)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <PrintAdvisorCTA />
     </div>

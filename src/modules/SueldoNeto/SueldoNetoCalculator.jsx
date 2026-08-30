@@ -9,7 +9,9 @@ import {
   Printer,
   Share2,
   Image,
-  BookOpen
+  BookOpen,
+  TableProperties,
+  Scale
 } from 'lucide-react';
 import { exportChartToPNG } from '../../utils/chartExporter';
 import {
@@ -69,6 +71,7 @@ const SueldoNetoCalculator = () => {
   const [platformFee, setPlatformFee] = useState(() => getNumericParam('fee', 2.5)); // 2.5% comisiones de cobro
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState('chart'); // 'chart' | 'table'
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -198,28 +201,65 @@ const SueldoNetoCalculator = () => {
     };
   }, [grossIncome, currency, exchangeRate, activity, iibbPercent, platformFee]);
 
+  const exportToCSV = () => {
+    const headers = ['Concepto', 'Monto Mensual (ARS)', 'Porcentaje (%)'];
+    const rows = [
+      ['Ingreso Bruto', calculations.grossIncomeArs, 100],
+      ...(calculations.scale.isExceeded ? [
+        ['Autónomos (Previsional)', calculations.autonomosAmount, (calculations.autonomosAmount / calculations.grossIncomeArs) * 100],
+        ['Impuesto a las Ganancias (Est.)', calculations.gananciasAmount, (calculations.gananciasAmount / calculations.grossIncomeArs) * 100]
+      ] : [
+        [`Monotributo Cat. ${calculations.scale.cat}`, calculations.nationalTaxAmount, (calculations.nationalTaxAmount / calculations.grossIncomeArs) * 100]
+      ]),
+      ['Ingresos Brutos (IIBB)', calculations.iibbAmount, (calculations.iibbAmount / calculations.grossIncomeArs) * 100],
+      ['Comisiones de Cobro / Plataforma', calculations.platformFeeAmount, (calculations.platformFeeAmount / calculations.grossIncomeArs) * 100],
+      ['Sueldo Neto de Bolsillo', calculations.netIncome, (calculations.netIncome / calculations.grossIncomeArs) * 100]
+    ];
+    
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.map(val => typeof val === 'number' ? val.toFixed(2) : `"${val}"`).join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `valia_sueldo_neto_freelancer.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <div className="container" style={{ padding: '2rem 0' }}>
-      <header className="calculator-header">
-        <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <Percent size={32} className="text-accent-primary" />
-          Sueldo Neto Freelancer
-        </h1>
-        <p>Calculá tus ingresos netos reales en mano bajo las escalas vigentes de Monotributo de Argentina.</p>
-        <button onClick={() => setIsHelpOpen(true)} className="help-btn">
+    <div className="container" style={{ paddingBottom: '4rem' }}>
+      <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+            <Scale size={16} />
+            Escalas Monotributo y Régimen General 2026
+          </div>
+          <h1 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
+            Calculadora de Sueldo Neto Freelancer
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', fontSize: '1rem', maxWidth: '650px' }}>
+            Calculá cuánto dinero te queda en mano en pesos (ARS) descontando el Monotributo 2026, comisiones de cobro e Ingresos Brutos.
+          </p>
+        </div>
+
+        <button 
+          onClick={() => setIsHelpOpen(true)}
+          className="btn btn-outline transition-spring"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
           <HelpCircle size={18} className="text-accent-primary" />
-          ¿Cómo se calculan las categorías del Monotributo?
+          ¿Cómo funciona el Monotributo?
         </button>
       </header>
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
-        {/* Input Panel */}
-        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '1.75rem' }}>
           <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-            Tus Ingresos y Parámetros
+            Parámetros de Facturación
           </h2>
 
-          {/* Quick Presets */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Perfiles Típicos:
@@ -232,12 +272,11 @@ const SueldoNetoCalculator = () => {
                 onClick={() => {
                   setGrossIncome(1500);
                   setCurrency('USD');
-                  setActivity('services');
-                  setIibbPercent(3.0);
                   setPlatformFee(2.5);
+                  setIibbPercent(3.0);
                 }}
               >
-                💻 Freelancer (USD 1.5k)
+                💻 Freelancer ($1.5k USD)
               </button>
               <button 
                 type="button" 
@@ -246,12 +285,11 @@ const SueldoNetoCalculator = () => {
                 onClick={() => {
                   setGrossIncome(3500);
                   setCurrency('USD');
-                  setActivity('services');
+                  setPlatformFee(2.0);
                   setIibbPercent(3.0);
-                  setPlatformFee(2.5);
                 }}
               >
-                🚀 Dev Senior (USD 3.5k)
+                🚀 Dev Senior ($3.5k USD)
               </button>
               <button 
                 type="button" 
@@ -260,90 +298,103 @@ const SueldoNetoCalculator = () => {
                 onClick={() => {
                   setGrossIncome(2500000);
                   setCurrency('ARS');
-                  setActivity('services');
+                  setPlatformFee(0);
                   setIibbPercent(3.5);
-                  setPlatformFee(1.0);
                 }}
               >
                 🇦🇷 Local ($2.5M ARS)
               </button>
             </div>
           </div>
-          
-          <div className="input-group">
-            <label className="input-label">Moneda de Cobro</label>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button 
+
+          <div>
+            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '0.5rem' }}>
+              Moneda de Cobro
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <button
                 type="button"
                 className={`btn transition-spring ${currency === 'ARS' ? 'btn-primary' : 'btn-outline'}`}
-                style={{ flex: 1, padding: '0.5rem', borderRadius: '50px' }}
-                onClick={() => setCurrency('ARS')}
+                onClick={() => {
+                  if (currency === 'USD') {
+                    setGrossIncome(prev => Math.round(prev * exchangeRate));
+                  }
+                  setCurrency('ARS');
+                }}
+                style={{ justifyContent: 'center' }}
               >
-                Pesos (ARS)
+                Pesos Argentinos (ARS)
               </button>
-              <button 
+              <button
                 type="button"
                 className={`btn transition-spring ${currency === 'USD' ? 'btn-primary' : 'btn-outline'}`}
-                style={{ flex: 1, padding: '0.5rem', borderRadius: '50px' }}
-                onClick={() => setCurrency('USD')}
+                onClick={() => {
+                  if (currency === 'ARS') {
+                    setGrossIncome(prev => Math.max(100, Math.round(prev / exchangeRate)));
+                  }
+                  setCurrency('USD');
+                }}
+                style={{ justifyContent: 'center' }}
               >
                 Dólares (USD)
               </button>
             </div>
           </div>
 
-          <FinancialInput 
-            label="Facturación / Ingreso Mensual Bruto" 
-            value={grossIncome} 
-            onChange={setGrossIncome} 
-            prefix={currency === 'USD' ? 'u$s' : '$'} 
-            step={currency === 'USD' ? 100 : 100000} 
+          <FinancialInput
+            label="Facturación Bruta Mensual"
+            value={grossIncome}
+            onChange={setGrossIncome}
+            prefix={currency === 'USD' ? 'u$s' : '$'}
+            step={currency === 'USD' ? 100 : 50000}
           />
 
           {currency === 'USD' && (
-            <FinancialInput 
-              label="Tipo de Cambio MEP/Financiero" 
-              value={exchangeRate} 
-              onChange={setExchangeRate} 
-              prefix="$" 
-              step={10} 
+            <FinancialInput
+              label="Tipo de Cambio MEP Estimado ($)"
+              value={exchangeRate}
+              onChange={setExchangeRate}
+              prefix="$"
+              step={10}
             />
           )}
 
-          <div className="input-group">
-            <label className="input-label">Tipo de Actividad</label>
-            <select 
-              className="input-field" 
-              value={activity} 
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+              Tipo de Actividad
+            </label>
+            <select
+              value={activity}
               onChange={e => setActivity(e.target.value)}
-              style={{ appearance: 'auto' }}
+              className="input-field"
+              style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.9rem' }}
             >
-              <option value="services">Prestación de Servicios</option>
-              <option value="goods">Venta de Cosas Muebles (Bienes)</option>
+              <option value="services">Prestación de Servicios (Freelancer / Dev / Consultor)</option>
+              <option value="goods">Venta de Cosas Muebles / Comercio</option>
             </select>
           </div>
 
-          <FinancialInput 
-            label="Alícuota Ingresos Brutos (IIBB)" 
-            value={iibbPercent} 
-            onChange={setIibbPercent} 
-            suffix="%" 
-            step={0.1} 
+          <FinancialInput
+            label="Alícuota Ingresos Brutos (IIBB)"
+            value={iibbPercent}
+            onChange={setIibbPercent}
+            suffix="%"
+            step={0.5}
           />
 
-          <FinancialInput 
-            label="Comisiones de Cobro / Plataforma" 
-            value={platformFee} 
-            onChange={setPlatformFee} 
-            suffix="%" 
-            step={0.5} 
+          <FinancialInput
+            label="Comisión de Plataforma / Cobro (Payoneer, Wise, etc.)"
+            value={platformFee}
+            onChange={setPlatformFee}
+            suffix="%"
+            step={0.5}
           />
 
           <div 
-            onClick={() => navigateToArticle('monotributo-escalas-2026-neto')}
+            onClick={() => navigateToArticle('guia-monotributo-freelancers')}
             className="taste-card no-print transition-spring"
             style={{ 
-              marginTop: '1.5rem', 
+              marginTop: '0.5rem', 
               cursor: 'pointer',
               background: 'var(--bg-tertiary)',
               display: 'flex',
@@ -355,13 +406,12 @@ const SueldoNetoCalculator = () => {
           >
             <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
             <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
-              <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>Guía Recomendada</span>
-              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Escalas Monotributo 2026: Cuotas y cálculo de neto</span>
+              <span style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '0.15rem', fontSize: '0.725rem', fontWeight: 600, textTransform: 'uppercase' }}>Guía Práctica</span>
+              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Monotributo Tech: Claves impositivas para exportar servicios</span>
             </div>
           </div>
         </div>
 
-        {/* Results Panel */}
         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animationDelay: '100ms' }}>
           <PrintReportHeader 
             title="Reporte de Sueldo Neto Freelancer y Monotributo"
@@ -375,7 +425,6 @@ const SueldoNetoCalculator = () => {
               { label: 'Comisión de Plataforma / Cobro', value: `${platformFee}%` }
             ]}
           />
-          {/* Main Net Income Card */}
           <div className="taste-card" style={{
             textAlign: 'center',
             borderTop: '4px solid #10b981',
@@ -392,14 +441,14 @@ const SueldoNetoCalculator = () => {
             </p>
           </div>
 
-          {/* Alert if exceeded Monotributo */}
           {calculations.scale.isExceeded && (
-            <div className="card" style={{
+            <div className="taste-card" style={{
               display: 'flex',
               gap: '1rem',
               alignItems: 'start',
               border: '1px solid var(--accent-warning)',
-              backgroundColor: 'rgba(245, 158, 11, 0.05)'
+              backgroundColor: 'rgba(245, 158, 11, 0.05)',
+              padding: '1.25rem'
             }}>
               <AlertTriangle className="text-accent-warning" size={24} style={{ flexShrink: 0 }} />
               <div>
@@ -414,15 +463,14 @@ const SueldoNetoCalculator = () => {
             </div>
           )}
 
-          {/* Tax breakdown details */}
-          <div className="card" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.05rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+          <div className="taste-card" style={{ padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.05rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', fontWeight: 700 }}>
               Desglose Mensual
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Ingreso Bruto (Pesos):</span>
-                <strong>{formatCurrency(calculations.grossIncomeArs)}</strong>
+                <strong className="tabular-nums">{formatCurrency(calculations.grossIncomeArs)}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Categoría Impositiva:</span>
@@ -434,89 +482,148 @@ const SueldoNetoCalculator = () => {
               {!calculations.scale.isExceeded ? (
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Cuota Unificada Monotributo:</span>
-                  <strong className="text-accent-danger">{formatCurrency(calculations.nationalTaxAmount)}</strong>
+                  <strong className="tabular-nums text-accent-danger">{formatCurrency(calculations.nationalTaxAmount)}</strong>
                 </div>
               ) : (
                 <>
                   <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '1rem' }}>
                     <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>• Autónomos (Previsional):</span>
-                    <strong className="text-accent-danger" style={{ fontSize: '0.85rem' }}>{formatCurrency(calculations.autonomosAmount)}</strong>
+                    <strong className="tabular-nums text-accent-danger" style={{ fontSize: '0.85rem' }}>{formatCurrency(calculations.autonomosAmount)}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '1rem' }}>
                     <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>• Impuesto Ganancias (Est.):</span>
-                    <strong className="text-accent-danger" style={{ fontSize: '0.85rem' }}>{formatCurrency(calculations.gananciasAmount)}</strong>
+                    <strong className="tabular-nums text-accent-danger" style={{ fontSize: '0.85rem' }}>{formatCurrency(calculations.gananciasAmount)}</strong>
                   </div>
                 </>
               )}
 
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Ingresos Brutos (Provincial):</span>
-                <strong className="text-accent-warning">{formatCurrency(calculations.iibbAmount)}</strong>
+                <strong className="tabular-nums text-accent-warning">{formatCurrency(calculations.iibbAmount)}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Comisiones Plataforma:</span>
-                <strong style={{ color: '#64748b' }}>{formatCurrency(calculations.platformFeeAmount)}</strong>
+                <strong className="tabular-nums" style={{ color: '#64748b' }}>{formatCurrency(calculations.platformFeeAmount)}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', fontSize: '1rem' }}>
                 <strong>Sueldo Neto:</strong>
-                <strong style={{ color: '#10b981' }}>{formatCurrency(calculations.netIncome)}</strong>
+                <strong className="tabular-nums" style={{ color: '#10b981' }}>{formatCurrency(calculations.netIncome)}</strong>
               </div>
             </div>
           </div>
 
-          {/* Action buttons */}
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-            <button 
-              onClick={handleShare}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Share2 size={16} />
-              {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
-            </button>
-            <button 
-              onClick={() => window.print()}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Printer size={16} />
-              Imprimir Reporte
-            </button>
-            <button 
-              onClick={() => exportChartToPNG('net-income-chart-container', 'valia_sueldo_neto_monotributo.png')}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Image size={16} />
-              Descargar Gráfico
-            </button>
+          <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+              <button
+                type="button"
+                className={`btn transition-spring ${activeTab === 'chart' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setActiveTab('chart')}
+              >
+                <TrendingUp size={14} />
+                Gráfico
+              </button>
+              <button
+                type="button"
+                className={`btn transition-spring ${activeTab === 'table' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setActiveTab('table')}
+              >
+                <TableProperties size={14} />
+                Tabla Detallada
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button 
+                onClick={handleShare}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+              >
+                <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                {shareCopied ? '¡Copiado!' : 'Compartir'}
+              </button>
+              
+              <button 
+                onClick={exportToCSV}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Download size={14} />
+                CSV
+              </button>
+
+              <button 
+                onClick={() => window.print()}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Printer size={14} />
+                PDF
+              </button>
+
+              <button 
+                onClick={() => exportChartToPNG('net-income-chart-container', 'valia_sueldo_neto_monotributo.png')}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Image size={14} />
+                PNG
+              </button>
+            </div>
           </div>
 
-          {/* Recharts PieChart */}
-          <div className="card chart-container" id="net-income-chart-container" style={{ height: '320px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.05rem', alignSelf: 'flex-start' }}>Distribución de tu Facturación</h3>
-            <ResponsiveContainer width="100%" height="80%">
-              <PieChart>
-                <Pie
-                  data={calculations.pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {calculations.pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+          {activeTab === 'chart' ? (
+            <div className="taste-card chart-container" id="net-income-chart-container" style={{ height: '340px', padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.05rem', alignSelf: 'flex-start', fontWeight: 700 }}>Distribución de tu Facturación</h3>
+              <ResponsiveContainer width="100%" height="80%">
+                <PieChart>
+                  <Pie
+                    data={calculations.pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {calculations.pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend verticalAlign="bottom" align="center" formatter={(value) => <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{value}</span>} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
+                <thead>
+                  <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
+                    <th style={{ padding: '0.75rem 1rem', textAlign: 'left' }}>Concepto Impositivo</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Monto (ARS)</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Impacto sobre Bruto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {calculations.pieData.map((item, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <td style={{ padding: '0.6rem 1rem', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: item.color, display: 'inline-block' }}></span>
+                        {item.name}
+                      </td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', fontWeight: 600 }}>{formatCurrency(item.value)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: 'var(--text-secondary)' }}>
+                        {((item.value / calculations.grossIncomeArs) * 100 || 0).toFixed(1)}%
+                      </td>
+                    </tr>
                   ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                <Legend verticalAlign="bottom" align="center" formatter={(value) => <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{value}</span>} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+                </tbody>
+              </table>
+            </div>
+          )}
 
-          {/* Advisor CTA */}
           <AdvisorCTA 
             title="¿Querés optimizar tus impuestos?"
             description="Contactá a nuestro asesor en Balanz para evaluar cómo canalizar tus excedentes de facturación de manera fiscalmente eficiente y armar tu portafolio."
@@ -526,8 +633,7 @@ const SueldoNetoCalculator = () => {
         </div>
       </div>
 
-      {/* Guía SEO y Contexto Financiero */}
-      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+      <section className="taste-card faq-section no-print animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
           Guía Impositiva: Monotributo vs. Responsable Inscripto en Argentina
         </h2>

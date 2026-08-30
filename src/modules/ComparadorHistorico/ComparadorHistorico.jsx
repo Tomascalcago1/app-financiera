@@ -17,7 +17,8 @@ import {
   TrendingUp, 
   TrendingDown, 
   TableProperties,
-  Image 
+  Image,
+  Share2 
 } from 'lucide-react';
 import { exportChartToPNG } from '../../utils/chartExporter';
 import FinancialInput from '../../components/FinancialInput';
@@ -32,6 +33,23 @@ const formatCurrency = (val) => {
     currency: 'ARS',
     maximumFractionDigits: 0
   }).format(val);
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="taste-card" style={{ padding: '0.85rem 1.1rem', border: '1px solid var(--border-color)', minWidth: '220px' }}>
+        <p style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}>{label}</p>
+        {payload.map((entry, index) => (
+          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', gap: '0.5rem' }}>
+            <span style={{ color: entry.color, fontSize: '0.825rem' }}>{entry.name}:</span>
+            <strong className="tabular-nums" style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>{formatCurrency(entry.value)}</strong>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
 };
 
 const historicalReturns = [
@@ -53,7 +71,19 @@ const ComparadorHistorico = () => {
   const [monthlyContribution, setMonthlyContribution] = useState(50000); // 50 mil pesos por mes
   const [period, setPeriod] = useState('full'); // '3yr' | '5yr' | 'full'
   const [showTable, setShowTable] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('tool', 'comparador-historico');
+    if (initialCapital) params.set('initial', initialCapital);
+    if (monthlyContribution) params.set('monthly', monthlyContribution);
+    if (period) params.set('period', period);
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    return navigator.clipboard.writeText(shareUrl);
+  };
 
   const simulation = useMemo(() => {
     let startYear = 2015;
@@ -168,27 +198,6 @@ const ComparadorHistorico = () => {
     document.body.removeChild(link);
   };
 
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="card" style={{ padding: '1rem', border: '1px solid var(--border-color)', minWidth: '220px' }}>
-          <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Año: {label}</p>
-          {payload.map((entry, idx) => (
-            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.25rem' }}>
-              <span style={{ fontSize: '0.85rem', color: entry.color }}>{entry.name}:</span>
-              <strong style={{ fontSize: '0.85rem' }}>{formatCurrency(entry.value)}</strong>
-            </div>
-          ))}
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginTop: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.25rem' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Aportado Neto:</span>
-            <strong style={{ fontSize: '0.8rem' }}>{formatCurrency(payload[0].payload.totalInvested)}</strong>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
     <div className="container" style={{ padding: '2rem 0' }}>
       <header className="calculator-header">
@@ -299,61 +308,91 @@ const ComparadorHistorico = () => {
             })}
           </div>
 
-          {/* Export Actions */}
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-            <button 
-              onClick={exportToCSV}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Download size={16} />
-              Exportar CSV (Excel)
-            </button>
-            <button 
-              onClick={() => window.print()}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Printer size={16} />
-              Imprimir Reporte
-            </button>
-            <button 
-              onClick={() => exportChartToPNG('history-chart-container', 'valia_comparacion_historica.png')}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Image size={16} />
-              Descargar Gráfico
-            </button>
+          {/* Toolbar: Views Switch and Export Actions */}
+          <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            {/* Tab Switcher */}
+            <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+              <button
+                type="button"
+                className={`btn transition-spring ${!showTable ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setShowTable(false)}
+              >
+                <TrendingUp size={14} />
+                Gráfico
+              </button>
+              <button
+                type="button"
+                className={`btn transition-spring ${showTable ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setShowTable(true)}
+              >
+                <TableProperties size={14} />
+                Tabla Detallada
+              </button>
+            </div>
+
+            {/* Export Buttons */}
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button 
+                onClick={handleShare}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+              >
+                <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                {shareCopied ? '¡Copiado!' : 'Compartir'}
+              </button>
+              
+              <button 
+                onClick={exportToCSV}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Download size={14} />
+                CSV
+              </button>
+
+              <button 
+                onClick={() => window.print()}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Printer size={14} />
+                PDF
+              </button>
+
+              <button 
+                onClick={() => exportChartToPNG('history-chart-container', 'valia_comparacion_historica.png')}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Image size={14} />
+                PNG
+              </button>
+            </div>
           </div>
 
-          {/* Chart */}
-          <div className="card chart-container" id="history-chart-container">
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Progresión Histórica del Capital</h3>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={simulation.chartData} margin={{ top: 15, right: 20, left: 10, bottom: 25 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                <XAxis dataKey="yearLabel" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
-                <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={(v) => `$${(v / 1e6).toFixed(1)}M`} />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
-                <Line type="monotone" dataKey="merval" name="Merval (Acciones)" stroke="var(--accent-primary)" strokeWidth={3} dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="dolar" name="Dólar Blue" stroke="#38bdf8" strokeWidth={2.5} dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="plazoFijo" name="Plazo Fijo" stroke="#e11d48" strokeWidth={2} dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="baseInflacion" name="Línea de Inflación (IPC)" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Table toggle */}
-          <button className="btn btn-outline" onClick={() => setShowTable(!showTable)} style={{ alignSelf: 'flex-start' }}>
-            <TableProperties size={18} />
-            {showTable ? 'Ocultar Tabla' : 'Ver Tabla de Totales por Año'}
-          </button>
-
-          {showTable && (
-            <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.9rem' }}>
+          {/* Chart or Table View */}
+          {!showTable ? (
+            <div className="taste-card chart-container" id="history-chart-container" style={{ padding: '1.5rem', height: '380px' }}>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 700 }}>Progresión Histórica del Capital</h3>
+              <ResponsiveContainer width="100%" height="80%">
+                <LineChart data={simulation.chartData} margin={{ top: 15, right: 20, left: 10, bottom: 25 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                  <XAxis dataKey="yearLabel" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
+                  <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={(v) => `$${(v / 1e6).toFixed(1)}M`} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+                  <Line type="monotone" dataKey="merval" name="Merval (Acciones)" stroke="var(--accent-primary)" strokeWidth={3} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="dolar" name="Dólar Blue" stroke="#38bdf8" strokeWidth={2.5} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="plazoFijo" name="Plazo Fijo" stroke="#e11d48" strokeWidth={2} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="baseInflacion" name="Línea de Inflación (IPC)" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
                 <thead>
                   <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
                     <th style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>Año</th>
@@ -368,11 +407,11 @@ const ComparadorHistorico = () => {
                   {simulation.yearlySummaries.map((row) => (
                     <tr key={row.year} style={{ borderBottom: '1px solid var(--border-color)' }}>
                       <td style={{ padding: '0.6rem 1rem', textAlign: 'center', fontWeight: '500' }}>{row.year}</td>
-                      <td style={{ padding: '0.6rem 1rem', color: 'var(--accent-primary)' }}>{formatCurrency(row.merval)}</td>
-                      <td style={{ padding: '0.6rem 1rem', color: '#38bdf8' }}>{formatCurrency(row.dolar)}</td>
-                      <td style={{ padding: '0.6rem 1rem', color: '#e11d48' }}>{formatCurrency(row.plazoFijo)}</td>
-                      <td style={{ padding: '0.6rem 1rem', color: '#10b981' }}>{formatCurrency(row.baseInflacion)}</td>
-                      <td style={{ padding: '0.6rem 1rem', fontWeight: 'bold' }}>{formatCurrency(row.totalInvested)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: 'var(--accent-primary)', fontWeight: 600 }}>{formatCurrency(row.merval)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: '#38bdf8' }}>{formatCurrency(row.dolar)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: '#e11d48' }}>{formatCurrency(row.plazoFijo)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: '#10b981' }}>{formatCurrency(row.baseInflacion)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', fontWeight: 'bold' }}>{formatCurrency(row.totalInvested)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -391,7 +430,7 @@ const ComparadorHistorico = () => {
       </div>
 
       {/* Guía SEO y Contexto Financiero */}
-      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+      <section className="taste-card faq-section no-print animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
           Guía de Rendimientos: ¿Dólar, Plazo Fijo o Merval para ganarle a la inflación?
         </h2>

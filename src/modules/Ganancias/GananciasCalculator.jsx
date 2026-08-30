@@ -10,7 +10,9 @@ import {
   Minus,
   Share2,
   Image,
-  BookOpen
+  BookOpen,
+  Download,
+  TableProperties
 } from 'lucide-react';
 import { exportChartToPNG } from '../../utils/chartExporter';
 import {
@@ -66,6 +68,7 @@ const GananciasCalculator = () => {
   const [monthlyDomesticService, setMonthlyDomesticService] = useState(() => getStringParam('domestic', ''));
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState('chart'); // 'chart' | 'table'
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -641,57 +644,139 @@ const GananciasCalculator = () => {
             </div>
           </div>
 
-          {/* Action buttons */}
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-            <button 
-              onClick={handleShare}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Share2 size={16} />
-              {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
-            </button>
-            <button 
-              onClick={() => window.print()}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Printer size={16} />
-              Imprimir Reporte
-            </button>
-            <button 
-              onClick={() => exportChartToPNG('ganancias-chart-container', 'valia_impuesto_a_las_ganancias.png')}
-              className="btn btn-outline" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <Image size={16} />
-              Descargar Gráfico
-            </button>
+          {/* Toolbar: Views Switch and Export Actions */}
+          <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            {/* Tab Switcher */}
+            <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+              <button
+                type="button"
+                className={`btn transition-spring ${activeTab === 'chart' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setActiveTab('chart')}
+              >
+                <TrendingUp size={14} />
+                Gráfico
+              </button>
+              <button
+                type="button"
+                className={`btn transition-spring ${activeTab === 'table' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                onClick={() => setActiveTab('table')}
+              >
+                <TableProperties size={14} />
+                Tabla Detallada
+              </button>
+            </div>
+
+            {/* Export Buttons */}
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button 
+                onClick={handleShare}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+              >
+                <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                {shareCopied ? '¡Copiado!' : 'Compartir'}
+              </button>
+              
+              <button 
+                onClick={() => {
+                  const headers = ['Concepto', 'Monto Mensual (ARS)', 'Porcentaje (%)'];
+                  const rows = [
+                    ['Sueldo Bruto', calculations.grossMonthlyArs, 100],
+                    ['Aportes Jubilación y OS (17%)', calculations.monthlyPrevisional, calculations.percentages.previsional],
+                    ['Impuesto a las Ganancias (Est.)', calculations.monthlyTax, calculations.percentages.tax],
+                    ['Gastos Deducibles Directos', (Number(monthlyPrepaga) || 0) + (Number(monthlyRent) || 0) + (Number(monthlyDomesticService) || 0), calculations.percentages.deductions],
+                    ['Sueldo Neto de Bolsillo', calculations.netPocketMonthly, calculations.percentages.pocket]
+                  ];
+                  const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.map(val => typeof val === 'number' ? val.toFixed(2) : `"${val}"`).join(','))].join('\n');
+                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.setAttribute("href", url);
+                  link.setAttribute("download", `valia_impuesto_ganancias.csv`);
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Download size={14} />
+                CSV
+              </button>
+
+              <button 
+                onClick={() => window.print()}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Printer size={14} />
+                PDF
+              </button>
+
+              <button 
+                onClick={() => exportChartToPNG('ganancias-chart-container', 'valia_impuesto_a_las_ganancias.png')}
+                className="btn btn-outline transition-spring" 
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              >
+                <Image size={14} />
+                PNG
+              </button>
+            </div>
           </div>
 
-          {/* Recharts PieChart */}
-          <div className="card chart-container animate-fade-in" id="ganancias-chart-container" style={{ height: '320px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.05rem', alignSelf: 'flex-start' }}>Distribución de tu Salario Bruto</h3>
-            <ResponsiveContainer width="100%" height="80%">
-              <PieChart>
-                <Pie
-                  data={calculations.pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {calculations.pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+          {/* Chart or Table View */}
+          {activeTab === 'chart' ? (
+            <div className="taste-card chart-container animate-fade-in" id="ganancias-chart-container" style={{ height: '340px', padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.05rem', alignSelf: 'flex-start', fontWeight: 700 }}>Distribución de tu Salario Bruto</h3>
+              <ResponsiveContainer width="100%" height="80%">
+                <PieChart>
+                  <Pie
+                    data={calculations.pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {calculations.pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend verticalAlign="bottom" align="center" formatter={(value) => <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{value}</span>} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
+                <thead>
+                  <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
+                    <th style={{ padding: '0.75rem 1rem', textAlign: 'left' }}>Concepto de Haberes</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Monto (ARS)</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Impacto sobre Bruto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {calculations.pieData.map((item, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <td style={{ padding: '0.6rem 1rem', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: item.color, display: 'inline-block' }}></span>
+                        {item.name}
+                      </td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', fontWeight: 600 }}>{formatCurrency(item.value)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: 'var(--text-secondary)' }}>
+                        {((item.value / calculations.grossMonthlyArs) * 100 || 0).toFixed(1)}%
+                      </td>
+                    </tr>
                   ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                <Legend verticalAlign="bottom" align="center" formatter={(value) => <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{value}</span>} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <AdvisorCTA 
             title="¿Querés optimizar tu retención de Ganancias?"
@@ -705,7 +790,7 @@ const GananciasCalculator = () => {
       </div>
 
       {/* Guía SEO y Contexto Financiero */}
-      <section className="card animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
+      <section className="taste-card faq-section no-print animate-fade-in" style={{ marginTop: '3rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', animationDelay: '200ms' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
           Guía de Impuesto a las Ganancias: Claves para entender la Retención de 4° Categoría
         </h2>

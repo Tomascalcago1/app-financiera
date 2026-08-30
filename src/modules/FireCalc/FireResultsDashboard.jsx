@@ -210,100 +210,122 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
         </div>
       </div>
 
-      {/* Export Actions */}
-      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-        {onShare && (
-          <button 
-            onClick={() => {
-              onShare()
-                .then(() => {
-                  setShareCopied(true);
-                  setTimeout(() => setShareCopied(false), 2000);
-                })
-                .catch(err => console.error('Error al compartir: ', err));
-            }}
-            className="btn btn-outline" 
-            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+      {/* Toolbar: Views Switch and Export Actions */}
+      <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        {/* Tab Switcher */}
+        <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+          <button
+            type="button"
+            className={`btn transition-spring ${!showTable ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setShowTable(false)}
           >
-            <Share2 size={16} />
-            {shareCopied ? tLocal('dash.btn.copied') : tLocal('dash.btn.share')}
+            <TrendingUp size={14} />
+            {language === 'en' ? 'Growth Chart' : 'Gráfico'}
           </button>
-        )}
-        <button 
-          onClick={exportToCSV}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Download size={16} />
-          {tLocal('dash.btn.csv')}
-        </button>
-        <button 
-          onClick={exportToPDF}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Printer size={16} />
-          {tLocal('dash.btn.pdf')}
-        </button>
-        <button 
-          onClick={() => exportChartToPNG('fire-chart-container', language === 'en' ? 'valia_retirement_simulator.png' : 'valia_simulador_retiro.png')}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Image size={16} />
-          {tLocal('dash.btn.image')}
-        </button>
+          <button
+            type="button"
+            className={`btn transition-spring ${showTable ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setShowTable(true)}
+          >
+            <TableProperties size={14} />
+            {language === 'en' ? 'Detailed Table' : 'Tabla Detallada'}
+          </button>
+        </div>
+
+        {/* Export Buttons */}
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {onShare && (
+            <button 
+              onClick={() => {
+                onShare()
+                  .then(() => {
+                    setShareCopied(true);
+                    setTimeout(() => setShareCopied(false), 2000);
+                  })
+                  .catch(err => console.error(err));
+              }}
+              className="btn btn-outline transition-spring" 
+              style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+            >
+              <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+              {shareCopied ? tLocal('dash.btn.copied') : tLocal('dash.btn.share')}
+            </button>
+          )}
+          
+          <button 
+            onClick={exportToCSV}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Download size={14} />
+            CSV
+          </button>
+
+          <button 
+            onClick={exportToPDF}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Printer size={14} />
+            PDF
+          </button>
+
+          <button 
+            onClick={() => exportChartToPNG('fire-chart-container', language === 'en' ? 'valia_retirement_simulator.png' : 'valia_simulador_retiro.png')}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Image size={14} />
+            PNG
+          </button>
+        </div>
       </div>
 
-      {/* Chart */}
-      <div className="card chart-container" id="fire-chart-container">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>{tLocal('dash.chart.title')}</h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 15, right: 20, left: 20, bottom: 25 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis dataKey="yearIndex" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
-            <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={formatCurrency} />
-            <Tooltip content={<CustomTooltip lang={language} />} />
-            <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
-            
-            {initialPortfolio && (
-              <ReferenceLine 
-                y={initialPortfolio} 
-                stroke="var(--text-secondary)" 
-                strokeDasharray="3 3" 
-                label={{ 
-                  value: tLocal('dash.chart.ref.initial').replace('{amount}', formatCurrency(initialPortfolio)), 
-                  fill: 'var(--text-secondary)', 
-                  position: 'right',
-                  fontSize: 10
-                }} 
-              />
-            )}
+      {/* Chart or Table View */}
+      {!showTable ? (
+        <div className="taste-card chart-container" id="fire-chart-container" style={{ padding: '1.5rem', height: '380px' }}>
+          <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 700 }}>{tLocal('dash.chart.title')}</h3>
+          <ResponsiveContainer width="100%" height="80%">
+            <AreaChart data={chartData} margin={{ top: 15, right: 20, left: 20, bottom: 25 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+              <XAxis dataKey="yearIndex" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
+              <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={formatCurrency} />
+              <Tooltip content={<CustomTooltip lang={language} />} />
+              <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+              
+              {initialPortfolio && (
+                <ReferenceLine 
+                  y={initialPortfolio} 
+                  stroke="var(--text-secondary)" 
+                  strokeDasharray="3 3" 
+                  label={{ 
+                    value: tLocal('dash.chart.ref.initial').replace('{amount}', formatCurrency(initialPortfolio)), 
+                    fill: 'var(--text-secondary)', 
+                    position: 'right',
+                    fontSize: 10
+                  }} 
+                />
+              )}
 
-            <Area type="monotone" dataKey="max" name={tLocal('dash.chart.max')} stroke="none" fill="var(--accent-success)" fillOpacity={0.08} />
-            <Area type="monotone" dataKey="p90" name={tLocal('dash.chart.p90')} stroke="var(--accent-success)" fill="var(--accent-success)" fillOpacity={0.12} strokeWidth={1} strokeDasharray="4 4" />
-            <Area type="monotone" dataKey="median" name={tLocal('dash.chart.median')} stroke="var(--accent-primary)" fill="url(#fireGrad)" strokeWidth={3} />
-            <Area type="monotone" dataKey="p10" name={tLocal('dash.chart.p10')} stroke="var(--accent-warning)" fill="none" strokeWidth={1} strokeDasharray="4 4" />
-            <Area type="monotone" dataKey="min" name={tLocal('dash.chart.min')} stroke="var(--accent-danger)" fill="none" strokeWidth={1} strokeDasharray="4 4" />
-            <defs>
-              <linearGradient id="fireGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Table Toggle */}
-      <button className="btn btn-outline" onClick={() => setShowTable(!showTable)} style={{ alignSelf: 'flex-start' }}>
-        <TableProperties size={18} />
-        {showTable ? tLocal('dash.btn.table.hide') : tLocal('dash.btn.table.show')}
-      </button>
-
-      {showTable && (
-        <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+              <Area type="monotone" dataKey="max" name={tLocal('dash.chart.max')} stroke="none" fill="var(--accent-success)" fillOpacity={0.08} />
+              <Area type="monotone" dataKey="p90" name={tLocal('dash.chart.p90')} stroke="var(--accent-success)" fill="var(--accent-success)" fillOpacity={0.12} strokeWidth={1} strokeDasharray="4 4" />
+              <Area type="monotone" dataKey="median" name={tLocal('dash.chart.median')} stroke="var(--accent-primary)" fill="url(#fireGrad)" strokeWidth={3} />
+              <Area type="monotone" dataKey="p10" name={tLocal('dash.chart.p10')} stroke="var(--accent-warning)" fill="none" strokeWidth={1} strokeDasharray="4 4" />
+              <Area type="monotone" dataKey="min" name={tLocal('dash.chart.min')} stroke="var(--accent-danger)" fill="none" strokeWidth={1} strokeDasharray="4 4" />
+              <defs>
+                <linearGradient id="fireGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
             <thead>
               <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
                 <th style={{ padding: '1rem', textAlign: 'center' }}>{tLocal('dash.table.start')}</th>
@@ -317,7 +339,7 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
                 <tr key={sim.startYear} style={{ borderBottom: '1px solid var(--border-color)' }}>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>{sim.startYear}</td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>{sim.endYear}</td>
-                  <td style={{ padding: '0.75rem 1rem', fontWeight: 'bold' }}>{formatCurrencyFull(sim.endingValue, language)}</td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', fontWeight: 'bold' }}>{formatCurrencyFull(sim.endingValue, language)}</td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: sim.survived ? 'var(--accent-success)' : 'var(--accent-danger)', fontWeight: 600 }}>
                     {sim.survived ? tLocal('dash.table.survived') : tLocal('dash.table.failed')}
                   </td>

@@ -71,7 +71,7 @@ const FAQSection = ({ faqs }) => {
 
   return (
     <div 
-      className="card"
+      className="taste-card faq-section no-print"
       style={{ 
         marginTop: '2.5rem',
         padding: '2rem',

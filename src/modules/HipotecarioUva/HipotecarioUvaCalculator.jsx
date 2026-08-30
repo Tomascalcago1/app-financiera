@@ -44,6 +44,29 @@ const formatUva = (val) => {
   }).format(val);
 };
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="taste-card" style={{ padding: '1rem', border: '1px solid var(--border-color)', minWidth: '220px' }}>
+        <p style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '0.9rem' }}>Año {label}</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.25rem' }}>
+          <span style={{ fontSize: '0.825rem', color: '#38bdf8' }}>Cuota Nominal (Con Inflación):</span>
+          <strong className="tabular-nums" style={{ fontSize: '0.85rem' }}>{formatCurrency(payload[0].value)}</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.25rem' }}>
+          <span style={{ fontSize: '0.825rem', color: '#10b981' }}>Cuota Real (En Pesos de Hoy):</span>
+          <strong className="tabular-nums" style={{ fontSize: '0.85rem' }}>{formatCurrency(payload[1].value)}</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginTop: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.25rem' }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Saldo Restante:</span>
+          <strong className="tabular-nums" style={{ fontSize: '0.8rem' }}>{formatCurrency(payload[0].payload.saldoPesosNominal)}</strong>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 const HipotecarioUvaCalculator = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const getNumericParam = (key, fallback) => {
@@ -194,29 +217,6 @@ const HipotecarioUvaCalculator = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="card" style={{ padding: '1rem', border: '1px solid var(--border-color)', minWidth: '220px' }}>
-          <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Año {label}</p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.25rem' }}>
-            <span style={{ fontSize: '0.85rem', color: '#38bdf8' }}>Cuota Nominal (Con Inflación):</span>
-            <strong style={{ fontSize: '0.85rem' }}>{formatCurrency(payload[0].value)}</strong>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.25rem' }}>
-            <span style={{ fontSize: '0.85rem', color: '#10b981' }}>Cuota Real (En Pesos de Hoy):</span>
-            <strong style={{ fontSize: '0.85rem' }}>{formatCurrency(payload[1].value)}</strong>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginTop: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.25rem' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Saldo Restante:</span>
-            <strong style={{ fontSize: '0.8rem' }}>{formatCurrency(payload[0].payload.saldoPesosNominal)}</strong>
-          </div>
-        </div>
-      );
-    }
-    return null;
   };
 
   return (
@@ -396,67 +396,89 @@ const HipotecarioUvaCalculator = () => {
                 </div>
               </div>
 
-              {/* Action buttons */}
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-                <button 
-                  onClick={handleShare}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Share2 size={16} />
-                  {shareCopied ? '¡Copiado!' : 'Compartir Simulación'}
-                </button>
-                <button 
-                  onClick={exportToCSV}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Download size={16} />
-                  Exportar CSV (Excel)
-                </button>
-                <button 
-                  onClick={() => window.print()}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Printer size={16} />
-                  Imprimir Reporte
-                </button>
-                <button 
-                  onClick={() => exportChartToPNG('uva-chart-container', 'valia_credito_hipotecario_uva.png')}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Image size={16} />
-                  Descargar Gráfico
-                </button>
+              {/* Toolbar: Views Switch and Export Actions */}
+              <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                {/* Tab Switcher */}
+                <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+                  <button
+                    type="button"
+                    className={`btn transition-spring ${!showTable ? 'btn-primary' : 'btn-outline'}`}
+                    style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                    onClick={() => setShowTable(false)}
+                  >
+                    <TrendingUp size={14} />
+                    Gráfico
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn transition-spring ${showTable ? 'btn-primary' : 'btn-outline'}`}
+                    style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                    onClick={() => setShowTable(true)}
+                  >
+                    <TableProperties size={14} />
+                    Tabla Detallada
+                  </button>
+                </div>
+
+                {/* Export Buttons */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <button 
+                    onClick={handleShare}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+                  >
+                    <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                    {shareCopied ? '¡Copiado!' : 'Compartir'}
+                  </button>
+                  
+                  <button 
+                    onClick={exportToCSV}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Download size={14} />
+                    CSV
+                  </button>
+
+                  <button 
+                    onClick={() => window.print()}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Printer size={14} />
+                    PDF
+                  </button>
+
+                  <button 
+                    onClick={() => exportChartToPNG('uva-chart-container', 'valia_credito_hipotecario_uva.png')}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Image size={14} />
+                    PNG
+                  </button>
+                </div>
               </div>
 
-              {/* Chart */}
-              <div className="card chart-container" id="uva-chart-container">
-                <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Evolución de la Cuota Mensual Proyectada</h3>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={simulation.yearlyData} margin={{ top: 15, right: 20, left: 10, bottom: 25 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                    <XAxis dataKey="year" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} label={{ value: 'Año', position: 'bottom', fill: 'var(--text-secondary)', offset: 10 }} />
-                    <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={(v) => `$${(v / 1e3).toFixed(0)}k`} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
-                    <Line type="monotone" dataKey="cuotaPromedioPesosNominal" name="Cuota Proyectada (Pesos Nominales)" stroke="#38bdf8" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                    <Line type="monotone" dataKey="cuotaPromedioPesosReal" name="Cuota Ajustada (Poder Compra Constante)" stroke="#10b981" strokeWidth={2} strokeDasharray="4 4" dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Table toggle */}
-              <button className="btn btn-outline" onClick={() => setShowTable(!showTable)} style={{ alignSelf: 'flex-start' }}>
-                <TableProperties size={18} />
-                {showTable ? 'Ocultar Tabla' : 'Ver Tabla de Amortización Anual'}
-              </button>
-
-              {showTable && (
-                <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.9rem' }}>
+              {/* Chart or Table View */}
+              {!showTable ? (
+                <div className="taste-card chart-container" id="uva-chart-container" style={{ padding: '1.5rem', height: '380px' }}>
+                  <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 700 }}>Evolución de la Cuota Mensual Proyectada</h3>
+                  <ResponsiveContainer width="100%" height="80%">
+                    <LineChart data={simulation.yearlyData} margin={{ top: 15, right: 20, left: 10, bottom: 25 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                      <XAxis dataKey="year" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} label={{ value: 'Año', position: 'bottom', fill: 'var(--text-secondary)', offset: 10 }} />
+                      <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} tickFormatter={(v) => `$${(v / 1e3).toFixed(0)}k`} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+                      <Line type="monotone" dataKey="cuotaPromedioPesosNominal" name="Cuota Proyectada (Pesos Nominales)" stroke="#38bdf8" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="cuotaPromedioPesosReal" name="Cuota Ajustada (Poder Compra Constante)" stroke="#10b981" strokeWidth={2} strokeDasharray="4 4" dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
                     <thead>
                       <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
                         <th style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>Año</th>
@@ -470,10 +492,10 @@ const HipotecarioUvaCalculator = () => {
                       {simulation.yearlyData.map((row) => (
                         <tr key={row.year} style={{ borderBottom: '1px solid var(--border-color)' }}>
                           <td style={{ padding: '0.6rem 1rem', textAlign: 'center', fontWeight: '500' }}>{row.year}</td>
-                          <td style={{ padding: '0.6rem 1rem', color: '#38bdf8' }}>{formatCurrency(row.cuotaPromedioPesosNominal)}</td>
-                          <td style={{ padding: '0.6rem 1rem', color: '#10b981' }}>{formatCurrency(row.cuotaPromedioPesosReal)}</td>
-                          <td style={{ padding: '0.6rem 1rem' }}>{formatUva(row.saldoUva)}</td>
-                          <td style={{ padding: '0.6rem 1rem', fontWeight: 'bold' }}>{formatCurrency(row.saldoPesosNominal)}</td>
+                          <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: '#38bdf8' }}>{formatCurrency(row.cuotaPromedioPesosNominal)}</td>
+                          <td className="tabular-nums" style={{ padding: '0.6rem 1rem', color: '#10b981' }}>{formatCurrency(row.cuotaPromedioPesosReal)}</td>
+                          <td className="tabular-nums" style={{ padding: '0.6rem 1rem' }}>{formatUva(row.saldoUva)}</td>
+                          <td className="tabular-nums" style={{ padding: '0.6rem 1rem', fontWeight: 'bold' }}>{formatCurrency(row.saldoPesosNominal)}</td>
                         </tr>
                       ))}
                     </tbody>

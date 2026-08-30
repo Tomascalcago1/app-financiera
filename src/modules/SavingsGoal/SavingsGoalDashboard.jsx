@@ -10,7 +10,7 @@ import {
   Legend,
   ReferenceLine
 } from 'recharts';
-import { TableProperties, Download, Printer, Image } from 'lucide-react';
+import { TableProperties, Download, Printer, Share2, Image, TrendingUp } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
@@ -32,12 +32,12 @@ const CustomTooltip = ({ active, payload, label, lang }) => {
   if (active && payload && payload.length) {
     const yearLabel = lang === 'en' ? `Year ${label}` : `Año ${label}`;
     return (
-      <div className="card" style={{ padding: '1rem', border: '1px solid var(--border-color)', minWidth: '200px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{yearLabel}</p>
+      <div className="taste-card" style={{ padding: '0.85rem 1.1rem', border: '1px solid var(--border-color)', minWidth: '200px' }}>
+        <p style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '0.9rem' }}>{yearLabel}</p>
         {payload.map((entry, index) => (
-          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-            <span style={{ color: entry.color, fontSize: '0.875rem' }}>{entry.name}:</span>
-            <strong style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>{formatCurrency(entry.value, lang)}</strong>
+          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', gap: '0.5rem' }}>
+            <span style={{ color: entry.color, fontSize: '0.825rem' }}>{entry.name}:</span>
+            <strong className="tabular-nums" style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>{formatCurrency(entry.value, lang)}</strong>
           </div>
         ))}
       </div>
@@ -47,7 +47,8 @@ const CustomTooltip = ({ active, payload, label, lang }) => {
 };
 
 const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs = {} }) => {
-  const [showTable, setShowTable] = useState(false);
+  const [activeTab, setActiveTab] = useState('chart'); // 'chart' | 'table'
+  const [shareCopied, setShareCopied] = useState(false);
   const { language } = useLanguage();
   const tLocal = (key) => {
     return translations[language][key] || translations['es'][key] || key;
@@ -55,13 +56,25 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs =
 
   if (!data || data.length === 0) {
     return (
-      <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-secondary)' }}>
+      <div className="taste-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-secondary)' }}>
         {tLocal('dash.placeholder')}
       </div>
     );
   }
 
   const finalYear = data[data.length - 1];
+
+  const handleShare = () => {
+    const params = new URLSearchParams();
+    params.set('tool', 'savings-goal');
+    if (inputs.goalAmount) params.set('goal', inputs.goalAmount);
+    if (inputs.initialInvestment) params.set('initial', inputs.initialInvestment);
+    if (inputs.years) params.set('years', inputs.years);
+    if (inputs.interestRate) params.set('rate', inputs.interestRate);
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    return navigator.clipboard.writeText(shareUrl);
+  };
 
   const exportToCSV = () => {
     const headers = language === 'en' 
@@ -149,121 +162,159 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs =
         </div>
       </div>
 
-      {/* Export Actions */}
-      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-        <button 
-          onClick={exportToCSV}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Download size={16} />
-          {tLocal('dash.btn.csv')}
-        </button>
-        <button 
-          onClick={exportToPDF}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Printer size={16} />
-          {tLocal('dash.btn.pdf')}
-        </button>
-        <button 
-          onClick={() => exportChartToPNG('savings-goal-chart-container', language === 'en' ? 'valia_savings_goal.png' : 'valia_objetivo_ahorro.png')}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Image size={16} />
-          {tLocal('dash.btn.image')}
-        </button>
-      </div>
-
-      {/* Chart */}
-      <div className="card chart-container" id="savings-goal-chart-container">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>{tLocal('dash.chart.title')}</h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={data}
-            margin={{ top: 15, right: 20, left: 20, bottom: 25 }}
+      {/* Toolbar: Views Switch and Export Actions */}
+      <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        {/* Tab Switcher */}
+        <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+          <button
+            type="button"
+            className={`btn transition-spring ${activeTab === 'chart' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setActiveTab('chart')}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis 
-              dataKey="year" 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)' }}
-            />
-            <YAxis 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)' }}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-            />
-            <Tooltip content={<CustomTooltip lang={language} />} />
-            <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
-            
-            <ReferenceLine 
-              y={goalAmount} 
-              stroke="var(--accent-success)" 
-              strokeDasharray="4 4" 
-              label={{ 
-                value: tLocal('dash.chart.ref_line').replace('{amount}', formatCurrency(goalAmount, language)), 
-                fill: 'var(--accent-success)', 
-                position: 'top',
-                fontSize: 11,
-                fontWeight: 500
-              }} 
-            />
+            <TrendingUp size={14} />
+            {language === 'en' ? 'Growth Chart' : 'Gráfico'}
+          </button>
+          <button
+            type="button"
+            className={`btn transition-spring ${activeTab === 'table' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setActiveTab('table')}
+          >
+            <TableProperties size={14} />
+            {language === 'en' ? 'Detailed Table' : 'Tabla Detallada'}
+          </button>
+        </div>
 
-            <Area 
-              type="monotone" 
-              dataKey="totalContributions" 
-              name={tLocal('dash.chart.contributions')} 
-              stroke="var(--text-secondary)" 
-              fill="var(--bg-tertiary)" 
-              strokeWidth={2}
-              stackId="0"
-            />
-            <Area 
-              type="monotone" 
-              dataKey="expected" 
-              name={tLocal('dash.chart.expected')} 
-              stroke="var(--accent-success)" 
-              fill="url(#colorExpectedGoal)" 
-              strokeWidth={3}
-            />
-            <defs>
-              <linearGradient id="colorExpectedGoal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--accent-success)" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="var(--accent-success)" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-          </AreaChart>
-        </ResponsiveContainer>
+        {/* Export Buttons */}
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <button 
+            onClick={() => {
+              handleShare()
+                .then(() => {
+                  setShareCopied(true);
+                  setTimeout(() => setShareCopied(false), 2000);
+                })
+                .catch(err => console.error(err));
+            }}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+          >
+            <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+            {shareCopied ? (language === 'en' ? 'Copied!' : '¡Copiado!') : (language === 'en' ? 'Share' : 'Compartir')}
+          </button>
+          
+          <button 
+            onClick={exportToCSV}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Download size={14} />
+            CSV
+          </button>
+
+          <button 
+            onClick={exportToPDF}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Printer size={14} />
+            PDF
+          </button>
+
+          <button 
+            onClick={() => exportChartToPNG('savings-goal-chart-container', language === 'en' ? 'valia_savings_goal.png' : 'valia_objetivo_ahorro.png')}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Image size={14} />
+            PNG
+          </button>
+        </div>
       </div>
 
-      <button 
-        className="btn btn-outline" 
-        onClick={() => setShowTable(!showTable)}
-        style={{ alignSelf: 'flex-start' }}
-      >
-        <TableProperties size={18} />
-        {showTable ? tLocal('dash.btn.table.hide') : tLocal('dash.btn.table.show')}
-      </button>
+      {/* Chart or Table View */}
+      {activeTab === 'chart' ? (
+        <div className="taste-card chart-container" id="savings-goal-chart-container" style={{ padding: '1.5rem', height: '380px' }}>
+          <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 700 }}>{tLocal('dash.chart.title')}</h3>
+          <ResponsiveContainer width="100%" height="80%">
+            <AreaChart
+              data={data}
+              margin={{ top: 15, right: 20, left: 20, bottom: 25 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+              <XAxis 
+                dataKey="year" 
+                stroke="var(--text-secondary)"
+                tick={{ fill: 'var(--text-secondary)' }}
+              />
+              <YAxis 
+                stroke="var(--text-secondary)"
+                tick={{ fill: 'var(--text-secondary)' }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
+              <Tooltip content={<CustomTooltip lang={language} />} />
+              <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+              
+              <ReferenceLine 
+                y={goalAmount} 
+                stroke="var(--accent-success)" 
+                strokeDasharray="4 4" 
+                label={{ 
+                  value: tLocal('dash.chart.ref_line').replace('{amount}', formatCurrency(goalAmount, language)), 
+                  fill: 'var(--accent-success)', 
+                  position: 'top',
+                  fontSize: 11,
+                  fontWeight: 500
+                }} 
+              />
 
-      {showTable && (
-        <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+              <Area 
+                type="monotone" 
+                dataKey="totalContributions" 
+                name={tLocal('dash.chart.contributions')} 
+                stroke="var(--text-secondary)" 
+                fill="var(--bg-tertiary)" 
+                strokeWidth={2}
+                stackId="0"
+              />
+              <Area 
+                type="monotone" 
+                dataKey="expected" 
+                name={tLocal('dash.chart.expected')} 
+                stroke="var(--accent-success)" 
+                fill="url(#colorExpectedGoal)" 
+                strokeWidth={3}
+              />
+              <defs>
+                <linearGradient id="colorExpectedGoal" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--accent-success)" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="var(--accent-success)" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
             <thead>
               <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                <th style={{ padding: '1rem', textAlign: 'center' }}>{tLocal('dash.table.year')}</th>
-                <th style={{ padding: '1rem' }}>{tLocal('dash.table.contributions')}</th>
-                <th style={{ padding: '1rem', color: 'var(--accent-success)' }}>{tLocal('dash.table.expected')}</th>
+                <th style={{ padding: '1rem', textAlign: 'center' }}>{language === 'en' ? 'Year' : 'Año'}</th>
+                <th style={{ padding: '1rem' }}>{language === 'en' ? 'Total Contributed' : 'Total Aportado'}</th>
+                <th style={{ padding: '1rem' }}>{language === 'en' ? 'Accumulated Balance' : 'Balance Acumulado'}</th>
+                <th style={{ padding: '1rem' }}>{language === 'en' ? 'Interest Earned' : 'Interés Generado'}</th>
               </tr>
             </thead>
             <tbody>
               {data.map((row) => (
                 <tr key={row.year} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 500 }}>{row.year}</td>
-                  <td style={{ padding: '0.75rem 1rem' }}>{formatCurrency(row.totalContributions, language)}</td>
-                  <td style={{ padding: '0.75rem 1rem', fontWeight: 'bold' }}>{formatCurrency(row.expected, language)}</td>
+                  <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                    {language === 'en' ? `Year ${row.year}` : `Año ${row.year}`}
+                  </td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: 'var(--text-secondary)' }}>{formatCurrency(row.totalContributions, language)}</td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: 'var(--accent-success)', fontWeight: 600 }}>{formatCurrency(row.expected, language)}</td>
+                  <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: 'var(--accent-primary)', fontWeight: 600 }}>{formatCurrency(row.expected - row.totalContributions, language)}</td>
                 </tr>
               ))}
             </tbody>

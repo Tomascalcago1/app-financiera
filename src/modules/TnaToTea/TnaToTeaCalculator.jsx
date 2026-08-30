@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { 
   Percent, HelpCircle, Download, Printer, Share2, 
-  TrendingUp, TableProperties, Coins, Scale, BookOpen
+  TrendingUp, TableProperties, Coins, Scale, BookOpen, Image
 } from 'lucide-react';
 import FinancialInput from '../../components/FinancialInput';
 import HelpModal from '../../components/HelpModal';
@@ -15,6 +15,7 @@ import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
 import { compoundingMap, runTnaToTeaCalculations } from './TnaToTeaEngine';
 import { useLanguage } from '../../utils/LanguageContext';
 import { translations } from './translations';
+import { exportChartToPNG } from '../../utils/chartExporter';
 
 const formatCurrency = (value) => {
   if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
@@ -192,7 +193,7 @@ const TnaToTeaCalculator = () => {
         {/* Input Panel */}
         <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
           <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-            {tLocal('card.title')}
+            {tLocal('card.params')}
           </h2>
 
           {/* Quick Presets */}
@@ -354,73 +355,101 @@ const TnaToTeaCalculator = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-0.5rem' }}>
-                <button 
-                  onClick={() => {
-                    handleShare()
-                      .then(() => {
-                        setShareCopied(true);
-                        setTimeout(() => setShareCopied(false), 2000);
-                      })
-                      .catch(err => console.error(err));
-                  }}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Share2 size={16} />
-                  {shareCopied ? tLocal('btn.copied') : tLocal('btn.share')}
-                </button>
-                
-                <button 
-                  onClick={exportToCSV}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Download size={16} />
-                  {tLocal('btn.csv')}
-                </button>
+              {/* Toolbar: Views Switch and Export Actions */}
+              <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                {/* Tab Switcher */}
+                <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+                  <button
+                    type="button"
+                    className={`btn transition-spring ${!showTable ? 'btn-primary' : 'btn-outline'}`}
+                    style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                    onClick={() => setShowTable(false)}
+                  >
+                    <TrendingUp size={14} />
+                    {language === 'en' ? 'Growth Chart' : 'Gráfico'}
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn transition-spring ${showTable ? 'btn-primary' : 'btn-outline'}`}
+                    style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+                    onClick={() => setShowTable(true)}
+                  >
+                    <TableProperties size={14} />
+                    {language === 'en' ? 'Detailed Table' : 'Tabla Detallada'}
+                  </button>
+                </div>
 
-                <button 
-                  onClick={() => window.print()}
-                  className="btn btn-outline" 
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                >
-                  <Printer size={16} />
-                  {tLocal('btn.pdf')}
-                </button>
+                {/* Export Buttons */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <button 
+                    onClick={() => {
+                      handleShare()
+                        .then(() => {
+                          setShareCopied(true);
+                          setTimeout(() => setShareCopied(false), 2000);
+                        })
+                        .catch(err => console.error(err));
+                    }}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderColor: shareCopied ? 'var(--accent-success)' : 'var(--border-color)' }}
+                  >
+                    <Share2 size={14} className={shareCopied ? "text-accent-success" : ""} />
+                    {shareCopied ? tLocal('btn.copied') : tLocal('btn.share')}
+                  </button>
+                  
+                  <button 
+                    onClick={exportToCSV}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Download size={14} />
+                    CSV
+                  </button>
+
+                  <button 
+                    onClick={() => window.print()}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Printer size={14} />
+                    PDF
+                  </button>
+
+                  <button 
+                    onClick={() => exportChartToPNG('tna-tea-chart', language === 'en' ? 'valia_apr_to_apy.png' : 'valia_tna_a_tea.png')}
+                    className="btn btn-outline transition-spring" 
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  >
+                    <Image size={14} />
+                    PNG
+                  </button>
+                </div>
               </div>
 
-              {/* Chart */}
-              <div className="card chart-container" id="tna-tea-chart" style={{ height: '360px' }}>
-                <h3 style={{ marginBottom: '0.25rem', fontSize: '1rem', fontWeight: 600 }}>
-                  {tLocal('chart.title')}
-                </h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                  {tLocal('chart.subtitle')}
-                </p>
-                <ResponsiveContainer width="100%" height="75%">
-                  <LineChart data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                    <XAxis dataKey="monthIndex" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                    <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickFormatter={formatCurrency} />
-                    <Tooltip content={<CustomTooltip language={language} />} />
-                    <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '15px', fontSize: 12 }} />
-                    
-                    <Line type="monotone" dataKey="compound" name={tLocal('chart.legend.compound')} stroke="#06B6D4" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                    <Line type="monotone" dataKey="simple" name={tLocal('chart.legend.simple')} stroke="#EF4444" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Table Toggle */}
-              <button className="btn btn-outline" onClick={() => setShowTable(!showTable)} style={{ alignSelf: 'flex-start' }}>
-                <TableProperties size={18} />
-                {showTable ? tLocal('btn.table.hide') : tLocal('btn.table.show')}
-              </button>
-
-              {showTable && (
-                <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
+              {/* Chart or Table View */}
+              {!showTable ? (
+                <div className="taste-card chart-container" id="tna-tea-chart" style={{ height: '380px', padding: '1.5rem' }}>
+                  <h3 style={{ marginBottom: '0.25rem', fontSize: '1rem', fontWeight: 700 }}>
+                    {tLocal('chart.title')}
+                  </h3>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                    {tLocal('chart.subtitle')}
+                  </p>
+                  <ResponsiveContainer width="100%" height="75%">
+                    <LineChart data={results.chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                      <XAxis dataKey="monthIndex" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
+                      <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickFormatter={formatCurrency} />
+                      <Tooltip content={<CustomTooltip language={language} />} />
+                      <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '15px', fontSize: 12 }} />
+                      
+                      <Line type="monotone" dataKey="compound" name={tLocal('chart.legend.compound')} stroke="#06B6D4" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="simple" name={tLocal('chart.legend.simple')} stroke="#EF4444" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="taste-card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.875rem' }}>
                     <thead>
                       <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
@@ -437,10 +466,10 @@ const TnaToTeaCalculator = () => {
                           <td style={{ padding: '0.75rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                             {language === 'en' ? `Month ${row.monthIndex}` : `Mes ${row.monthIndex}`}
                           </td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#EF4444' }}>${row.simpleBalance.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
-                          <td style={{ padding: '0.75rem 1rem', color: 'var(--text-secondary)' }}>${row.simpleInterestAcc.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#06B6D4', fontWeight: 600 }}>${row.compoundBalance.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
-                          <td style={{ padding: '0.75rem 1rem', color: '#06B6D4' }}>${row.compoundInterestAcc.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: '#EF4444' }}>${row.simpleBalance.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: 'var(--text-secondary)' }}>${row.simpleInterestAcc.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: '#06B6D4', fontWeight: 600 }}>${row.compoundBalance.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
+                          <td className="tabular-nums" style={{ padding: '0.75rem 1rem', color: '#06B6D4' }}>${row.compoundInterestAcc.toLocaleString(language === 'en' ? 'en-US' : 'es-AR')}</td>
                         </tr>
                       ))}
                     </tbody>
