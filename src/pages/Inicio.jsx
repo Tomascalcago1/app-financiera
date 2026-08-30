@@ -16,7 +16,6 @@ import {
   ChevronDown,
   HelpCircle,
   Landmark,
-  Sparkles,
   Zap,
   CheckCircle,
   Briefcase
