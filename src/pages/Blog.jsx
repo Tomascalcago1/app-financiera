@@ -1106,15 +1106,15 @@ const Blog = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
             
             {/* Search Input */}
-            <div style={{ position: 'relative', width: '100%', maxWidth: '500px', margin: '0 auto' }}>
-              <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
+            <div style={{ position: 'relative', width: '100%', maxWidth: '520px', margin: '0 auto' }}>
+              <Search size={18} style={{ position: 'absolute', left: '1.15rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
               <input 
                 type="text" 
-                className="input-field" 
+                className="input-field taste-card" 
                 placeholder={language === 'en' ? 'Search articles (e.g., Retirement, Compound interest)...' : 'Buscar artículos (ej: Retiro, Interés compuesto)...'}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                style={{ paddingLeft: '2.5rem', width: '100%', height: '44px', borderRadius: '50px' }}
+                style={{ paddingLeft: '2.75rem', width: '100%', height: '46px', borderRadius: '50px', fontSize: '0.9rem' }}
               />
             </div>
 
@@ -1124,10 +1124,10 @@ const Blog = () => {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`btn ${selectedCategory === category ? 'btn-primary' : 'btn-outline'}`}
+                  className={`btn transition-spring ${selectedCategory === category ? 'btn-primary' : 'btn-outline'}`}
                   style={{ 
-                    padding: '0.35rem 1rem', 
-                    fontSize: '0.85rem', 
+                    padding: '0.4rem 1.15rem', 
+                    fontSize: '0.825rem', 
                     borderRadius: '50px',
                     textTransform: 'capitalize'
                   }}
@@ -1141,7 +1141,7 @@ const Blog = () => {
 
           {/* Articles Grid */}
           {filteredArticles.length === 0 ? (
-            <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            <div className="taste-card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
               {language === 'en' ? 'No articles matched your search.' : 'No se encontraron artículos que coincidan con tu búsqueda.'}
             </div>
           ) : (
@@ -1149,29 +1149,28 @@ const Blog = () => {
               {filteredArticles.map(article => (
                 <div 
                   key={article.id} 
-                  className="card"
+                  className="taste-card transition-spring"
                   onClick={() => setSelectedArticleId(article.id)}
                   style={{ 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    gap: '1rem', 
+                    gap: '1.25rem', 
                     justifyContent: 'space-between',
                     cursor: 'pointer',
-                    transition: 'transform var(--transition-fast), border-color var(--transition-fast)'
+                    padding: '1.75rem'
                   }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.4)'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
                 >
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ 
-                        fontSize: '0.65rem', 
-                        fontWeight: 'bold', 
+                        fontSize: '0.675rem', 
+                        fontWeight: 700, 
                         color: 'var(--accent-primary)', 
                         textTransform: 'uppercase',
-                        backgroundColor: 'rgba(6, 182, 212, 0.08)',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '4px'
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        padding: '0.25rem 0.6rem',
+                        borderRadius: '999px',
+                        letterSpacing: '0.05em'
                       }}>
                         {getCategoryLabel(article.category, language)}
                       </span>
@@ -1181,15 +1180,15 @@ const Blog = () => {
                       </span>
                     </div>
 
-                    <h3 style={{ fontSize: '1.2rem', lineHeight: '1.3', fontWeight: 600 }}>{article.title}</h3>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                    <h3 style={{ fontSize: '1.25rem', lineHeight: '1.3', fontWeight: 700, letterSpacing: '-0.02em', margin: '0.25rem 0 0 0' }}>{article.title}</h3>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.55', margin: 0 }}>
                       {article.summary}
                     </p>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', marginTop: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: '0.85rem', marginTop: '0.5rem' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>{article.date}</span>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                       {language === 'en' ? 'Read article' : 'Leer artículo'}
                       <ChevronRight size={14} />
                     </span>

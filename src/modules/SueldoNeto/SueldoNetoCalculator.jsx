@@ -35,6 +35,21 @@ const formatCurrency = (val) => {
   }).format(val);
 };
 
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const { name, value, payload: data } = payload[0];
+    return (
+      <div className="card" style={{ padding: '0.75rem 1rem', border: '1px solid var(--border-color)' }}>
+        <p style={{ fontWeight: 600, marginBottom: '0.25rem', fontSize: '0.85rem' }}>{name}</p>
+        <strong style={{ fontSize: '0.85rem', color: data.color }}>
+          {formatCurrency(value)}
+        </strong>
+      </div>
+    );
+  }
+  return null;
+};
+
 const SueldoNetoCalculator = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const getNumericParam = (key, fallback) => {
@@ -183,22 +198,6 @@ const SueldoNetoCalculator = () => {
     };
   }, [grossIncome, currency, exchangeRate, activity, iibbPercent, platformFee]);
 
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const { name, value, payload: data } = payload[0];
-      const percentage = ((value / calculations.grossIncomeArs) * 100).toFixed(1);
-      return (
-        <div className="card" style={{ padding: '0.75rem 1rem', border: '1px solid var(--border-color)' }}>
-          <p style={{ fontWeight: 600, marginBottom: '0.25rem', fontSize: '0.85rem' }}>{name}</p>
-          <strong style={{ fontSize: '0.85rem', color: data.color }}>
-            {formatCurrency(value)} ({percentage}%)
-          </strong>
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
     <div className="container" style={{ padding: '2rem 0' }}>
       <header className="calculator-header">
@@ -214,38 +213,91 @@ const SueldoNetoCalculator = () => {
       </header>
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
-        {/* Input panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
-            Tus Ingresos Brutos
+        {/* Input Panel */}
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+            Tus Ingresos y Parámetros
           </h2>
 
-          <div className="input-group">
-            <label className="input-label">Moneda de Facturación</label>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {/* Quick Presets */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Perfiles Típicos:
+            </span>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
               <button 
-                className={`btn ${currency === 'ARS' ? 'btn-primary' : 'btn-outline'}`}
-                style={{ flex: 1, padding: '0.5rem', justifyContent: 'center' }}
-                onClick={() => setCurrency('ARS')}
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setGrossIncome(1500);
+                  setCurrency('USD');
+                  setActivity('services');
+                  setIibbPercent(3.0);
+                  setPlatformFee(2.5);
+                }}
               >
-                Pesos ($)
+                💻 Freelancer (USD 1.5k)
               </button>
               <button 
-                className={`btn ${currency === 'USD' ? 'btn-primary' : 'btn-outline'}`}
-                style={{ flex: 1, padding: '0.5rem', justifyContent: 'center' }}
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setGrossIncome(3500);
+                  setCurrency('USD');
+                  setActivity('services');
+                  setIibbPercent(3.0);
+                  setPlatformFee(2.5);
+                }}
+              >
+                🚀 Dev Senior (USD 3.5k)
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setGrossIncome(2500000);
+                  setCurrency('ARS');
+                  setActivity('services');
+                  setIibbPercent(3.5);
+                  setPlatformFee(1.0);
+                }}
+              >
+                🇦🇷 Local ($2.5M ARS)
+              </button>
+            </div>
+          </div>
+          
+          <div className="input-group">
+            <label className="input-label">Moneda de Cobro</label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button 
+                type="button"
+                className={`btn transition-spring ${currency === 'ARS' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ flex: 1, padding: '0.5rem', borderRadius: '50px' }}
+                onClick={() => setCurrency('ARS')}
+              >
+                Pesos (ARS)
+              </button>
+              <button 
+                type="button"
+                className={`btn transition-spring ${currency === 'USD' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ flex: 1, padding: '0.5rem', borderRadius: '50px' }}
                 onClick={() => setCurrency('USD')}
               >
-                Dólares (US$)
+                Dólares (USD)
               </button>
             </div>
           </div>
 
           <FinancialInput 
-            label={currency === 'USD' ? 'Facturación Mensual (USD)' : 'Facturación Mensual (ARS)'}
+            label="Facturación / Ingreso Mensual Bruto" 
             value={grossIncome} 
             onChange={setGrossIncome} 
             prefix={currency === 'USD' ? 'u$s' : '$'} 
-            step={currency === 'USD' ? 500 : 100000} 
+            step={currency === 'USD' ? 100 : 100000} 
           />
 
           {currency === 'USD' && (
@@ -289,7 +341,7 @@ const SueldoNetoCalculator = () => {
 
           <div 
             onClick={() => navigateToArticle('monotributo-escalas-2026-neto')}
-            className="card no-print"
+            className="taste-card no-print transition-spring"
             style={{ 
               marginTop: '1.5rem', 
               cursor: 'pointer',
@@ -298,9 +350,7 @@ const SueldoNetoCalculator = () => {
               alignItems: 'center',
               gap: '0.75rem',
               padding: '1rem',
-              borderRadius: 'var(--border-radius-md)',
-              border: 'none',
-              boxShadow: 'none'
+              borderRadius: 'var(--border-radius-md)'
             }}
           >
             <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
@@ -326,17 +376,19 @@ const SueldoNetoCalculator = () => {
             ]}
           />
           {/* Main Net Income Card */}
-          <div className="card" style={{
+          <div className="taste-card" style={{
             textAlign: 'center',
             borderTop: '4px solid #10b981',
-            background: 'linear-gradient(180deg, rgba(16, 185, 129, 0.05), transparent)'
+            background: 'linear-gradient(180deg, rgba(16, 185, 129, 0.08), var(--bg-secondary))',
+            padding: '2rem 1.5rem',
+            boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)'
           }}>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Ingreso Neto Mensual Estimado</p>
-            <p style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>
+            <p style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Ingreso Neto Mensual Estimado</p>
+            <p className="tabular-nums" style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-success)', lineHeight: 1.1, letterSpacing: '-0.03em', margin: '0.25rem 0' }}>
               {formatCurrency(calculations.netIncome)}
             </p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
-              Queda en mano el {((calculations.netIncome / calculations.grossIncomeArs) * 100 || 0).toFixed(1)}% de tu facturación.
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.65rem', marginBottom: 0 }}>
+              Queda en mano el <strong className="tabular-nums">{((calculations.netIncome / calculations.grossIncomeArs) * 100 || 0).toFixed(1)}%</strong> de tu facturación.
             </p>
           </div>
 

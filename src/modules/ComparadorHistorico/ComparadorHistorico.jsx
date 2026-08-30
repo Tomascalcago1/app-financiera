@@ -205,8 +205,8 @@ const ComparadorHistorico = () => {
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
         {/* Inputs Panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Tu Simulación Histórica
           </h2>
 
@@ -254,25 +254,27 @@ const ComparadorHistorico = () => {
             ]}
           />
           {/* Winner banner */}
-          <div className="card" style={{
+          <div className="taste-card" style={{
             textAlign: 'center',
             borderTop: `4px solid ${simulation.finalValues[0].color}`,
-            background: `linear-gradient(180deg, ${simulation.finalValues[0].color}11, transparent)`
+            background: `linear-gradient(180deg, ${simulation.finalValues[0].color}15, var(--bg-secondary))`,
+            padding: '2rem 1.5rem',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
           }}>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Mayor Retorno Histórico</p>
-            <p style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+            <p style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Mayor Retorno Histórico</p>
+            <p style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
               {simulation.finalValues[0].name}
             </p>
-            <p style={{ fontSize: '1.5rem', fontWeight: 700, color: simulation.finalValues[0].color, marginTop: '0.25rem' }}>
+            <p className="tabular-nums" style={{ fontSize: '2rem', fontWeight: 800, color: simulation.finalValues[0].color, margin: '0.25rem 0 0 0' }}>
               {formatCurrency(simulation.finalValues[0].val)}
             </p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
-              Aportado Neto: {formatCurrency(simulation.totalInvested)}
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.65rem', marginBottom: 0 }}>
+              Aportado Neto: <strong className="tabular-nums">{formatCurrency(simulation.totalInvested)}</strong>
             </p>
           </div>
 
           {/* Ranking Stats */}
-          <div className="stats-grid" style={{ gap: '1rem' }}>
+          <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1.25rem' }}>
             {simulation.finalValues.map((asset, index) => {
               const beatsInflation = asset.val >= simulation.finalInflation;
               const returnColor = asset.name === 'Ajuste Inflación (IPC)' 
@@ -280,16 +282,16 @@ const ComparadorHistorico = () => {
                 : beatsInflation ? 'var(--accent-success)' : 'var(--accent-danger)';
 
               return (
-                <div key={asset.name} className="card" style={{ textAlign: 'center', padding: '1rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                <div key={asset.name} className="taste-card" style={{ textAlign: 'center', padding: '1.25rem 0.75rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '0.25rem' }}>
                     #{index + 1} {asset.name}
                   </span>
-                  <p style={{ fontSize: '1.15rem', fontWeight: 700, color: returnColor }}>
+                  <p className="tabular-nums" style={{ fontSize: '1.25rem', fontWeight: 800, color: returnColor, margin: '0.25rem 0' }}>
                     {formatCurrency(asset.val)}
                   </p>
                   {asset.name !== 'Ajuste Inflación (IPC)' && (
-                    <span style={{ fontSize: '0.75rem', color: returnColor }}>
-                      {beatsInflation ? '✓ Superó la inflación' : '✗ Perdió contra inflación'}
+                    <span style={{ fontSize: '0.7rem', color: returnColor, fontWeight: 600 }}>
+                      {beatsInflation ? '✓ Superó inflación' : '✗ Perdió vs inflación'}
                     </span>
                   )}
                 </div>

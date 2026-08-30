@@ -244,10 +244,67 @@ const FireCalculator = () => {
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
         {/* Input Panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             {tLocal('card.title')}
           </h2>
+
+          {/* Quick Presets */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              {tLocal('preset.title')}
+            </span>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setPortfolioValue('500000');
+                  setRetirementLength('30');
+                  setWithdrawalStrategy('constant-dollar');
+                  setWithdrawalAmount('20000');
+                  setStockAlloc(80);
+                  setBondAlloc(20);
+                  setCashAlloc(0);
+                }}
+              >
+                {tLocal('preset.classic')}
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setPortfolioValue('250000');
+                  setRetirementLength('35');
+                  setWithdrawalStrategy('constant-dollar');
+                  setWithdrawalAmount('10000');
+                  setStockAlloc(90);
+                  setBondAlloc(10);
+                  setCashAlloc(0);
+                }}
+              >
+                {tLocal('preset.lean')}
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setPortfolioValue('1200000');
+                  setRetirementLength('30');
+                  setWithdrawalStrategy('constant-dollar');
+                  setWithdrawalAmount('42000');
+                  setStockAlloc(75);
+                  setBondAlloc(25);
+                  setCashAlloc(0);
+                }}
+              >
+                {tLocal('preset.fat')}
+              </button>
+            </div>
+          </div>
 
           <FinancialInput label={tLocal('input.portfolio')} value={portfolioValue} onChange={setPortfolioValue} prefix="$" step={10000} />
           <FinancialInput label={tLocal('input.length')} value={retirementLength} onChange={setRetirementLength} suffix={tLocal('input.length.suffix')} min={1} max={80} />

@@ -149,25 +149,27 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
       />
 
       {/* Success Rate */}
-      <div className="card" style={{
+      <div className="taste-card" style={{
         textAlign: 'center',
         borderTop: `4px solid ${rateColor}`,
-        background: `linear-gradient(180deg, ${rateColor}11, transparent)`
+        background: `linear-gradient(180deg, ${rateColor}15, var(--bg-secondary))`,
+        padding: '2rem 1.5rem',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
       }}>
-        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>{tLocal('dash.success.title')}</p>
-        <p style={{ fontSize: '4rem', fontWeight: 700, color: rateColor, lineHeight: 1 }}>{successRate}%</p>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+        <p style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>{tLocal('dash.success.title')}</p>
+        <p className="tabular-nums" style={{ fontSize: '4.25rem', fontWeight: 800, color: rateColor, lineHeight: 1, letterSpacing: '-0.03em' }}>{successRate}%</p>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.75rem', marginBottom: 0 }}>
           {tLocal('dash.success.desc').replace('{survived}', survivedCount).replace('{total}', totalSimulations)}
         </p>
       </div>
 
       {/* Resumen de Flujos Extraordinarios */}
       {inputs.extraFlows && inputs.extraFlows.length > 0 && (
-        <div className="card animate-fade-in" style={{ padding: '1rem', borderLeft: '4px solid var(--accent-primary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div className="taste-card animate-fade-in" style={{ padding: '1.25rem', borderLeft: '4px solid var(--accent-primary)', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
           <h4 style={{ fontSize: '0.95rem', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
             {tLocal('dash.flows.configured')}
           </h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {inputs.extraFlows.map((flow, idx) => {
               const typeColor = flow.type === 'income' ? 'var(--accent-success)' : 'var(--accent-danger)';
               const timingLabel = flow.recurring 
@@ -180,7 +182,7 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
                     • <strong style={{ color: 'var(--text-primary)' }}>{flow.name || 'Sin nombre'}</strong> ({timingLabel}):
                   </span>
                   <span>
-                    <strong style={{ color: typeColor }}>{flow.type === 'income' ? '+' : '-'}{formatCurrencyFull(Number(flow.amount) || 0, language)}</strong>{inflationLabel}
+                    <strong className="tabular-nums" style={{ color: typeColor }}>{flow.type === 'income' ? '+' : '-'}{formatCurrencyFull(Number(flow.amount) || 0, language)}</strong>{inflationLabel}
                   </span>
                 </div>
               );
@@ -190,21 +192,21 @@ const FireResultsDashboard = ({ results, onShare, inputs = {} }) => {
       )}
 
       {/* Stats Cards */}
-      <div className="stats-grid">
-        <div className="card" style={{ textAlign: 'center' }}>
-          <TrendingDown size={20} style={{ color: 'var(--accent-danger)', marginBottom: '0.5rem' }} />
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{tLocal('dash.stats.worst')}</p>
-          <p style={{ fontSize: '1.25rem', fontWeight: 700 }}>{formatCurrencyFull(statistics.worst, language)}</p>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.25rem' }}>
+        <div className="taste-card" style={{ textAlign: 'center', padding: '1.5rem 1rem' }}>
+          <TrendingDown size={22} style={{ color: 'var(--accent-danger)', marginBottom: '0.5rem' }} />
+          <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{tLocal('dash.stats.worst')}</p>
+          <p className="tabular-nums" style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0.25rem 0 0 0', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>{formatCurrencyFull(statistics.worst, language)}</p>
         </div>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <BarChart3 size={20} style={{ color: 'var(--accent-primary)', marginBottom: '0.5rem' }} />
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{tLocal('dash.stats.median')}</p>
-          <p style={{ fontSize: '1.25rem', fontWeight: 700 }}>{formatCurrencyFull(statistics.median, language)}</p>
+        <div className="taste-card" style={{ textAlign: 'center', padding: '1.5rem 1rem' }}>
+          <BarChart3 size={22} style={{ color: 'var(--accent-primary)', marginBottom: '0.5rem' }} />
+          <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{tLocal('dash.stats.median')}</p>
+          <p className="tabular-nums" style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0.25rem 0 0 0', color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>{formatCurrencyFull(statistics.median, language)}</p>
         </div>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <TrendingUp size={20} style={{ color: 'var(--accent-success)', marginBottom: '0.5rem' }} />
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{tLocal('dash.stats.best')}</p>
-          <p style={{ fontSize: '1.25rem', fontWeight: 700 }}>{formatCurrencyFull(statistics.best, language)}</p>
+        <div className="taste-card" style={{ textAlign: 'center', padding: '1.5rem 1rem' }}>
+          <TrendingUp size={22} style={{ color: 'var(--accent-success)', marginBottom: '0.5rem' }} />
+          <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{tLocal('dash.stats.best')}</p>
+          <p className="tabular-nums" style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0.25rem 0 0 0', color: 'var(--accent-success)', letterSpacing: '-0.02em' }}>{formatCurrencyFull(statistics.best, language)}</p>
         </div>
       </div>
 

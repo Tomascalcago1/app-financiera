@@ -112,36 +112,38 @@ const SavingsGoalDashboard = ({ data, requiredContribution, goalAmount, inputs =
       />
       
       {/* Summary Banner */}
-      <div className="card" style={{
-        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05))',
-        borderLeft: '4px solid var(--accent-success)'
+      <div className="taste-card" style={{
+        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), var(--bg-secondary))',
+        borderLeft: '4px solid var(--accent-success)',
+        padding: '1.75rem',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
       }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
           {tLocal('dash.result.title')}
         </h2>
         {requiredContribution > 0 ? (
-          <p style={{ fontSize: '1.125rem' }}>
+          <p className="tabular-nums" style={{ fontSize: '1.125rem', color: 'var(--text-primary)' }}>
             {tLocal('dash.result.msg')
               .replace('{goal}', formatCurrency(goalAmount, language))
               .replace('{years}', finalYear.year)
               .replace('{contribution}', formatCurrency(requiredContribution, language))}
           </p>
         ) : (
-          <p style={{ fontSize: '1.125rem', color: 'var(--accent-success)' }}>
+          <p className="tabular-nums" style={{ fontSize: '1.125rem', color: 'var(--accent-success)', fontWeight: 600 }}>
             {tLocal('dash.result.msg.zero')}
           </p>
         )}
 
-        <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-primary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
-          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>{tLocal('dash.breakdown.title')}</h4>
+        <div className="taste-card" style={{ marginTop: '1rem', padding: '1rem 1.25rem', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
+          <h4 style={{ fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{tLocal('dash.breakdown.title')}</h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.875rem' }}>
             <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
               <span>{tLocal('dash.breakdown.pocket')}</span>
-              <strong>{formatCurrency(finalYear.totalContributions, language)}</strong>
+              <strong className="tabular-nums">{formatCurrency(finalYear.totalContributions, language)}</strong>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--accent-success)' }}>{tLocal('dash.breakdown.interest')}</span>
-              <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(finalYear.expected - finalYear.totalContributions, language)}</strong>
+              <strong className="tabular-nums" style={{ color: 'var(--accent-success)' }}>{formatCurrency(finalYear.expected - finalYear.totalContributions, language)}</strong>
             </li>
           </ul>
         </div>

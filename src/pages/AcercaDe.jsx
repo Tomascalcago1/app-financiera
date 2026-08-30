@@ -27,25 +27,25 @@ const AcercaDe = () => {
         </header>
 
         {/* What is Valia */}
-        <section className="card" style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <section className="taste-card" style={{ marginBottom: '2rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             <Target size={20} className="text-accent-primary" />
             What is Valia?
           </h2>
-          <p style={{ marginBottom: '1rem' }}>
+          <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
             <strong>Valia</strong> is a financial tools web platform designed to help people 
             plan their economic future. Our interactive calculators allow you to simulate 
             complex scenarios simply and visually.
           </p>
-          <p>
+          <p style={{ color: 'var(--text-secondary)' }}>
             From comparing whether it is better to rent or buy a property, to simulating retirement plans 
             with real historical market data, Valia puts at your fingertips the same tools used by financial professionals.
           </p>
         </section>
 
         {/* Tools */}
-        <section className="card" style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Our Tools</h2>
+        <section className="taste-card" style={{ marginBottom: '2rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Our Tools</h2>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {[
               { name: 'Buy vs. Rent', desc: 'Compare financially both scenarios considering mortgage, investments, inflation, and property appreciation.' },
@@ -61,15 +61,15 @@ const AcercaDe = () => {
                 borderLeft: '3px solid var(--accent-primary)'
               }}>
                 <strong style={{ color: 'var(--text-primary)' }}>{tool.name}</strong>
-                <p style={{ fontSize: '0.875rem', marginTop: '0.25rem', marginBottom: 0 }}>{tool.desc}</p>
+                <p style={{ fontSize: '0.875rem', marginTop: '0.25rem', marginBottom: 0, color: 'var(--text-secondary)' }}>{tool.desc}</p>
               </li>
             ))}
           </ul>
         </section>
 
         {/* Commitments of Trust */}
-        <section className="card" style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
+        <section className="taste-card" style={{ marginBottom: '2rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Our Commitments of Trust
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
@@ -298,17 +298,17 @@ const AcercaDe = () => {
       </header>
 
       {/* Qué es Valia */}
-      <section className="card" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <section className="taste-card" style={{ marginBottom: '2rem', padding: '1.75rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
           <Target size={20} className="text-accent-primary" />
           ¿Qué es Valia?
         </h2>
-        <p style={{ marginBottom: '1rem' }}>
+        <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
           <strong>Valia</strong> es una plataforma web de herramientas financieras diseñada para ayudar a personas 
           en Argentina y toda Latinoamérica a planificar su futuro económico. Nuestras calculadoras interactivas 
           te permiten simular escenarios complejos de manera visual y sencilla.
         </p>
-        <p>
+        <p style={{ color: 'var(--text-secondary)' }}>
           Desde comparar si conviene alquilar o comprar una propiedad, hasta simular planes de retiro con 
           datos históricos reales del mercado, Valia pone a tu alcance las mismas herramientas que usan 
           los profesionales de las finanzas.
@@ -316,8 +316,8 @@ const AcercaDe = () => {
       </section>
 
       {/* Herramientas */}
-      <section className="card" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Nuestras Herramientas</h2>
+      <section className="taste-card" style={{ marginBottom: '2rem', padding: '1.75rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Nuestras Herramientas</h2>
         <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {[
             { name: '¿Comprar o Alquilar?', desc: 'Compara financieramente ambos escenarios considerando hipoteca, inversiones, inflación y apreciación inmobiliaria.' },
@@ -333,15 +333,15 @@ const AcercaDe = () => {
               borderLeft: '3px solid var(--accent-primary)'
             }}>
               <strong style={{ color: 'var(--text-primary)' }}>{tool.name}</strong>
-              <p style={{ fontSize: '0.875rem', marginTop: '0.25rem', marginBottom: 0 }}>{tool.desc}</p>
+              <p style={{ fontSize: '0.875rem', marginTop: '0.25rem', marginBottom: 0, color: 'var(--text-secondary)' }}>{tool.desc}</p>
             </li>
           ))}
         </ul>
       </section>
 
       {/* Compromisos de Confianza */}
-      <section className="card" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
+      <section className="taste-card" style={{ marginBottom: '2rem', padding: '1.75rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--text-primary)', fontWeight: 700, letterSpacing: '-0.02em' }}>
           Nuestros Compromisos de Confianza
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>

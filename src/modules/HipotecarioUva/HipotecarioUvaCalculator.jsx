@@ -235,10 +235,61 @@ const HipotecarioUvaCalculator = () => {
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
         {/* Input panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Datos del Préstamo
           </h2>
+
+          {/* Quick Presets */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Montos y Plazos Típicos:
+            </span>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setLoanAmount(30000000);
+                  setYears(20);
+                  setInterestRate(5.5);
+                  setInflationRate(35);
+                  setAmortizationSystem('french');
+                }}
+              >
+                🏠 $30M a 20a
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setLoanAmount(60000000);
+                  setYears(20);
+                  setInterestRate(6.0);
+                  setInflationRate(35);
+                  setAmortizationSystem('french');
+                }}
+              >
+                🏙️ $60M a 20a
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setLoanAmount(100000000);
+                  setYears(30);
+                  setInterestRate(5.0);
+                  setInflationRate(30);
+                  setAmortizationSystem('french');
+                }}
+              >
+                🏡 $100M a 30a
+              </button>
+            </div>
+          </div>
           
           <FinancialInput 
             label="Monto Solicitado" 
@@ -290,7 +341,7 @@ const HipotecarioUvaCalculator = () => {
         {/* Results Panel */}
         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animationDelay: '100ms' }}>
           {!simulation ? (
-            <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', color: 'var(--text-secondary)' }}>
+            <div className="taste-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', color: 'var(--text-secondary)' }}>
               Completá los campos del simulador para calcular el préstamo.
             </div>
           ) : (
@@ -307,17 +358,19 @@ const HipotecarioUvaCalculator = () => {
                 ]}
               />
               {/* Summary Cards */}
-              <div className="card" style={{
+              <div className="taste-card" style={{
                 textAlign: 'center',
                 borderTop: '4px solid var(--accent-primary)',
-                background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.05), transparent)'
+                background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), var(--bg-secondary))',
+                padding: '2rem 1.5rem',
+                boxShadow: '0 8px 24px rgba(6, 182, 212, 0.08)'
               }}>
-                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Primera Cuota Proyectada</p>
-                <p style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>
+                <p style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Primera Cuota Proyectada</p>
+                <p className="tabular-nums" style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1.1, letterSpacing: '-0.03em', margin: '0.25rem 0' }}>
                   {formatCurrency(simulation.initialMonthlyPayment)}
                 </p>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
-                  Equivalente a {formatUva(simulation.principalUva / (years * 12))} UVAs iniciales.
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.65rem', marginBottom: 0 }}>
+                  Equivalente a <strong className="tabular-nums">{formatUva(simulation.principalUva / (years * 12))}</strong> UVAs iniciales.
                 </p>
               </div>
 

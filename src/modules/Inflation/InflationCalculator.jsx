@@ -114,11 +114,60 @@ const InflationCalculator = () => {
       </header>
 
       {/* Inputs - Horizontal Layout */}
-      <div className="card animate-fade-in no-print" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div className="taste-card animate-fade-in no-print" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
-          <h2 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Tus Parámetros</h2>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Tus Parámetros</h2>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Moneda: USD (Dólares)</span>
         </div>
+
+        {/* Quick Presets */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Hitos Históricos (USD):
+          </span>
+          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+            <button 
+              type="button" 
+              className="btn btn-outline transition-spring"
+              style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+              onClick={() => {
+                setAmount(100);
+                setFromYear(1980);
+                setToYear(2025);
+                resetRate();
+              }}
+            >
+              📉 1980 a Hoy ($100)
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-outline transition-spring"
+              style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+              onClick={() => {
+                setAmount(100);
+                setFromYear(2000);
+                setToYear(2025);
+                resetRate();
+              }}
+            >
+              🪙 2000 a Hoy ($100)
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-outline transition-spring"
+              style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+              onClick={() => {
+                setAmount(100);
+                setFromYear(1929);
+                setToYear(2025);
+                resetRate();
+              }}
+            >
+              🏛️ Crack 1929 a Hoy
+            </button>
+          </div>
+        </div>
+
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', alignItems: 'end' }}>
           
           <div className="input-group" style={{ marginBottom: 0 }}>

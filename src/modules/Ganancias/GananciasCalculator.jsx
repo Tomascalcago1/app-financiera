@@ -276,41 +276,94 @@ const GananciasCalculator = () => {
 
       {/* Grid */}
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
-        
-        {/* Input Panel */}
+         {/* Columna Izquierda: Entradas y Deducciones */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
-          {/* Card: Salario */}
-          <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
-              Tus Ingresos
+          {/* Card: Sueldo Bruto */}
+          <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+            <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+              Salario Bruto Mensual
             </h2>
-            <div className="input-group">
-              <label className="input-label">Moneda de Salario</label>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+
+            {/* Quick Presets */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Casos Típicos:
+              </span>
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                 <button 
-                  className={`btn ${currency === 'ARS' ? 'btn-primary' : 'btn-outline'}`}
-                  style={{ flex: 1, padding: '0.5rem', justifyContent: 'center' }}
-                  onClick={() => setCurrency('ARS')}
+                  type="button" 
+                  className="btn btn-outline transition-spring"
+                  style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                  onClick={() => {
+                    setGrossIncome(2800000);
+                    setCurrency('ARS');
+                    setHasSpouse(false);
+                    setChildrenCount(0);
+                    setIsPatagonico(false);
+                  }}
                 >
-                  Pesos ($)
+                  👤 Soltero ($2.8M)
                 </button>
                 <button 
-                  className={`btn ${currency === 'USD' ? 'btn-primary' : 'btn-outline'}`}
-                  style={{ flex: 1, padding: '0.5rem', justifyContent: 'center' }}
+                  type="button" 
+                  className="btn btn-outline transition-spring"
+                  style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                  onClick={() => {
+                    setGrossIncome(4200000);
+                    setCurrency('ARS');
+                    setHasSpouse(true);
+                    setChildrenCount(2);
+                    setIsPatagonico(false);
+                  }}
+                >
+                  👨‍👩‍👧‍👦 Casado + 2 Hijos ($4.2M)
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-outline transition-spring"
+                  style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                  onClick={() => {
+                    setGrossIncome(5500000);
+                    setCurrency('ARS');
+                    setHasSpouse(true);
+                    setChildrenCount(2);
+                    setIsPatagonico(true);
+                  }}
+                >
+                  🏔️ Patagonia ($5.5M)
+                </button>
+              </div>
+            </div>
+            
+            <div className="input-group">
+              <label className="input-label">Moneda de Cobro</label>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button 
+                  type="button"
+                  className={`btn transition-spring ${currency === 'ARS' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1, padding: '0.5rem', borderRadius: '50px' }}
+                  onClick={() => setCurrency('ARS')}
+                >
+                  Pesos (ARS)
+                </button>
+                <button 
+                  type="button"
+                  className={`btn transition-spring ${currency === 'USD' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1, padding: '0.5rem', borderRadius: '50px' }}
                   onClick={() => setCurrency('USD')}
                 >
-                  Dólares (US$)
+                  Dólares (USD)
                 </button>
               </div>
             </div>
 
             <FinancialInput 
-              label={currency === 'USD' ? 'Salario Bruto Mensual (USD)' : 'Salario Bruto Mensual (ARS)'}
+              label="Sueldo Bruto Mensual (Normal y Habitual)" 
               value={grossIncome} 
               onChange={setGrossIncome} 
               prefix={currency === 'USD' ? 'u$s' : '$'} 
-              step={currency === 'USD' ? 500 : 100000} 
+              step={currency === 'USD' ? 100 : 100000} 
             />
 
             {currency === 'USD' && (
@@ -325,8 +378,8 @@ const GananciasCalculator = () => {
           </div>
 
           {/* Card: Deducciones Familiares */}
-          <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
+          <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+            <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
               Deducciones Personales (Cargas de Familia)
             </h2>
             
@@ -486,17 +539,19 @@ const GananciasCalculator = () => {
           />
           
           {/* Sueldo Neto de Bolsillo Card */}
-          <div className="card animate-fade-in" style={{
+          <div className="taste-card animate-fade-in" style={{
             textAlign: 'center',
             borderTop: '4px solid #10b981',
-            background: 'linear-gradient(180deg, rgba(16, 185, 129, 0.05), transparent)'
+            background: 'linear-gradient(180deg, rgba(16, 185, 129, 0.08), var(--bg-secondary))',
+            padding: '2rem 1.5rem',
+            boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)'
           }}>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Sueldo Neto de Bolsillo Mensual</p>
-            <p style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>
+            <p style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Sueldo Neto de Bolsillo Mensual</p>
+            <p className="tabular-nums" style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-success)', lineHeight: 1.1, letterSpacing: '-0.03em', margin: '0.25rem 0' }}>
               {formatCurrency(calculations.netPocketMonthly)}
             </p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
-              Recibís en mano el {calculations.percentages.pocket}% de tu salario bruto.
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.65rem', marginBottom: 0 }}>
+              Recibís en mano el <strong className="tabular-nums">{calculations.percentages.pocket}%</strong> de tu salario bruto.
             </p>
           </div>
 

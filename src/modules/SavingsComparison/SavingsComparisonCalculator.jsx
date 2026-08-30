@@ -269,10 +269,61 @@ const SavingsComparisonCalculator = () => {
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
         {/* Input Panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Parámetros de Ahorro
           </h2>
+
+          {/* Quick Presets */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Plazos y Montos Típicos:
+            </span>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setInitialCapital('500000');
+                  setTermDays('180');
+                  setTnaTraditional('35');
+                  setTnaCauciones('30');
+                  setAverageInflation('2.5');
+                }}
+              >
+                💰 $500k a 180d
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setInitialCapital('1500000');
+                  setTermDays('360');
+                  setTnaTraditional('35');
+                  setTnaCauciones('30');
+                  setAverageInflation('2.2');
+                }}
+              >
+                💼 $1.5M a 360d
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setInitialCapital('3000000');
+                  setTermDays('180');
+                  setTnaTraditional('38');
+                  setTnaCauciones('32');
+                  setAverageInflation('2.5');
+                }}
+              >
+                📈 $3M a 180d
+              </button>
+            </div>
+          </div>
 
           <FinancialInput label="Capital Inicial ($)" value={initialCapital} onChange={setInitialCapital} prefix="$" step={50000} />
           
@@ -316,18 +367,17 @@ const SavingsComparisonCalculator = () => {
             </label>
             
             {customInflationMode && (
-              <div className="card animate-fade-in" style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'var(--bg-tertiary)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '0.75rem', maxHeight: '180px', overflowY: 'auto' }}>
+              <div className="taste-card animate-fade-in" style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'var(--bg-tertiary)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '0.75rem', maxHeight: '180px', overflowY: 'auto' }}>
                 {Array.from({ length: numMonths }).map((_, index) => (
                   <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Mes {index + 1}</span>
                     <input 
                       type="number" 
+                      step="0.1"
                       className="input-field" 
                       style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', textAlign: 'center' }}
-                      value={inflationRates[index] || ''}
-                      onChange={e => handleCustomRateChange(index, e.target.value)}
-                      placeholder={averageInflation}
-                      step={0.1}
+                      value={inflationRates[index] !== undefined ? inflationRates[index] : '2.0'} 
+                      onChange={e => handleCustomRateChange(index, e.target.value)} 
                     />
                   </div>
                 ))}
@@ -340,13 +390,13 @@ const SavingsComparisonCalculator = () => {
         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animationDelay: '100ms' }}>
           {results && (
             <>
-              {/* Print-only Header & Params */}
+              {/* Print-only Header */}
               <PrintReportHeader 
-                title="Reporte de Comparación: Ahorro en Pesos"
-                subtitle="Ficha de Evaluación de Alternativas Plazo Fijo UVA vs Tradicional vs Cauciones"
+                title="Reporte de Comparación de Ahorro e Inversión"
+                subtitle="Ficha Técnica de Rendimiento Real (UVA vs PF vs Cauciones)"
                 params={[
                   { label: 'Capital Inicial', value: formatCurrencyFull(Number(initialCapital) || 0) },
-                  { label: 'Plazo Simulación', value: `${termDays} días` },
+                  { label: 'Plazo Total', value: `${termDays} días (${numMonths} meses)` },
                   { label: 'TNA Plazo Fijo Tradicional', value: `${tnaTraditional}%` },
                   { label: 'TNA Cauciones 7d', value: `${tnaCauciones}%` },
                   { label: 'Tasa Adicional UVA', value: `UVA + ${tnaUva}%` },
@@ -355,48 +405,50 @@ const SavingsComparisonCalculator = () => {
               />
 
               {/* Winner Highlight Card */}
-              <div className="card" style={{
+              <div className="taste-card" style={{
                 textAlign: 'center',
                 borderTop: '4px solid var(--accent-primary)',
-                background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), transparent)'
+                background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), var(--bg-secondary))',
+                padding: '2rem 1.5rem',
+                boxShadow: '0 8px 24px rgba(6, 182, 212, 0.08)'
               }}>
-                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                <p style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
                   <Award size={18} className="text-accent-primary" />
                   Estrategia Ganadora Proyectada
                 </p>
                 <h3 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
                   {results.winnerLabel}
                 </h3>
-                <p style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1, margin: '0.25rem 0' }}>
+                <p className="tabular-nums" style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1.1, margin: '0.25rem 0', letterSpacing: '-0.03em' }}>
                   {formatCurrencyFull(results.winnerValue)}
                 </p>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
-                  Inflación acumulada proyectada del periodo: <strong>{results.inflationAcumulada}%</strong>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.65rem', marginBottom: 0 }}>
+                  Inflación acumulada proyectada del periodo: <strong className="tabular-nums">{results.inflationAcumulada}%</strong>
                 </p>
               </div>
 
               {/* Stats Breakdown */}
-              <div className="stats-grid">
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #10B981' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Plazo Fijo UVA</span>
-                  <strong style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>{formatCurrencyFull(results.uvaFinal)}</strong>
-                  <span style={{ fontSize: '0.7rem', color: results.uvaRealReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
+              <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.25rem' }}>
+                <div className="taste-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', padding: '1.25rem', borderTop: '2px solid #10B981' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Plazo Fijo UVA</span>
+                  <strong className="tabular-nums" style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrencyFull(results.uvaFinal)}</strong>
+                  <span className="tabular-nums" style={{ fontSize: '0.75rem', fontWeight: 600, color: results.uvaRealReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
                     {results.uvaRealReturn >= 0 ? '✓ Ganancia real: ' : '✗ Pérdida real: '} {results.uvaRealReturn}%
                   </span>
                 </div>
 
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #F59E0B' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>PF Tradicional</span>
-                  <strong style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>{formatCurrencyFull(results.traditionalFinal)}</strong>
-                  <span style={{ fontSize: '0.7rem', color: results.traditionalRealReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
+                <div className="taste-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', padding: '1.25rem', borderTop: '2px solid #F59E0B' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>PF Tradicional</span>
+                  <strong className="tabular-nums" style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrencyFull(results.traditionalFinal)}</strong>
+                  <span className="tabular-nums" style={{ fontSize: '0.75rem', fontWeight: 600, color: results.traditionalRealReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
                     {results.traditionalRealReturn >= 0 ? '✓ Ganancia real: ' : '✗ Pérdida real: '} {results.traditionalRealReturn}%
                   </span>
                 </div>
 
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #EF4444' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Cauciones 7d</span>
-                  <strong style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>{formatCurrencyFull(results.caucionesFinal)}</strong>
-                  <span style={{ fontSize: '0.7rem', color: results.caucionesRealReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
+                <div className="taste-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', padding: '1.25rem', borderTop: '2px solid #EF4444' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cauciones 7d</span>
+                  <strong className="tabular-nums" style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrencyFull(results.caucionesFinal)}</strong>
+                  <span className="tabular-nums" style={{ fontSize: '0.75rem', fontWeight: 600, color: results.caucionesRealReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
                     {results.caucionesRealReturn >= 0 ? '✓ Ganancia real: ' : '✗ Pérdida real: '} {results.caucionesRealReturn}%
                   </span>
                 </div>

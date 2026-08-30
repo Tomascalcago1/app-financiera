@@ -15,6 +15,10 @@ export const translations = {
     'input.percent': 'Porcentaje de Retiro Anual',
     'input.min': 'Retiro Mínimo Anual (Opcional)',
     'input.max': 'Retiro Máximo Anual (Opcional)',
+    'preset.title': 'Estrategias FIRE Rápidas:',
+    'preset.classic': '🛡️ Regla 4% ($500k / $20k)',
+    'preset.lean': '🌴 Lean FIRE ($250k / $10k)',
+    'preset.fat': '👑 Fat FIRE ($1.2M / $42k)',
 
     // Extraordinary Flows
     'flows.title': 'Flujos Extraordinarios',
@@ -121,6 +125,10 @@ export const translations = {
     'input.percent': 'Annual Withdrawal Percentage',
     'input.min': 'Minimum Annual Withdrawal (Optional)',
     'input.max': 'Maximum Annual Withdrawal (Optional)',
+    'preset.title': 'Quick FIRE Strategies:',
+    'preset.classic': '🛡️ 4% Rule ($500k / $20k)',
+    'preset.lean': '🌴 Lean FIRE ($250k / $10k)',
+    'preset.fat': '👑 Fat FIRE ($1.2M / $42k)',
 
     // Extraordinary Flows
     'flows.title': 'Extraordinary Flows',

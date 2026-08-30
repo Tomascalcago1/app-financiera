@@ -388,15 +388,15 @@ const Glosario = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem' }}>
         
         {/* Search Input */}
-        <div style={{ position: 'relative', width: '100%', maxWidth: '500px', margin: '0 auto' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '520px', margin: '0 auto' }}>
           <Search size={18} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
           <input 
             type="text" 
-            className="input-field" 
+            className="input-field taste-card" 
             placeholder={language === 'en' ? 'Search term (e.g. CEDEAR, MEP, APY)...' : 'Buscar término (ej. CEDEAR, MEP, UVA)...'}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            style={{ paddingLeft: '2.75rem', width: '100%', height: '46px', borderRadius: '50px' }}
+            style={{ paddingLeft: '2.75rem', width: '100%', height: '46px', borderRadius: '50px', fontSize: '0.9rem' }}
           />
         </div>
 
@@ -409,9 +409,9 @@ const Glosario = () => {
                 setActiveCategory(cat.id);
                 setOpenTermId(null);
               }}
-              className={`btn ${activeCategory === cat.id ? 'btn-primary' : 'btn-outline'}`}
+              className={`btn transition-spring ${activeCategory === cat.id ? 'btn-primary' : 'btn-outline'}`}
               style={{ 
-                padding: '0.35rem 1rem', 
+                padding: '0.4rem 1.15rem', 
                 fontSize: '0.825rem', 
                 borderRadius: '50px'
               }}
@@ -426,7 +426,7 @@ const Glosario = () => {
       {/* Terms Accordion List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {filteredTerms.length === 0 ? (
-          <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+          <div className="taste-card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
             {language === 'en' ? 'No terms matched your search.' : 'No se encontraron términos que coincidan con tu búsqueda.'}
           </div>
         ) : (
@@ -436,15 +436,14 @@ const Glosario = () => {
               <div 
                 key={item.id} 
                 id={`term-card-${item.id}`}
-                className="card"
+                className="taste-card transition-spring"
                 style={{ 
-                  padding: '1.25rem 1.5rem',
+                  padding: '1.35rem 1.75rem',
                   cursor: 'pointer',
                   borderColor: isOpen ? 'var(--accent-primary)' : 'var(--border-color)',
                   background: isOpen 
                     ? 'linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)' 
                     : 'var(--bg-secondary)',
-                  transition: 'all var(--transition-fast)'
                 }}
                 onClick={() => toggleTerm(item.id)}
               >
@@ -453,9 +452,10 @@ const Glosario = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {item.highlight && <Star size={16} className="text-accent-primary" fill="var(--accent-primary)" style={{ flexShrink: 0 }} />}
                     <h3 style={{ 
-                       fontSize: '1.05rem', 
+                       fontSize: '1.1rem', 
                        margin: 0, 
-                       fontWeight: 600,
+                       fontWeight: 700,
+                       letterSpacing: '-0.02em',
                        color: isOpen ? 'var(--accent-primary)' : 'var(--text-primary)'
                     }}>
                       {item.term}
@@ -475,7 +475,7 @@ const Glosario = () => {
                       borderTop: '1px solid var(--border-color)', 
                       paddingTop: '1rem',
                       color: 'var(--text-secondary)',
-                      lineHeight: '1.6',
+                      lineHeight: '1.65',
                       fontSize: '0.925rem'
                     }}
                   >
@@ -491,17 +491,16 @@ const Glosario = () => {
                           setCopiedTermId(item.id);
                           setTimeout(() => setCopiedTermId(null), 2000);
                         }}
-                        className="btn btn-outline"
+                        className="btn btn-outline transition-spring"
                         style={{ 
-                          padding: '0.25rem 0.75rem', 
+                          padding: '0.3rem 0.75rem', 
                           fontSize: '0.75rem', 
                           height: 'auto',
-                          borderRadius: '4px',
+                          borderRadius: '999px',
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.35rem',
-                          borderColor: copiedTermId === item.id ? 'var(--accent-success, #10b981)' : 'var(--border-color)',
-                          transition: 'all var(--transition-fast)'
+                          borderColor: copiedTermId === item.id ? 'var(--accent-success, #10b981)' : 'var(--border-color)'
                         }}
                       >
                         <Share2 size={12} className={copiedTermId === item.id ? "text-accent-success" : "text-accent-primary"} />
@@ -509,13 +508,13 @@ const Glosario = () => {
                       </button>
 
                       <span style={{ 
-                        fontSize: '0.65rem', 
+                        fontSize: '0.675rem', 
                         fontWeight: 600, 
                         color: 'var(--text-tertiary)',
                         textTransform: 'uppercase',
                         border: '1px solid var(--border-color)',
-                        padding: '0.15rem 0.5rem',
-                        borderRadius: '4px'
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '999px'
                       }}>
                         {categories.find(c => c.id === item.category)?.label || item.category}
                       </span>

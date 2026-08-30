@@ -809,3 +809,55 @@ input[type="number"] {
   transform: translateY(0);
 }
 
+/* Light Theme Polish & High-Contrast Adjustments (WCAG AA) */
+[data-theme="light"] .taste-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .taste-card:hover {
+  border-color: rgba(14, 116, 144, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .valia-slider {
+  background: #E2E8F0;
+}
+
+[data-theme="light"] .valia-slider::-webkit-slider-thumb {
+  background: #0891B2;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(8, 145, 178, 0.35);
+}
+
+[data-theme="light"] .valia-slider::-moz-range-thumb {
+  background: #0891B2;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(8, 145, 178, 0.35);
+}
+
+[data-theme="light"] .chart-container {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] table thead tr {
+  background-color: #F1F5F9 !important;
+  border-bottom: 1px solid #CBD5E1 !important;
+}
+
+[data-theme="light"] table tbody tr {
+  border-bottom: 1px solid #F1F5F9 !important;
+}
+
+[data-theme="light"] table tbody tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+[data-theme="light"] blockquote {
+  background-color: #F1F5F9 !important;
+  border-left-color: #0e7490 !important;
+}
+
+

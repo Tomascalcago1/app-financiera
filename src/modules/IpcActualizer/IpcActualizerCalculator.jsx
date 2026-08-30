@@ -784,10 +784,54 @@ const IpcActualizerCalculator = () => {
       {activeTab === 'actualizer' && (
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
           {/* Inputs Panel */}
-          <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
+          <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+            <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
               Parámetros de Ajuste
             </h2>
+
+            {/* Quick Period Presets */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Períodos Rápidos:
+              </span>
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-outline transition-spring"
+                  style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                  onClick={() => {
+                    const lastIdx = compoundedIpcList.length - 1;
+                    setStartIndex(Math.max(0, lastIdx - 12));
+                    setEndIndex(lastIdx);
+                  }}
+                >
+                  ⏱️ Último Año (12m)
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-outline transition-spring"
+                  style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                  onClick={() => {
+                    const lastIdx = compoundedIpcList.length - 1;
+                    setStartIndex(Math.max(0, lastIdx - 36));
+                    setEndIndex(lastIdx);
+                  }}
+                >
+                  📅 Últimos 3 Años
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-outline transition-spring"
+                  style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                  onClick={() => {
+                    setStartIndex(0);
+                    setEndIndex(compoundedIpcList.length - 1);
+                  }}
+                >
+                  🏛️ Serie Completa
+                </button>
+              </div>
+            </div>
 
             <FinancialInput label="Monto Original ($)" value={amount} onChange={setAmount} prefix="$" step={10000} />
 
@@ -833,7 +877,7 @@ const IpcActualizerCalculator = () => {
 
             <div 
               onClick={() => navigateToArticle('actualizacion-ipc-contratos-deudas')}
-              className="card no-print"
+              className="taste-card no-print transition-spring"
               style={{ 
                 marginTop: '1.5rem', 
                 cursor: 'pointer',
@@ -842,9 +886,7 @@ const IpcActualizerCalculator = () => {
                 alignItems: 'center',
                 gap: '0.75rem',
                 padding: '1rem',
-                borderRadius: 'var(--border-radius-md)',
-                border: 'none',
-                boxShadow: 'none'
+                borderRadius: 'var(--border-radius-md)'
               }}
             >
               <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
@@ -872,34 +914,36 @@ const IpcActualizerCalculator = () => {
                 />
 
                 {/* Updated Amount Highlight Card */}
-                <div className="card" style={{
+                <div className="taste-card" style={{
                   textAlign: 'center',
                   borderTop: '4px solid var(--accent-primary)',
-                  background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), transparent)'
+                  background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), var(--bg-secondary))',
+                  padding: '2rem 1.5rem',
+                  boxShadow: '0 8px 24px rgba(6, 182, 212, 0.08)'
                 }}>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                  <p style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>
                     Monto Equivalente Actualizado (Poder de Compra)
                   </p>
-                  <h3 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1, margin: '0.25rem 0' }}>
+                  <h3 className="tabular-nums" style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1.1, margin: '0.25rem 0', letterSpacing: '-0.03em' }}>
                     {formatCurrencyFull(results.updatedValue)}
                   </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
-                    Para comprar hoy lo mismo que comprabas con <strong>{formatCurrencyFull(Number(amount) || 0)}</strong> en {results.startLabel}, necesitás ese monto.
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.65rem', marginBottom: 0 }}>
+                    Para comprar hoy lo mismo que con <strong className="tabular-nums" style={{ color: 'var(--text-primary)' }}>{formatCurrencyFull(Number(amount) || 0)}</strong> en {results.startLabel}, necesitás ese monto.
                   </p>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="stats-grid">
-                  <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #F59E0B' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Inflación Acumulada</span>
-                    <strong style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>{formatPercent(results.accumulatedInflation)}</strong>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Aumento general de precios</span>
+                <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.25rem' }}>
+                  <div className="taste-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', padding: '1.25rem', borderTop: '2px solid #F59E0B' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Inflación Acumulada</span>
+                    <strong className="tabular-nums" style={{ fontSize: '1.4rem', fontWeight: 800, color: '#F59E0B', letterSpacing: '-0.02em' }}>{formatPercent(results.accumulatedInflation)}</strong>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Aumento general de precios</span>
                   </div>
 
-                  <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #EF4444' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pérdida Poder Adquisitivo</span>
-                    <strong style={{ fontSize: '1.25rem', color: '#EF4444' }}>-{formatPercent(results.powerLoss)}</strong>
-                    <span style={{ fontSize: '0.7rem', color: '#EF4444' }}>Depreciación real de la moneda</span>
+                  <div className="taste-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', padding: '1.25rem', borderTop: '2px solid #EF4444' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pérdida Poder Adquisitivo</span>
+                    <strong className="tabular-nums" style={{ fontSize: '1.4rem', fontWeight: 800, color: '#EF4444', letterSpacing: '-0.02em' }}>-{formatPercent(results.powerLoss)}</strong>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Desvalorización del billete</span>
                   </div>
                 </div>
 

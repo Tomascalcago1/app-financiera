@@ -203,10 +203,64 @@ const InstallmentsVsCashCalculator = () => {
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
         
         {/* Input Panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Datos del Producto
           </h2>
+
+          {/* Quick Presets */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Escenarios Típicos:
+            </span>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setCashPrice(100000);
+                  setCashDiscount(10);
+                  setListPrice(100000);
+                  setInstallmentsCount(3);
+                  setMonthlyInflation(2.0);
+                  setInvestmentTna(25);
+                }}
+              >
+                ⚡ 3 Cuotas (10% desc)
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setCashPrice(200000);
+                  setCashDiscount(15);
+                  setListPrice(200000);
+                  setInstallmentsCount(6);
+                  setMonthlyInflation(2.2);
+                  setInvestmentTna(25);
+                }}
+              >
+                💳 6 Cuotas (15% desc)
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setCashPrice(500000);
+                  setCashDiscount(25);
+                  setListPrice(500000);
+                  setInstallmentsCount(12);
+                  setMonthlyInflation(2.0);
+                  setInvestmentTna(25);
+                }}
+              >
+                🔥 12 Cuotas (25% desc)
+              </button>
+            </div>
+          </div>
 
           <FinancialInput 
             label="Precio de Lista (Pesos)"
@@ -226,9 +280,9 @@ const InstallmentsVsCashCalculator = () => {
             max={100}
           />
 
-          <div className="card" style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Precio Contado Real a Pagar:</span>
-            <strong style={{ display: 'block', fontSize: '1.2rem', color: 'var(--accent-success)' }}>
+          <div className="taste-card" style={{ padding: '0.85rem 1.15rem', backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
+            <span style={{ fontSize: '0.775rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Precio Contado Real a Pagar:</span>
+            <strong className="tabular-nums" style={{ display: 'block', fontSize: '1.25rem', color: 'var(--accent-success)', fontWeight: 800 }}>
               {formatCurrency(simulation.actualCashPrice)}
             </strong>
           </div>
@@ -255,7 +309,7 @@ const InstallmentsVsCashCalculator = () => {
             </select>
           </div>
 
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginTop: '1rem', marginBottom: '0.25rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginTop: '1rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Contexto Económico
           </h2>
 
@@ -298,20 +352,22 @@ const InstallmentsVsCashCalculator = () => {
           />
 
           {/* 1. Winner Banner Card */}
-          <div className="card" style={{
+          <div className="taste-card" style={{
             textAlign: 'center',
             borderTop: `4px solid ${simulation.recommendInstallments ? 'var(--accent-success)' : 'var(--accent-primary)'}`,
-            background: `linear-gradient(180deg, ${simulation.recommendInstallments ? 'rgba(16, 185, 129, 0.05)' : 'rgba(6, 182, 212, 0.05)'}, transparent)`
+            background: `linear-gradient(180deg, ${simulation.recommendInstallments ? 'rgba(16, 185, 129, 0.08)' : 'rgba(6, 182, 212, 0.08)'}, var(--bg-secondary))`,
+            padding: '2rem 1.5rem',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
           }}>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Opción Financieramente Recomendada</p>
-            <p style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>
+            <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Opción Financieramente Recomendada</p>
+            <p style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.1, letterSpacing: '-0.03em' }}>
               {simulation.recommendInstallments ? '¡Conviene Cuotas!' : 'Conviene Efectivo / Contado'}
             </p>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '0.75rem', marginBottom: 0 }}>
               {simulation.recommendInstallments 
                 ? 'Pagar en cuotas te genera un ahorro real estimado de ' 
                 : 'Pagar de contado te genera un ahorro real estimado de '}
-              <strong style={{ color: simulation.recommendInstallments ? 'var(--accent-success)' : 'var(--accent-primary)' }}>
+              <strong className="tabular-nums" style={{ color: simulation.recommendInstallments ? 'var(--accent-success)' : 'var(--accent-primary)' }}>
                 {formatCurrency(simulation.finalSavings)}
               </strong> en términos de valor presente.
             </p>
@@ -319,42 +375,44 @@ const InstallmentsVsCashCalculator = () => {
 
           {/* 2. Surcharge alert if listing price is higher than cash */}
           {simulation.surchargePercent > 0 && (
-            <div className="card" style={{
+            <div className="taste-card" style={{
               display: 'flex',
               gap: '1rem',
               alignItems: 'start',
+              padding: '1.25rem',
               border: '1px solid var(--border-color)',
-              backgroundColor: 'rgba(30, 41, 59, 0.4)'
+              backgroundColor: 'var(--bg-tertiary)'
             }}>
               <AlertTriangle className="text-accent-warning" size={24} style={{ flexShrink: 0 }} />
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
                   Recargo por Financiación: {simulation.surchargePercent.toFixed(1)}%
                 </h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  El comercio aplica un recargo del **{simulation.surchargePercent.toFixed(1)}%** al pagar en cuotas respecto al precio de contado. 
-                  Aun así, {simulation.recommendInstallments ? 'la inflación licúa este costo haciendo que convengan las cuotas.' : 'el recargo supera el efecto de la inflación y por eso te conviene pagar al contado.'}
+                <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: '1.45', margin: 0 }}>
+                  El comercio aplica un recargo del <strong className="tabular-nums">%{simulation.surchargePercent.toFixed(1)}</strong> al pagar en cuotas. 
+                  Aun así, {simulation.recommendInstallments ? 'la inflación licúa este costo haciendo que convengan las cuotas.' : 'el recargo supera el efecto de la inflación y por eso conviene pagar al contado.'}
                 </p>
               </div>
             </div>
           )}
 
           {/* 3. Detailed stats cards */}
-          <div className="stats-grid">
-            <div className="card" style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Valor Nominal de la Cuota</p>
-              <p style={{ fontSize: '1.25rem', fontWeight: 700 }}>{formatCurrency(simulation.installmentValue)}</p>
+          <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.25rem' }}>
+            <div className="taste-card" style={{ textAlign: 'center', padding: '1.25rem 1rem' }}>
+              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Valor Nominal de la Cuota</p>
+              <p className="tabular-nums" style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0.2rem 0', color: 'var(--text-primary)' }}>{formatCurrency(simulation.installmentValue)}</p>
             </div>
-            <div className="card" style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Saldo Final Inversión Proyectado</p>
-              <p style={{ 
-                fontSize: '1.25rem', 
-                fontWeight: 700, 
+            <div className="taste-card" style={{ textAlign: 'center', padding: '1.25rem 1rem' }}>
+              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Saldo Inversión Final</p>
+              <p className="tabular-nums" style={{ 
+                fontSize: '1.35rem', 
+                fontWeight: 800, 
+                margin: '0.2rem 0',
                 color: simulation.finalInvestmentBalance >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' 
               }}>
                 {formatCurrency(simulation.finalInvestmentBalance)}
               </p>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
                 {simulation.finalInvestmentBalance >= 0 ? 'Excedente a favor' : 'Agotado en el mes ' + simulation.monthlyData.findIndex(m => m.investmentBalance < 0)}
               </span>
             </div>

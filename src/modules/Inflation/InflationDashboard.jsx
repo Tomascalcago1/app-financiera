@@ -73,25 +73,27 @@ const InflationDashboard = ({ result, chartData, amount, fromYear, toYear, annua
       />
 
       {/* Main Result */}
-      <div className="card" style={{
-        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05))',
-        borderLeft: '4px solid var(--accent-success)'
+      <div className="taste-card" style={{
+        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), var(--bg-secondary))',
+        borderLeft: '4px solid var(--accent-success)',
+        padding: '1.75rem',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
       }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Resultado</h2>
-        <p style={{ fontSize: '1.25rem' }}>
-          <strong style={{ color: 'var(--text-primary)' }}>{formatCurrency(amount)}</strong> en{' '}
-          <strong>{fromYear}</strong> equivale a{' '}
-          <strong style={{ color: 'var(--accent-success)', fontSize: '1.5rem' }}>{formatCurrency(result.equivalentValue)}</strong> en{' '}
-          <strong>{toYear}</strong>.
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Resultado</h2>
+        <p style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>
+          <strong className="tabular-nums" style={{ color: 'var(--text-primary)' }}>{formatCurrency(amount)}</strong> en{' '}
+          <strong className="tabular-nums">{fromYear}</strong> equivale a{' '}
+          <strong className="tabular-nums" style={{ color: 'var(--accent-success)', fontSize: '1.65rem' }}>{formatCurrency(result.equivalentValue)}</strong> en{' '}
+          <strong className="tabular-nums">{toYear}</strong>.
         </p>
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+        <div style={{ marginTop: '1.25rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Inflación Total</p>
-            <p style={{ fontSize: '1.125rem', fontWeight: 600 }}>{result.totalInflationPercent.toFixed(2)}%</p>
+            <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Inflación Total</p>
+            <p className="tabular-nums" style={{ fontSize: '1.25rem', fontWeight: 800 }}>{result.totalInflationPercent.toFixed(2)}%</p>
           </div>
           <div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Tasa Promedio Anual</p>
-            <p style={{ fontSize: '1.125rem', fontWeight: 600 }}>{result.averageAnnualRate.toFixed(2)}%</p>
+            <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Tasa Promedio Anual</p>
+            <p className="tabular-nums" style={{ fontSize: '1.25rem', fontWeight: 800 }}>{result.averageAnnualRate.toFixed(2)}%</p>
           </div>
         </div>
       </div>

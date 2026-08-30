@@ -189,11 +189,56 @@ const TnaToTeaCalculator = () => {
       </header>
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '2rem', alignItems: 'start' }}>
-        {/* Inputs Panel */}
-        <div className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
-            {tLocal('card.params')}
+        {/* Input Panel */}
+        <div className="taste-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+            {tLocal('card.title')}
           </h2>
+
+          {/* Quick Presets */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              {language === 'en' ? 'Quick Rates:' : 'Tasas de Referencia:'}
+            </span>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setTna('35');
+                  setFrequency('monthly');
+                  setInflation('30');
+                }}
+              >
+                🏦 Plazo Fijo (35% mens)
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setTna('30');
+                  setFrequency('weekly');
+                  setInflation('30');
+                }}
+              >
+                📈 Caución 7d (30%)
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '999px' }}
+                onClick={() => {
+                  setTna('28');
+                  setFrequency('daily');
+                  setInflation('30');
+                }}
+              >
+                📱 Billetera (28% diaria)
+              </button>
+            </div>
+          </div>
 
           <FinancialInput label={tLocal('input.tna')} value={tna} onChange={setTna} suffix="%" step={0.5} />
 
@@ -205,7 +250,7 @@ const TnaToTeaCalculator = () => {
               value={frequency} 
               onChange={e => setFrequency(e.target.value)}
               className="input-field"
-              style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: 'none' }}
+              style={{ width: '100%', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.9rem' }}
             >
               {Object.entries(compoundingMap).map(([key]) => (
                 <option key={key} value={key}>{tLocal(`freq.${key}`)}</option>
@@ -217,7 +262,7 @@ const TnaToTeaCalculator = () => {
 
           <div 
             onClick={() => navigateToArticle('tna-vs-tea-capitalizacion')}
-            className="card no-print"
+            className="taste-card no-print transition-spring"
             style={{ 
               marginTop: '1.5rem', 
               cursor: 'pointer',
@@ -226,9 +271,7 @@ const TnaToTeaCalculator = () => {
               alignItems: 'center',
               gap: '0.75rem',
               padding: '1rem',
-              borderRadius: 'var(--border-radius-md)',
-              border: 'none',
-              boxShadow: 'none'
+              borderRadius: 'var(--border-radius-md)'
             }}
           >
             <BookOpen size={18} className="text-accent-primary" style={{ flexShrink: 0 }} />
@@ -259,50 +302,53 @@ const TnaToTeaCalculator = () => {
               />
 
               {/* TEA Highlight Card */}
-              <div className="card" style={{
+              <div className="taste-card" style={{
                 textAlign: 'center',
                 borderTop: '4px solid var(--accent-primary)',
-                background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), transparent)'
+                background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.08), var(--bg-secondary))',
+                padding: '2rem 1.5rem',
+                boxShadow: '0 8px 24px rgba(6, 182, 212, 0.08)'
               }}>
-                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                <p style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
                   {tLocal('dash.tea_title')}
                 </p>
-                <h3 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1, margin: '0.25rem 0' }}>
+                <h3 className="tabular-nums" style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1.1, margin: '0.25rem 0', letterSpacing: '-0.03em' }}>
                   {formatPercent(results.tea)}
                 </h3>
                 <p 
-                  style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}
+                  style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.65rem', marginBottom: 0 }}
                   dangerouslySetInnerHTML={{ 
-                    __html: tLocal('dash.tea_desc').replace('{diff}', formatPercent(results.tea - Number(tna))) 
+                    __html: tLocal('dash.tea_desc').replace('{diff}', `<strong class="tabular-nums">${formatPercent(results.tea - Number(tna))}</strong>`) 
                   }}
                 />
               </div>
 
               {/* Stats Grid */}
-              <div className="stats-grid">
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '2px solid #06B6D4' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+              <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.25rem' }}>
+                <div className="taste-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', padding: '1.25rem', borderTop: '2px solid #06B6D4' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {tLocal('dash.tem_title')}
                   </span>
-                  <strong style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>{formatPercent(results.tem)}</strong>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>
+                  <strong className="tabular-nums" style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatPercent(results.tem)}</strong>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                     {tLocal('dash.tem_desc')}
                   </span>
                 </div>
 
-                <div className="card" style={{ 
+                <div className="taste-card" style={{ 
                   display: 'flex', 
                   flexDirection: 'column', 
-                  gap: '0.25rem', 
+                  gap: '0.35rem',
+                  padding: '1.25rem',
                   borderTop: results.realReturn >= 0 ? '2px solid #10B981' : '2px solid #EF4444' 
                 }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {tLocal('dash.real_return_title')}
                   </span>
-                  <strong style={{ fontSize: '1.25rem', color: results.realReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
+                  <strong className="tabular-nums" style={{ fontSize: '1.35rem', fontWeight: 800, color: results.realReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
                     {results.realReturn >= 0 ? '+' : ''}{formatPercent(results.realReturn)}
                   </strong>
-                  <span style={{ fontSize: '0.7rem', color: results.realReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
+                  <span className="tabular-nums" style={{ fontSize: '0.75rem', fontWeight: 600, color: results.realReturn >= 0 ? 'var(--accent-success)' : 'var(--accent-danger)' }}>
                     {results.realReturn >= 0 ? tLocal('dash.real_return_success') : tLocal('dash.real_return_loss')}
                   </span>
                 </div>

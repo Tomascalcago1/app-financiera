@@ -203,13 +203,13 @@ const Asesores = () => {
           </div>
 
           {/* Right: Contact Form */}
-          <div className="card" style={{ 
-            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+          <div className="taste-card" style={{ 
+            background: 'var(--bg-secondary)',
             border: '1px solid var(--border-color)',
-            boxShadow: 'var(--shadow-glow), var(--shadow-md)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
             padding: '2rem'
           }}>
-            <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
               <MessageSquare size={20} className="text-accent-primary" />
               Request Advisor
             </h2>
@@ -404,13 +404,13 @@ const Asesores = () => {
         </div>
 
         {/* Right: Contact Form */}
-        <div className="card" style={{ 
-          background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+        <div className="taste-card" style={{ 
+          background: 'var(--bg-secondary)',
           border: '1px solid var(--border-color)',
-          boxShadow: 'var(--shadow-glow), var(--shadow-md)',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
           padding: '2rem'
         }}>
-          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
             <MessageSquare size={20} className="text-accent-primary" />
             Solicitar Asesor Preferencial
           </h2>

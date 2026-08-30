@@ -128,16 +128,18 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
       />
       
       {/* Summary Banner */}
-      <div className="card" style={{
+      <div className="taste-card" style={{
         background: buyWins 
-          ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05))'
-          : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05))',
-        borderLeft: `4px solid ${buyWins ? 'var(--accent-success)' : 'var(--accent-primary)'}`
+          ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), var(--bg-secondary))'
+          : 'linear-gradient(135deg, rgba(6, 182, 212, 0.1), var(--bg-secondary))',
+        borderLeft: `4px solid ${buyWins ? 'var(--accent-success)' : 'var(--accent-primary)'}`,
+        padding: '1.75rem',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
       }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
           {language === 'en' ? `Result in ${finalYear.year} years` : `Resultado en {years} años`.replace('{years}', finalYear.year)}
         </h2>
-        <p style={{ fontSize: '1.125rem' }}>
+        <p className="tabular-nums" style={{ fontSize: '1.125rem', color: 'var(--text-primary)' }}>
           {buyWins ? (
             tLocal('dash.result.buy')
               .replace('{years}', finalYear.year)
@@ -150,8 +152,8 @@ const ResultsDashboard = ({ data, inputs = {} }) => {
         </p>
 
         {/* Breakdown */}
-        <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-primary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
-          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+        <div className="taste-card" style={{ marginTop: '1rem', padding: '1rem 1.25rem', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
+          <h4 style={{ fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
             {language === 'en' 
               ? `Your Net Worth Breakdown (${buyWins ? 'Buying' : 'Renting'}):` 
               : `Desglose de tu Riqueza (${buyWins ? 'Comprando' : 'Alquilando'}):`}

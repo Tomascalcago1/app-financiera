@@ -273,10 +273,10 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
       </header>
 
       {/* Intro Perks Card */}
-      <div className="card" style={{ 
-        background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.12) 0%, rgba(15, 23, 42, 0.4) 100%)',
+      <div className="taste-card" style={{ 
+        background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.12) 0%, var(--bg-secondary) 100%)',
         border: '1px solid rgba(6, 182, 212, 0.3)',
-        boxShadow: 'var(--shadow-glow), var(--shadow-md)',
+        boxShadow: '0 8px 24px rgba(6, 182, 212, 0.1)',
         padding: '2rem',
         marginBottom: '3rem',
         borderRadius: 'var(--border-radius-md)'
@@ -294,9 +294,9 @@ const BrokerComparator = ({ onNavigateToAsesores }) => {
             <Sparkles size={28} />
           </div>
           <div style={{ flex: '1', minWidth: '280px' }}>
-            <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
               Beneficios Exclusivos con Balanz
-              <span className="badge" style={{ backgroundColor: 'var(--accent-primary)', color: '#090D16', fontSize: '0.7rem', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 'bold' }}>VALIA PREFERENCIAL</span>
+              <span className="badge" style={{ backgroundColor: 'var(--accent-primary)', color: '#FFFFFF', fontSize: '0.7rem', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 'bold' }}>VALIA PREFERENCIAL</span>
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', lineHeight: '1.6', marginBottom: '1rem' }}>
               Operando a través de Valia accedés a un canal exclusivo de asesoramiento financiero directo. Un profesional matriculado de Balanz te ayudará a diseñar carteras de inversión a medida sin pagar costos extras ni comisiones infladas.
