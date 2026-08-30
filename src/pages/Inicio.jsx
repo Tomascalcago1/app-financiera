@@ -15,7 +15,11 @@ import {
   Scale,
   ChevronDown,
   HelpCircle,
-  Landmark
+  Landmark,
+  Sparkles,
+  Zap,
+  CheckCircle,
+  Briefcase
 } from 'lucide-react';
 import AdvisorCTA from '../components/AdvisorCTA';
 import FinancialTest from '../components/FinancialTest';
@@ -31,6 +35,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
   const [savings, setSavings] = useState(200);
   const [rate, setRate] = useState(8);
   const [years, setYears] = useState(10);
+  const [adjustInflation, setAdjustInflation] = useState(false);
 
   const calcResults = () => {
     const pmt = Number(savings) || 0;
@@ -46,15 +51,18 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
     
     const totalContributed = pmt * n;
     const totalInterest = Math.max(0, fv - totalContributed);
+    const nominalTotal = Math.round(fv);
+    const realTotal = Math.round(nominalTotal / Math.pow(1 + 0.03, y));
     
     return {
-      total: Math.round(fv),
+      total: nominalTotal,
+      realTotal: realTotal,
       contributed: Math.round(totalContributed),
       interest: Math.round(totalInterest)
     };
   };
 
-  const { total, contributed, interest } = calcResults();
+  const { total, realTotal, contributed, interest } = calcResults();
   
   const contributedPct = total > 0 ? (contributed / total) * 100 : 100;
   const interestPct = total > 0 ? (interest / total) * 100 : 0;
@@ -65,6 +73,12 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
       currency: 'USD',
       maximumFractionDigits: 0
     }).format(val);
+  };
+
+  const applyPreset = (pSavings, pRate, pYears) => {
+    setSavings(pSavings);
+    setRate(pRate);
+    setYears(pYears);
   };
 
   const handleCtaClick = () => {
@@ -236,6 +250,41 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
     { name: t('trust.bls.name'), sub: t('trust.bls.sub') }
   ];
 
+  const intentCards = [
+    {
+      id: 'tax',
+      toolId: 'sueldo-neto',
+      icon: <Briefcase size={20} className="text-accent-primary" />,
+      title: t('intent.tax.title'),
+      desc: t('intent.tax.desc'),
+      category: 'impuestos'
+    },
+    {
+      id: 'invest',
+      toolId: 'compound-interest',
+      icon: <TrendingUp size={20} style={{ color: 'var(--accent-success)' }} />,
+      title: t('intent.invest.title'),
+      desc: t('intent.invest.desc'),
+      category: 'inversiones'
+    },
+    {
+      id: 'credit',
+      toolId: 'installments-vs-cash',
+      icon: <Scale size={20} style={{ color: 'var(--accent-primary)' }} />,
+      title: t('intent.credit.title'),
+      desc: t('intent.credit.desc'),
+      category: 'ahorro-credito'
+    },
+    {
+      id: 'fire',
+      toolId: 'fire',
+      icon: <Flame size={20} style={{ color: 'var(--accent-warning)' }} />,
+      title: t('intent.fire.title'),
+      desc: t('intent.fire.desc'),
+      category: 'inversiones'
+    }
+  ].filter(card => language === 'es' || card.id !== 'tax');
+
   const categoryOptions = [
     { id: 'todas', label: t('cat.todas') },
     { id: 'inversiones', label: t('cat.inversiones') },
@@ -286,7 +335,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           </div>
 
           <h1 style={{ 
-            fontSize: 'clamp(2.1rem, 5vw, 3rem)', 
+            fontSize: 'clamp(2.1rem, 5vw, 3.1rem)', 
             lineHeight: '1.12', 
             fontWeight: '800',
             background: 'linear-gradient(135deg, var(--text-gradient-start) 0%, var(--text-gradient-end) 100%)',
@@ -404,7 +453,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
           </div>
         </div>
 
-        {/* Columna Derecha: Mini-Simulador Táctil */}
+        {/* Columna Derecha: Mini-Simulador Táctil con Presets */}
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
           <div className="card animate-fade-in" style={{
             background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
@@ -415,9 +464,9 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.5), var(--shadow-glow)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '1.35rem',
+            gap: '1.25rem',
             width: '100%',
-            maxWidth: '450px'
+            maxWidth: '460px'
           }}>
             <div style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.85rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
@@ -431,8 +480,36 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
               </p>
             </div>
 
+            {/* Quick Strategy Preset Chips */}
+            <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button 
+                type="button"
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.25rem 0.65rem', fontSize: '0.725rem', borderRadius: '999px', background: savings === 100 && rate === 6 && years === 5 ? 'rgba(6, 182, 212, 0.15)' : 'var(--bg-tertiary)' }}
+                onClick={() => applyPreset(100, 6, 5)}
+              >
+                🛡️ {t('mini.preset.emergency')}
+              </button>
+              <button 
+                type="button"
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.25rem 0.65rem', fontSize: '0.725rem', borderRadius: '999px', background: savings === 250 && rate === 10 && years === 15 ? 'rgba(6, 182, 212, 0.15)' : 'var(--bg-tertiary)' }}
+                onClick={() => applyPreset(250, 10, 15)}
+              >
+                🚀 {t('mini.preset.etf')}
+              </button>
+              <button 
+                type="button"
+                className="btn btn-outline transition-spring"
+                style={{ padding: '0.25rem 0.65rem', fontSize: '0.725rem', borderRadius: '999px', background: savings === 500 && rate === 8 && years === 25 ? 'rgba(6, 182, 212, 0.15)' : 'var(--bg-tertiary)' }}
+                onClick={() => applyPreset(500, 8, 25)}
+              >
+                🔥 {t('mini.preset.fire')}
+              </button>
+            </div>
+
             {/* Ahorro Mensual Slider */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 500 }}>
                 <span style={{ color: 'var(--text-secondary)' }}>{t('mini.savings')}</span>
                 <strong className="tabular-nums" style={{ color: 'var(--accent-primary)', fontSize: '0.95rem' }}>
@@ -451,7 +528,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             </div>
 
             {/* Tasa Anual Slider */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 500 }}>
                 <span style={{ color: 'var(--text-secondary)' }}>{t('mini.rate')}</span>
                 <strong className="tabular-nums" style={{ color: 'var(--accent-primary)', fontSize: '0.95rem' }}>
@@ -470,7 +547,7 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
             </div>
 
             {/* Plazo en Años Slider */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 500 }}>
                 <span style={{ color: 'var(--text-secondary)' }}>{t('mini.years')}</span>
                 <strong className="tabular-nums" style={{ color: 'var(--accent-primary)', fontSize: '0.95rem' }}>
@@ -486,6 +563,19 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
                 value={years}
                 onChange={(e) => setYears(Number(e.target.value))}
               />
+            </div>
+
+            {/* Toggle Poder de Compra Real */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.2rem 0' }}>
+              <label style={{ fontSize: '0.775rem', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <input 
+                  type="checkbox"
+                  checked={adjustInflation}
+                  onChange={(e) => setAdjustInflation(e.target.checked)}
+                  style={{ cursor: 'pointer', accentColor: 'var(--accent-primary)' }}
+                />
+                {t('mini.real_power.toggle')}
+              </label>
             </div>
 
             {/* Resultados del Mini-Simulador */}
@@ -504,8 +594,13 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
                 {t('mini.result.title')}
               </span>
               <strong className="tabular-nums" style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--accent-success)', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-                {formatValue(total)}
+                {formatValue(adjustInflation ? realTotal : total)}
               </strong>
+              {adjustInflation && (
+                <span className="tabular-nums" style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
+                  (Nominal: {formatValue(total)})
+                </span>
+              )}
             </div>
 
             {/* Barra de Progreso Bi-color con micro-labels */}
@@ -559,11 +654,116 @@ const Inicio = ({ onSelectTool, preloadTool }) => {
         </div>
       </section>
 
+      {/* Live Market Benchmark Ticker */}
+      <section style={{ 
+        maxWidth: '1200px', 
+        margin: '-2rem auto 0 auto', 
+        width: '100%', 
+        padding: '0 1.5rem' 
+      }}>
+        <div className="taste-card" style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1rem',
+          padding: '0.75rem 1.5rem',
+          borderRadius: '999px',
+          background: 'linear-gradient(90deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.7) 100%)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(6, 182, 212, 0.15)',
+          overflowX: 'auto',
+          whiteSpace: 'nowrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            <Zap size={14} style={{ color: 'var(--accent-primary)' }} />
+            <span>{t('ticker.sp500')}</span>
+          </div>
+          <div style={{ height: '14px', width: '1px', backgroundColor: 'var(--border-color)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            <TrendingUp size={14} style={{ color: 'var(--accent-success)' }} />
+            <span>{t('ticker.us_cpi')}</span>
+          </div>
+          <div style={{ height: '14px', width: '1px', backgroundColor: 'var(--border-color)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            <Shield size={14} style={{ color: 'var(--accent-primary)' }} />
+            <span>{t('ticker.local_calc')}</span>
+          </div>
+          <div style={{ height: '14px', width: '1px', backgroundColor: 'var(--border-color)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            <CheckCircle size={14} style={{ color: 'var(--accent-success)' }} />
+            <span>{t('ticker.no_cookies')}</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Goal Matcher ("¿Qué querés calcular hoy?") */}
+      <section className="container" style={{ maxWidth: '1200px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.85rem', marginBottom: '0.5rem', letterSpacing: '-0.025em' }}>{t('intent.title')}</h2>
+          <p style={{ color: 'var(--text-secondary)', maxWidth: '560px', margin: '0 auto', fontSize: '0.95rem' }}>
+            {t('intent.subtitle')}
+          </p>
+        </div>
+
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
+          gap: '1.25rem' 
+        }}>
+          {intentCards.map((card) => (
+            <div
+              key={card.id}
+              className="taste-card transition-spring"
+              style={{
+                padding: '1.4rem',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                border: '1px solid var(--border-color)'
+              }}
+              onClick={() => {
+                setSelectedCategory(card.category);
+                onSelectTool(card.toolId);
+              }}
+              onMouseEnter={() => {
+                if (preloadTool) preloadTool(card.toolId);
+              }}
+            >
+              <div style={{ 
+                width: '40px', 
+                height: '40px', 
+                borderRadius: '10px', 
+                backgroundColor: 'var(--bg-tertiary)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                border: '1px solid var(--border-color)'
+              }}>
+                {card.icon}
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 600, margin: '0 0 0.25rem 0', color: 'var(--text-primary)' }}>
+                  {card.title}
+                </h3>
+                <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                  {card.desc}
+                </p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--accent-primary)', fontSize: '0.8rem', fontWeight: 600, marginTop: 'auto' }}>
+                <span>Simular</span>
+                <ArrowRight size={13} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Brand Trust Bar / Data Sources */}
       <section style={{ 
         textAlign: 'center', 
         padding: '0 1.5rem',
-        marginTop: '-1.5rem',
+        marginTop: '-1rem',
         marginBottom: '0.5rem'
       }}>
         <p style={{ 

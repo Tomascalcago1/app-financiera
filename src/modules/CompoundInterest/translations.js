@@ -21,6 +21,15 @@ export const translations = {
     'advanced.freq.daily': 'Diariamente',
     'guide.tag': 'Guía Recomendada',
     'guide.title': 'Jubilación Temprana con Interés Compuesto y aportes',
+    'preset.title': 'Estrategias Preconfiguradas:',
+    'preset.starter': '🔰 Principiante ($1k / $150m)',
+    'preset.etf': '🚀 Inversor ETF ($5k / $300m)',
+    'preset.fire': '🔥 Retiro FIRE ($10k / $750m)',
+    'preset.bonds': '🛡️ Conservador ($5k / $200m)',
+    'dash.kpi.total': 'Saldo Total Estimado',
+    'dash.kpi.contributions': 'Tus Aportes de Bolsillo',
+    'dash.kpi.interest': 'Interés Puro Ganado',
+    'dash.kpi.multiplier': 'Multiplicador Patrimonial',
     
     // SEO
     'seo.title': 'Entendiendo la Fórmula: ¿Qué es el Interés Compuesto y cómo calcularlo?',
@@ -102,6 +111,15 @@ export const translations = {
     'advanced.freq.daily': 'Daily',
     'guide.tag': 'Recommended Guide',
     'guide.title': 'Early Retirement with Compound Interest and Contributions',
+    'preset.title': 'Preconfigured Strategies:',
+    'preset.starter': '🔰 Starter ($1k / $150m)',
+    'preset.etf': '🚀 Index ETF ($5k / $300m)',
+    'preset.fire': '🔥 FIRE Goal ($10k / $750m)',
+    'preset.bonds': '🛡️ Conservative ($5k / $200m)',
+    'dash.kpi.total': 'Estimated Total Balance',
+    'dash.kpi.contributions': 'Total Pocket Contributions',
+    'dash.kpi.interest': 'Pure Interest Earned',
+    'dash.kpi.multiplier': 'Wealth Multiplier',
     
     // SEO
     'seo.title': 'Understanding the Formula: What is Compound Interest?',

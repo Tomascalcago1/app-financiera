@@ -10,7 +10,7 @@ import {
   Legend,
   ReferenceLine
 } from 'recharts';
-import { TableProperties, Download, Printer, Share2, Image } from 'lucide-react';
+import { TableProperties, Download, Printer, Share2, Image, Sparkles, TrendingUp, DollarSign, Award, Layers } from 'lucide-react';
 import AdvisorCTA from '../../components/AdvisorCTA';
 import PrintReportHeader from '../../components/PrintReportHeader';
 import PrintAdvisorCTA from '../../components/PrintAdvisorCTA';
@@ -30,16 +30,17 @@ const formatCurrency = (value, lang) => {
 
 const CustomTooltip = ({ active, payload, label, lang }) => {
   if (active && payload && payload.length) {
-    // Ordenar de mayor a menor para mejor legibilidad en tooltip
     const sortedPayload = [...payload].sort((a, b) => b.value - a.value);
 
     return (
-      <div className="card" style={{ padding: '1rem', border: '1px solid var(--border-color)', minWidth: '200px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{lang === 'en' ? `Year ${label}` : `Año ${label}`}</p>
+      <div className="taste-card" style={{ padding: '0.85rem 1.1rem', border: '1px solid rgba(6, 182, 212, 0.3)', minWidth: '220px', background: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(12px)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+        <p style={{ fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary)', fontSize: '0.9rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.35rem' }}>
+          {lang === 'en' ? `Year ${label}` : `Año ${label}`}
+        </p>
         {sortedPayload.map((entry, index) => (
-          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-            <span style={{ color: entry.color, fontSize: '0.875rem' }}>{entry.name}:</span>
-            <strong style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>{formatCurrency(entry.value, lang)}</strong>
+          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem', gap: '0.75rem' }}>
+            <span style={{ color: entry.color, fontSize: '0.825rem' }}>{entry.name}:</span>
+            <strong className="tabular-nums" style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>{formatCurrency(entry.value, lang)}</strong>
           </div>
         ))}
       </div>
@@ -54,7 +55,7 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} 
     return translations[language][key] || translations['es'][key] || key;
   };
 
-  const [showTable, setShowTable] = useState(false);
+  const [activeTab, setActiveTab] = useState('chart'); // 'chart' | 'table'
   const [shareCopied, setShareCopied] = useState(false);
 
   const profitCrossoverYear = useMemo(() => {
@@ -71,6 +72,10 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} 
   if (!data || data.length === 0) return null;
 
   const finalYear = data[data.length - 1];
+  const pureInterest = Math.max(0, finalYear.expected - finalYear.totalContributions);
+  const multiplier = finalYear.totalContributions > 0 
+    ? (finalYear.expected / finalYear.totalContributions).toFixed(1) 
+    : '1.0';
 
   const exportToCSV = () => {
     const headers = ['Año', 'Aportes Acumulados', 'Saldo Estimado (Medio)'];
@@ -129,220 +134,321 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} 
         ]}
       />
       
-      {/* Summary Banner */}
-      <div className="card" style={{
-        background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.05))',
-        borderLeft: '4px solid var(--accent-primary)'
+      {/* High-Impact 3-Card KPI Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '1.25rem'
       }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-          {language === 'en' ? `Final projection in ${finalYear.year} years` : `Proyección final en ${finalYear.year} años`}
-        </h2>
-        <p style={{ fontSize: '1.125rem' }}>
-          {language === 'en' ? 'You will have an estimated balance of ' : 'Tendrás un balance estimado de '}
-          <strong style={{ color: 'var(--accent-primary)' }}>
+        {/* Saldo Final Estimado */}
+        <div className="taste-card" style={{
+          padding: '1.5rem',
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, var(--bg-secondary) 100%)',
+          border: '1px solid rgba(6, 182, 212, 0.3)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.4rem',
+          boxShadow: '0 8px 24px rgba(6, 182, 212, 0.1)'
+        }}>
+          <span style={{ fontSize: '0.775rem', fontWeight: 600, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {tLocal('dash.kpi.total')}
+          </span>
+          <strong className="tabular-nums" style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
             {formatCurrency(finalYear.expected, language)}
-          </strong>.
-        </p>
-        
-        {varianceEnabled && (
-          <p style={{ fontSize: '0.875rem', marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
-            {language === 'en' ? 'Depending on volatility, the result could vary between ' : 'Dependiendo de la volatilidad, el resultado podría variar entre '}
-            <strong style={{ color: 'var(--accent-warning)', marginLeft: '0.25rem' }}>{formatCurrency(finalYear.pessimistic, language)}</strong>
-            {language === 'en' ? ' and ' : ' y '}
-            <strong style={{ color: 'var(--accent-success)', marginLeft: '0.25rem' }}>{formatCurrency(finalYear.optimistic, language)}</strong>.
-          </p>
-        )}
+          </strong>
+          <span style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
+            {language === 'en' ? `In ${finalYear.year} years horizon` : `En un horizonte de ${finalYear.year} años`}
+          </span>
+        </div>
 
-        <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-primary)', borderRadius: 'var(--border-radius-sm)', border: '1px solid var(--border-color)' }}>
-          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
-            {language === 'en' ? 'Investment Breakdown:' : 'Desglose de la Inversión:'}
-          </h4>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.875rem' }}>
-            <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-              <span>{language === 'en' ? 'Total contributions from your pocket:' : 'Total de Aportes de tu bolsillo:'}</span>
-              <strong>{formatCurrency(finalYear.totalContributions, language)}</strong>
-            </li>
-            <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--accent-primary)' }}>
-                {language === 'en' ? 'Interest Earned (Estimated):' : 'Interés Ganado (Estimado):'}
-              </span>
-              <strong style={{ color: 'var(--accent-primary)' }}>{formatCurrency(finalYear.expected - finalYear.totalContributions, language)}</strong>
-            </li>
-          </ul>
+        {/* Total Aportado */}
+        <div className="taste-card" style={{
+          padding: '1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.4rem'
+        }}>
+          <span style={{ fontSize: '0.775rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {tLocal('dash.kpi.contributions')}
+          </span>
+          <strong className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            {formatCurrency(finalYear.totalContributions, language)}
+          </strong>
+          <span style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
+            {language === 'en' ? 'Total principal saved' : 'Ahorro neto aportado'}
+          </span>
+        </div>
+
+        {/* Interés Puro Ganado */}
+        <div className="taste-card" style={{
+          padding: '1.5rem',
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-secondary) 100%)',
+          border: '1px solid rgba(16, 185, 129, 0.25)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.4rem'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.775rem', fontWeight: 600, color: 'var(--accent-success)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              {tLocal('dash.kpi.interest')}
+            </span>
+            <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', borderRadius: '999px', backgroundColor: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-success)', fontWeight: 700 }}>
+              {multiplier}x
+            </span>
+          </div>
+          <strong className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--accent-success)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            {formatCurrency(pureInterest, language)}
+          </strong>
+          <span style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
+            {language === 'en' ? 'Generated by compound growth' : 'Generado por interés compuesto'}
+          </span>
         </div>
       </div>
 
-      {/* Export Actions */}
-      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '-1rem' }}>
-        {onShare && (
-          <button 
-            onClick={() => {
-              onShare()
-                .then(() => {
-                  setShareCopied(true);
-                  setTimeout(() => setShareCopied(false), 2000);
-                })
-                .catch(err => console.error('Error al compartir: ', err));
-            }}
-            className="btn btn-outline" 
-            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+      {/* Crossover Milestone Notification */}
+      {profitCrossoverYear && (
+        <div className="taste-card" style={{
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+          border: '1px solid rgba(16, 185, 129, 0.3)',
+          padding: '1.25rem 1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem'
+        }}>
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            color: 'var(--accent-success)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <Award size={22} />
+          </div>
+          <div>
+            <strong style={{ fontSize: '0.95rem', color: 'var(--text-primary)', display: 'block', marginBottom: '0.2rem' }}>
+              {tLocal('dash.crossover.title')} (Año {profitCrossoverYear})
+            </strong>
+            <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              {language === 'en'
+                ? `In year ${profitCrossoverYear}, pure interest earnings overtake your total pocket contributions. The exponential curve takes over.`
+                : `En el año ${profitCrossoverYear}, las ganancias por interés superan a la suma de todos tus aportes. A partir de aquí, el dinero trabaja por vos.`}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Toolbar: Views and Export Actions */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        {/* Tab Toggle: Chart vs Table */}
+        <div style={{ display: 'inline-flex', background: 'var(--bg-tertiary)', padding: '0.25rem', borderRadius: '999px', border: '1px solid var(--border-color)' }}>
+          <button
+            type="button"
+            className={`btn transition-spring ${activeTab === 'chart' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setActiveTab('chart')}
           >
-            <Share2 size={16} />
-            {shareCopied ? tLocal('dash.btn.copied') : tLocal('dash.btn.share')}
+            <TrendingUp size={14} />
+            {tLocal('dash.tab.chart')}
           </button>
-        )}
-        <button 
-          onClick={exportToCSV}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Download size={16} />
-          {tLocal('dash.btn.csv')}
-        </button>
-        <button 
-          onClick={exportToPDF}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Printer size={16} />
-          {tLocal('dash.btn.pdf')}
-        </button>
-        <button 
-          onClick={() => exportChartToPNG('compound-chart-container', 'valia_interes_compuesto.png')}
-          className="btn btn-outline" 
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          <Image size={16} />
-          {tLocal('dash.btn.image')}
-        </button>
-      </div>
-
-      {/* Chart */}
-      <div className="card chart-container" id="compound-chart-container">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>
-          {language === 'en' ? 'Growth Projection' : 'Proyección del Crecimiento'}
-        </h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={data}
-            margin={{ top: 15, right: 20, left: 20, bottom: 25 }}
+          <button
+            type="button"
+            className={`btn transition-spring ${activeTab === 'table' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', borderRadius: '999px', border: 'none' }}
+            onClick={() => setActiveTab('table')}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis 
-              dataKey="year" 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)' }}
-            />
-            <YAxis 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)' }}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-            />
-            <Tooltip content={<CustomTooltip lang={language} />} />
-            <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
-            
-            {profitCrossoverYear && (
-              <ReferenceLine 
-                x={profitCrossoverYear} 
-                stroke="var(--accent-success)" 
-                strokeDasharray="3 3" 
-                label={{ 
-                  value: language === 'en' ? 'Interest > Contributions' : 'Interés > Aportes', 
-                  fill: 'var(--accent-success)', 
-                  position: 'top', 
-                  fontSize: 11,
-                  fontWeight: 500
-                }} 
-              />
-            )}
+            <TableProperties size={14} />
+            {tLocal('dash.tab.table')}
+          </button>
+        </div>
 
-            <Area 
-              type="monotone" 
-              dataKey="totalContributions" 
-              name={tLocal('dash.chart.contributions')} 
-              stroke="var(--text-secondary)" 
-              fill="var(--bg-tertiary)" 
-              strokeWidth={2}
-              stackId="0"
-            />
-
-            {varianceEnabled && (
-              <>
-                <Area 
-                  type="monotone" 
-                  dataKey="optimistic" 
-                  name={tLocal('dash.chart.optimistic')} 
-                  stroke="var(--accent-success)" 
-                  fill="none" 
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="pessimistic" 
-                  name={tLocal('dash.chart.pessimistic')} 
-                  stroke="var(--accent-warning)" 
-                  fill="none" 
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                />
-              </>
-            )}
-
-            <Area 
-              type="monotone" 
-              dataKey="expected" 
-              name={tLocal('dash.chart.expected')} 
-              stroke="var(--accent-primary)" 
-              fill="url(#colorExpected)" 
-              strokeWidth={3}
-            />
-            <defs>
-              <linearGradient id="colorExpected" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-
-          </AreaChart>
-        </ResponsiveContainer>
+        {/* Export Buttons */}
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {onShare && (
+            <button 
+              onClick={() => {
+                onShare()
+                  .then(() => {
+                    setShareCopied(true);
+                    setTimeout(() => setShareCopied(false), 2000);
+                  })
+                  .catch(err => console.error('Error al compartir: ', err));
+              }}
+              className="btn btn-outline transition-spring" 
+              style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+            >
+              <Share2 size={15} />
+              {shareCopied ? tLocal('dash.btn.copied') : tLocal('dash.btn.share')}
+            </button>
+          )}
+          <button 
+            onClick={exportToCSV}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Download size={15} />
+            CSV
+          </button>
+          <button 
+            onClick={exportToPDF}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Printer size={15} />
+            PDF
+          </button>
+          <button 
+            onClick={() => exportChartToPNG('compound-chart-container', 'valia_interes_compuesto.png')}
+            className="btn btn-outline transition-spring" 
+            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+          >
+            <Image size={15} />
+            PNG
+          </button>
+        </div>
       </div>
 
-      <button 
-        className="btn btn-outline" 
-        onClick={() => setShowTable(!showTable)}
-        style={{ alignSelf: 'flex-start' }}
-      >
-        <TableProperties size={18} />
-        {showTable ? (language === 'en' ? 'Hide Table' : 'Ocultar Tabla') : (language === 'en' ? 'Show Year-by-Year Table' : 'Mostrar Tabla Año por Año')}
-      </button>
+      {/* Main Visual: Chart View */}
+      {activeTab === 'chart' && (
+        <div className="taste-card chart-container" id="compound-chart-container" style={{ padding: '1.5rem' }}>
+          <h3 style={{ marginBottom: '1.25rem', fontSize: '1.15rem', fontWeight: 600, letterSpacing: '-0.02em' }}>
+            {language === 'en' ? 'Growth Trajectory Over Time' : 'Trayectoria de Crecimiento en el Tiempo'}
+          </h3>
+          <ResponsiveContainer width="100%" height={380}>
+            <AreaChart
+              data={data}
+              margin={{ top: 15, right: 20, left: 10, bottom: 25 }}
+            >
+              <defs>
+                <linearGradient id="colorExpected" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0.0}/>
+                </linearGradient>
+                <linearGradient id="colorContrib" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#64748B" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#64748B" stopOpacity={0.0}/>
+                </linearGradient>
+                <linearGradient id="colorOptimistic" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.25}/>
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0.0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+              <XAxis 
+                dataKey="year" 
+                stroke="var(--text-secondary)"
+                tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+              />
+              <YAxis 
+                stroke="var(--text-secondary)"
+                tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
+              <Tooltip content={<CustomTooltip lang={language} />} />
+              <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: '20px' }} />
+              
+              {profitCrossoverYear && (
+                <ReferenceLine 
+                  x={profitCrossoverYear} 
+                  stroke="var(--accent-success)" 
+                  strokeDasharray="4 4" 
+                  label={{ 
+                    value: language === 'en' ? 'Interest > Contributions' : 'Interés > Aportes', 
+                    fill: 'var(--accent-success)',
+                    fontSize: 11,
+                    position: 'top'
+                  }} 
+                />
+              )}
 
-      {showTable && (
-        <div className="card animate-fade-in" style={{ overflowX: 'auto', padding: 0 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+              <Area 
+                type="monotone" 
+                dataKey="totalContributions" 
+                name={tLocal('dash.chart.contributions')} 
+                stroke="#94A3B8" 
+                fillOpacity={1} 
+                fill="url(#colorContrib)" 
+                strokeWidth={2}
+              />
+
+              <Area 
+                type="monotone" 
+                dataKey="expected" 
+                name={tLocal('dash.chart.expected')} 
+                stroke="var(--accent-primary)" 
+                fillOpacity={1} 
+                fill="url(#colorExpected)" 
+                strokeWidth={2.5}
+              />
+
+              {varianceEnabled && (
+                <>
+                  <Area 
+                    type="monotone" 
+                    dataKey="optimistic" 
+                    name={tLocal('dash.chart.optimistic')} 
+                    stroke="#10B981" 
+                    fillOpacity={1} 
+                    fill="url(#colorOptimistic)" 
+                    strokeWidth={1.5}
+                    strokeDasharray="4 4"
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="pessimistic" 
+                    name={tLocal('dash.chart.pessimistic')} 
+                    stroke="#F59E0B" 
+                    fill="none" 
+                    strokeWidth={1.5}
+                    strokeDasharray="4 4"
+                  />
+                </>
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* Main Visual: Table View */}
+      {activeTab === 'table' && (
+        <div className="taste-card" style={{ padding: 0, overflowX: 'auto', border: '1px solid var(--border-color)' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
             <thead>
               <tr style={{ background: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                <th style={{ padding: '1rem', textAlign: 'center' }}>{tLocal('dash.table.year')}</th>
-                <th style={{ padding: '1rem' }}>{tLocal('dash.table.contributions')}</th>
-                <th style={{ padding: '1rem', color: 'var(--accent-primary)' }}>{tLocal('dash.table.expected')}</th>
+                <th style={{ padding: '0.9rem 1.25rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{tLocal('dash.table.year')}</th>
+                <th style={{ padding: '0.9rem 1.25rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{tLocal('dash.table.contributions')}</th>
+                <th style={{ padding: '0.9rem 1.25rem', color: 'var(--accent-primary)', fontWeight: 700, background: 'rgba(6, 182, 212, 0.05)' }}>{tLocal('dash.table.expected')}</th>
                 {varianceEnabled && (
                   <>
-                    <th style={{ padding: '1rem', color: 'var(--accent-success)' }}>{tLocal('dash.table.optimistic')}</th>
-                    <th style={{ padding: '1rem', color: 'var(--accent-warning)' }}>{tLocal('dash.table.pessimistic')}</th>
+                    <th style={{ padding: '0.9rem 1.25rem', color: 'var(--accent-warning)', fontWeight: 600 }}>{tLocal('dash.table.pessimistic')}</th>
+                    <th style={{ padding: '0.9rem 1.25rem', color: 'var(--accent-success)', fontWeight: 600 }}>{tLocal('dash.table.optimistic')}</th>
                   </>
                 )}
               </tr>
             </thead>
             <tbody>
               {data.map((row) => (
-                <tr key={row.year} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 500 }}>{row.year}</td>
-                  <td style={{ padding: '0.75rem 1rem' }}>{formatCurrency(row.totalContributions, language)}</td>
-                  <td style={{ padding: '0.75rem 1rem', fontWeight: 'bold' }}>{formatCurrency(row.expected, language)}</td>
+                <tr key={row.year} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background-color 0.15s ease' }}>
+                  <td style={{ padding: '0.85rem 1.25rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {language === 'en' ? `Year ${row.year}` : `Año ${row.year}`}
+                  </td>
+                  <td className="tabular-nums" style={{ padding: '0.85rem 1.25rem', color: 'var(--text-secondary)' }}>
+                    {formatCurrency(row.totalContributions, language)}
+                  </td>
+                  <td className="tabular-nums" style={{ padding: '0.85rem 1.25rem', color: 'var(--accent-primary)', fontWeight: 700, background: 'rgba(6, 182, 212, 0.02)' }}>
+                    {formatCurrency(row.expected, language)}
+                  </td>
                   {varianceEnabled && (
                     <>
-                      <td style={{ padding: '0.75rem 1rem' }}>{formatCurrency(row.optimistic, language)}</td>
-                      <td style={{ padding: '0.75rem 1rem' }}>{formatCurrency(row.pessimistic, language)}</td>
+                      <td className="tabular-nums" style={{ padding: '0.85rem 1.25rem', color: 'var(--accent-warning)' }}>
+                        {formatCurrency(row.pessimistic, language)}
+                      </td>
+                      <td className="tabular-nums" style={{ padding: '0.85rem 1.25rem', color: 'var(--accent-success)' }}>
+                        {formatCurrency(row.optimistic, language)}
+                      </td>
                     </>
                   )}
                 </tr>
@@ -352,10 +458,14 @@ const CompoundResultsDashboard = ({ data, varianceEnabled, onShare, inputs = {} 
         </div>
       )}
 
-      <AdvisorCTA 
-        whatsappText="Hola! Estuve proyectando mis ahorros con la calculadora de Interés Compuesto en Valia y quiero asesoramiento para poner en práctica este plan con Balanz." 
-      />
-      <PrintAdvisorCTA />
+      {/* Lead Gen Advisor CTA banner */}
+      <div style={{ marginTop: '1rem' }}>
+        <AdvisorCTA 
+          title={language === 'en' ? "Want to automate your investments with a professional advisor?" : "¿Querés automatizar tus inversiones con un asesor profesional?"}
+          description={language === 'en' ? "Connect with our accredited financial advisor to build an optimal compound portfolio." : "Contactá a nuestro asesor matriculado en Balanz para estructurar tu cartera de interés compuesto sin comisiones ocultas."}
+        />
+      </div>
+
     </div>
   );
 };
