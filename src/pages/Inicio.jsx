@@ -15,9 +15,7 @@ import {
   Scale,
   ChevronDown,
   HelpCircle,
-  Landmark,
-  CheckCircle2,
-  XCircle
+  Landmark
 } from 'lucide-react';
 import AdvisorCTA from '../components/AdvisorCTA';
 import FinancialTest from '../components/FinancialTest';
